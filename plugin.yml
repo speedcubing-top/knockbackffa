@@ -1,0 +1,9 @@
+name: KnockBackFFA
+main: speedcubing.KnockBackFFA
+version: 1.0
+depend:
+  - speedcubingServer
+  - speedcubingLib
+commands:
+  map:
+    usage: /map
