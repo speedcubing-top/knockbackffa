@@ -1,5 +1,6 @@
 package speedcubing;
 
+import cubing.bukkit.Event.ServerEventManager;
 import cubing.bukkit.InventoryUtils;
 import cubing.bukkit.ItemUtils;
 import net.minecraft.server.v1_8_R3.BlockPosition;
@@ -16,9 +17,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import speedcubing.All.SocketServer;
-import speedcubing.All.map;
-import speedcubing.BukkitEventListener.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,34 +39,21 @@ public class KnockBackFFA extends JavaPlugin {
 
     public static int centerX = 0;
     public static int centerZ = 0;
+    public static int offsetY = 0;
 
-    public static void switchMap(int newX, int newZ) {
+    public static void switchMap(int newX, int newZ, int newY) {
         centerX = newX;
         centerZ = newZ;
+        offsetY = newY;
     }
 
     public void onEnable() {
-
         Bukkit.getPluginCommand("map").setExecutor(new map());
-
-        Bukkit.getPluginManager().registerEvents(new EntityDamage(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
-        Bukkit.getPluginManager().registerEvents(new Bow(), this);
-        Bukkit.getPluginManager().registerEvents(new EntityDamageByEntity(), this);
-        Bukkit.getPluginManager().registerEvents(new InventoryClick(), this);
-        Bukkit.getPluginManager().registerEvents(new InventoryClose(), this);
-        Bukkit.getPluginManager().registerEvents(new BlockBreak(), this);
-        Bukkit.getPluginManager().registerEvents(new BlockPlace(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerDropItem(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerInteract(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerQuit(), this);
-        Bukkit.getPluginManager().registerEvents(new ProjectileLaunch(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerTeleport(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerMove(), this);
+        Bukkit.getPluginManager().registerEvents(new EventListeners(), this);
         World world = Bukkit.getWorld("world");
         world.setDifficulty(Difficulty.PEACEFUL);
         world.setTime(6000);
-        new SocketServer().Load();
+        ServerEventManager.registerEventListener(new ServerEvent());
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Set<PacketPlayOutBlockBreakAnimation> a = new HashSet<>();
             Set<BlockPosition> ba = new HashSet<>();
@@ -82,7 +67,8 @@ public class KnockBackFFA extends JavaPlugin {
                     ba.add(b);
                 }
             }
-            for (Player p : Bukkit.getOnlinePlayers()) {
+            for (Player
+                    p : Bukkit.getOnlinePlayers()) {
                 PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
                 for (PacketPlayOutBlockBreakAnimation packet : a) {
                     c.sendPacket(packet);

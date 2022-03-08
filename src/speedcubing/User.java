@@ -84,6 +84,7 @@ public class User {
         inventory.setItem(4, KnockBackFFA.itemStacks[lang][11]);
         player.setLevel(0);
         player.setHealth(20);
+        PlayerUtils.removeArrows(((CraftPlayer) player).getHandle().getDataWatcher());
         PlayerUtils.teleport(((CraftPlayer) player).getHandle().playerConnection, KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, 90, 0);
         Bukkit.getScheduler().scheduleSyncDelayedTask(KnockBackFFA.getPlugin(KnockBackFFA.class), () -> player.setFireTicks(0), 1);
         player.setFireTicks(0);
