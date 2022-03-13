@@ -57,7 +57,7 @@ public class EventListeners implements Listener {
     public void PlayerMoveEvent(PlayerMoveEvent e) {
         Player player = e.getPlayer();
         if (player.getGameMode() == GameMode.SURVIVAL) {
-            User user = User.users.get(player.getUniqueId());
+            Member user = Member.users.get(player.getUniqueId());
             Location to = e.getTo();
             if (to.getY() < 147 && !user.isFighting) {
                 user.isFighting = true;
@@ -72,10 +72,10 @@ public class EventListeners implements Listener {
         Entity entity = e.getEntity();
         if (entity instanceof Player) {
             EntityDamageEvent.DamageCause cause = e.getCause();
-            if (!User.users.get(entity.getUniqueId()).isFighting || cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.FIRE_TICK)
+            if (!Member.users.get(entity.getUniqueId()).isFighting || cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.FIRE_TICK)
                 e.setCancelled(true);
             else if ((cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.DROWNING) && ((Player) entity).getHealth() - e.getFinalDamage() < 0)
-                User.users.get(entity.getUniqueId()).death(null);
+                Member.users.get(entity.getUniqueId()).death(null);
         }
     }
 
@@ -105,11 +105,11 @@ public class EventListeners implements Listener {
             if (damager != null) {
                 UUID victimuuid = victim.getUniqueId();
                 if (victim.getHealth() - e.getFinalDamage() <= 0) {
-                    User.users.get(victimuuid).death(damager);
+                    Member.users.get(victimuuid).death(damager);
                     e.setCancelled(true);
                     victim.damage(0);
                 }
-                User user = User.users.get(victimuuid);
+                Member user = Member.users.get(victimuuid);
                 user.Damage = damage.getUniqueId();
                 user.KillTime = System.currentTimeMillis();
             }
@@ -135,7 +135,7 @@ public class EventListeners implements Listener {
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
                             UUID uuid = player.getUniqueId();
-                            User user = User.users.get(uuid);
+                            Member user = Member.users.get(uuid);
                             player.sendMessage(GlobalString.SavedSettings[user.lang]);
                             List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
                             String newcfg = "";
@@ -181,7 +181,7 @@ public class EventListeners implements Listener {
     public void InventoryCloseEvent(InventoryCloseEvent e) {
         if (e.getInventory().getHolder() == KnockBackFFA.KitEditorHolder) {
             Player player = (Player) e.getPlayer();
-            User user = User.users.get(player.getUniqueId());
+            Member user = Member.users.get(player.getUniqueId());
             if (user.iseditingkit) {
                 user.iseditingkit = false;
                 player.sendMessage(GlobalString.UnSavedSettings[user.lang]);
@@ -197,7 +197,7 @@ public class EventListeners implements Listener {
     public void PlayerInteractEvent(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         if (player.getItemInHand().getType().equals(Material.CHEST)) {
-            User user = User.users.get(player.getUniqueId());
+            Member user = Member.users.get(player.getUniqueId());
             player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
             Inventory inventory = player.getInventory();
             inventory.setItem(4, new ItemStack(Material.AIR));
@@ -226,7 +226,7 @@ public class EventListeners implements Listener {
         UUID uuid = player.getUniqueId();
         if (PlayerJoin.JoinPackets.containsKey(uuid)) {
             PlayerUtils.removeArrows(((CraftPlayer) player).getHandle().getDataWatcher());
-            User.users.remove(uuid);
+            Member.users.remove(uuid);
         }
     }
 
@@ -234,7 +234,7 @@ public class EventListeners implements Listener {
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         if (player.isOnline())
-            new User(player);
+            new Member(player);
     }
 
     @EventHandler
@@ -257,7 +257,7 @@ public class EventListeners implements Listener {
         Projectile projectile = e.getEntity();
         if (projectile instanceof EnderPearl) {
             EnderPearl pearl = (EnderPearl) projectile;
-            User.users.get(((Player) pearl.getShooter()).getUniqueId()).pearls.add(pearl);
+            Member.users.get(((Player) pearl.getShooter()).getUniqueId()).pearls.add(pearl);
         }
     }
 }

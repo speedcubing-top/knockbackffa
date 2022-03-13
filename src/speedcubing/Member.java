@@ -1,10 +1,12 @@
 package speedcubing;
 
 import cubing.bukkit.PlayerUtils;
-import cubingserver.libs.PlayerData;
-import cubingserver.libs.Rank;
+import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
@@ -15,8 +17,8 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
 
-public class User {
-    public static Map<UUID, User> users = new HashMap<>();
+public class Member {
+    public static Map<UUID, Member> users = new HashMap<>();
 
     public Player player;
     public int Kills;
@@ -28,10 +30,10 @@ public class User {
     public String SQLCache;
     public int lang;
 
-    public User(Player player) {
+    public Member(Player player) {
         UUID uuid = player.getUniqueId();
         this.player = player;
-        lang = PlayerData.getLang(uuid);
+        lang = User.getLang(uuid);
         pearls = new HashSet<>();
         Kills = 0;
         users.put(uuid, this);
@@ -63,13 +65,13 @@ public class User {
                 if (damager != null) {
                     damager.playSound(damager.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
                     damager.setHealth(20);
-                    User Damager = User.users.get(damager.getUniqueId());
+                    Member Damager = Member.users.get(damager.getUniqueId());
                     Damager.Kills += 1;
                     Damager.item(true);
                     damager.setLevel(Damager.Kills);
-                    String ft = Rank.format(damager.getUniqueId())[0];
-                    String ft2 = Rank.format(player.getUniqueId())[0];
-                    for (User u : users.values()) {
+                    String ft = User.getFormat(User.getRank(damager.getUniqueId()))[0];
+                    String ft2 = User.getFormat(User.getRank(player.getUniqueId()))[0];
+                    for (Member u : users.values()) {
                         u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", damager.getName()));
                     }
                 }

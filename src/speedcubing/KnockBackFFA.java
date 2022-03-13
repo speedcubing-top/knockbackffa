@@ -2,7 +2,7 @@ package speedcubing;
 
 import cubing.bukkit.Event.ServerEventManager;
 import cubing.bukkit.InventoryUtils;
-import cubing.bukkit.ItemUtils;
+import cubing.bukkit.ItemBuilder;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
@@ -88,23 +88,23 @@ public class KnockBackFFA extends JavaPlugin {
         String[] unsave = {"§cnicht gespeicherte Änderungen", "§cUnSave Changes", "§c不儲存設定", "§c不储存设置"};
         String[] display = {"§4Sie können die Elemente hier nicht einstellen!", "§4You can't set the items here!", "§4你不能將物品設定於此處!", "§4你不能将物品设定于此处!"};
         for (int i = 0; i < 4; i++) {
-            itemStacks[i][0] = ItemUtils.item(Material.LEATHER_HELMET, null, 1, -1, false, true, null, new Enchantment[]{Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE}, new int[]{2, 4}, null);
-            itemStacks[i][1] = ItemUtils.item(Material.LEATHER_CHESTPLATE, null, 1, -1, false, true, null, new Enchantment[]{Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE}, new int[]{2, 4}, null);
-            itemStacks[i][2] = ItemUtils.item(Material.LEATHER_LEGGINGS, null, 1, -1, false, true, null, new Enchantment[]{Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE}, new int[]{2, 4}, null);
-            itemStacks[i][3] = ItemUtils.item(Material.LEATHER_BOOTS, null, 1, -1, false, true, null, new Enchantment[]{Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE}, new int[]{2, 4}, null);
-            itemStacks[i][4] = ItemUtils.item(Material.WOOD_SWORD, null, 1, -1, false, true, null, new Enchantment[]{Enchantment.DAMAGE_ALL}, new int[]{1}, null);
-            itemStacks[i][5] = ItemUtils.item(Material.STICK, null, 1, -1, false, false, null, new Enchantment[]{Enchantment.KNOCKBACK}, new int[]{1}, null);
-            itemStacks[i][6] = ItemUtils.item(Material.ENDER_PEARL, null, 1, -1, false, false, null, null, null, null);
-            itemStacks[i][7] = ItemUtils.item(Material.WEB, null, 1, -1, false, false, null, null, null, null);
-            itemStacks[i][8] = ItemUtils.item(Material.SANDSTONE, null, 64, -1, false, false, null, null, null, null);
-            itemStacks[i][9] = ItemUtils.item(Material.ARROW, null, 16, -1, false, false, null, null, null, null);
-            itemStacks[i][10] = ItemUtils.item(Material.BOW, null, 1, -1, false, true, null, new Enchantment[]{Enchantment.ARROW_KNOCKBACK}, new int[]{1}, null);
-            itemStacks[i][11] = ItemUtils.item(Material.CHEST, inv[i], 1, -1, false, false, null, null, null, null);
+            itemStacks[i][0] = new ItemBuilder(Material.LEATHER_HELMET).unBreak().ench(new Enchantment[]{Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE}, new int[]{2, 4}).build();
+            itemStacks[i][1] = new ItemBuilder(Material.LEATHER_CHESTPLATE).unBreak().ench(new Enchantment[]{Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE}, new int[]{2, 4}).build();
+            itemStacks[i][2] = new ItemBuilder(Material.LEATHER_LEGGINGS).unBreak().ench(new Enchantment[]{Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE}, new int[]{2, 4}).build();
+            itemStacks[i][3] = new ItemBuilder(Material.LEATHER_BOOTS).unBreak().ench(new Enchantment[]{Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE}, new int[]{2, 4}).build();
+            itemStacks[i][4] = new ItemBuilder(Material.WOOD_SWORD).unBreak().ench(new Enchantment[]{Enchantment.DAMAGE_ALL}, new int[]{1}).build();
+            itemStacks[i][5] = new ItemBuilder(Material.STICK).ench(new Enchantment[]{Enchantment.KNOCKBACK}, new int[]{1}).build();
+            itemStacks[i][6] = new ItemBuilder(Material.ENDER_PEARL).build();
+            itemStacks[i][7] = new ItemBuilder(Material.WEB).build();
+            itemStacks[i][8] = new ItemBuilder(Material.SANDSTONE).amount(64).build();
+            itemStacks[i][9] = new ItemBuilder(Material.ARROW).amount(16).build();
+            itemStacks[i][10] = new ItemBuilder(Material.BOW).unBreak().ench(new Enchantment[]{Enchantment.ARROW_KNOCKBACK}, new int[]{1}).build();
+            itemStacks[i][11] = new ItemBuilder(Material.CHEST).name(inv[i]).build();
             KitEditor[i] = Bukkit.createInventory(KitEditorHolder, 9, title[i]);
-            InventoryUtils.fillItem(KitEditor[i], 0, 9, ItemUtils.item(Material.STAINED_GLASS_PANE, "§a", 1, 7, false, false, null, null, null, null));
-            KitEditor[i].setItem(3, ItemUtils.item(Material.INK_SACK, save[i], 1, 10, false, false, null, null, null, null));
-            KitEditor[i].setItem(5, ItemUtils.item(Material.INK_SACK, unsave[i], 1, 1, false, false, null, null, null, null));
-            Invalid[i] = ItemUtils.item(Material.STAINED_GLASS_PANE, display[i], 1, 8, false, false, null, null, null, null);
+            InventoryUtils.fillItem(KitEditor[i], 0, 9, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name("§a").build());
+            KitEditor[i].setItem(3, new ItemBuilder(Material.INK_SACK).durability(10).name(save[i]).build());
+            KitEditor[i].setItem(5, new ItemBuilder(Material.INK_SACK).durability(1).name(unsave[i]).build());
+            Invalid[i] = new ItemBuilder(Material.STAINED_GLASS_PANE).durability(8).name(display[i]).build();
         }
     }
 
