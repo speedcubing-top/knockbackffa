@@ -1,8 +1,8 @@
 package speedcubing;
 
-import cubing.bukkit.Event.ServerEventManager;
-import cubing.bukkit.InventoryUtils;
-import cubing.bukkit.ItemBuilder;
+import cubing.spigot.lib.bukkit.Event.ServerEventManager;
+import cubing.spigot.lib.bukkit.InventoryUtils;
+import cubing.spigot.lib.bukkit.ItemBuilder;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
 import net.minecraft.server.v1_8_R3.PlayerConnection;

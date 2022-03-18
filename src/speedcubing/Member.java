@@ -1,6 +1,6 @@
 package speedcubing;
 
-import cubing.bukkit.PlayerUtils;
+import cubing.spigot.lib.bukkit.PlayerUtils;
 import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
 import org.bukkit.Bukkit;
