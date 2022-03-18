@@ -1,9 +1,8 @@
 package speedcubing;
 
+import cubing.lib.utils.Console;
 import cubing.spigot.lib.bukkit.Event.ServerEventHandler;
 import cubing.spigot.lib.bukkit.Event.events.PlayInChatEvent;
-import cubing.spigot.lib.bukkit.PlayerUtils;
-import cubing.spigot.lib.utils.Console;
 import cubingserver.StringList.GlobalString;
 import cubingserver.customEvents.UDPEvent;
 import cubingserver.libs.User;
