@@ -51,7 +51,7 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginCommand("map").setExecutor(new map());
         Bukkit.getPluginManager().registerEvents(new EventListeners(), this);
         World world = Bukkit.getWorld("world");
-        world.setDifficulty(Difficulty.PEACEFUL);
+        world.setDifficulty(Difficulty.EASY);
         world.setTime(6000);
         ServerEventManager.registerListeners(new ServerEvent());
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {

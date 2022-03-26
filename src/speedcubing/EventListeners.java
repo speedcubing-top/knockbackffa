@@ -59,7 +59,7 @@ public class EventListeners implements Listener {
         if (player.getGameMode() == GameMode.SURVIVAL) {
             Member user = Member.users.get(player.getUniqueId());
             Location to = e.getTo();
-            if (to.getY() < 147 && !user.isFighting) {
+            if (to.getY() < 148 && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
             } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5))
@@ -248,7 +248,7 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void PlayerTeleportEvent(PlayerTeleportEvent e) {
-        if (e.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL && e.getTo().getY() >= 150)
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL && e.getTo().getY() >= 148)
             e.setCancelled(true);
     }
 
