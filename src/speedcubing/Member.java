@@ -69,8 +69,8 @@ public class Member {
                     Damager.Kills += 1;
                     Damager.item(true);
                     damager.setLevel(Damager.Kills);
-                    String ft = User.getFormat(User.getRank(damager.getUniqueId()))[0];
-                    String ft2 = User.getFormat(User.getRank(player.getUniqueId()))[0];
+                    String ft = User.getFormat(User.getRank(damager.getUniqueId()))[1];
+                    String ft2 = User.getFormat(User.getRank(player.getUniqueId()))[1];
                     for (Member u : users.values()) {
                         u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", damager.getName()));
                     }
