@@ -41,7 +41,7 @@ public class ServerEvent {
                 player.sendMessage(GlobalString.samemsg[User.getLang(uuid)]);
             else {
                 String[] formats = User.getFormat(User.getRank(uuid));
-                String text = formats[0] + formats[1] + player.getName();
+                String text = formats[0] + player.getName();
                 String[] str = GlobalString.MessageFormat[0];
                 String[] out = new String[]{
                         str[0].replace("%text%", text).replace("%text2%", formats[2] + message),
