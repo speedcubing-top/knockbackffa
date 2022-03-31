@@ -1,8 +1,8 @@
 package speedcubing;
 
 import com.google.common.collect.Sets;
-import cubing.spigot.lib.bukkit.InventoryUtils;
-import cubing.spigot.lib.bukkit.PlayerUtils;
+import cubing.lib.bukkit.InventoryUtils;
+import cubing.lib.bukkit.PlayerUtils;
 import cubingserver.StringList.GlobalString;
 import cubingserver.speedcubingServer;
 import cubingserver.things.events.PlayerJoin;

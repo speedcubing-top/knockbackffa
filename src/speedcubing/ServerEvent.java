@@ -1,8 +1,9 @@
 package speedcubing;
 
+import cubing.lib.bukkit.packetwrapper.OutPlayerListHeaderFooter;
 import cubing.lib.utils.Console;
-import cubing.spigot.lib.bukkit.Event.ServerEventHandler;
-import cubing.spigot.lib.bukkit.Event.events.PlayInChatEvent;
+import cubing.lib.bukkit.Event.ServerEventHandler;
+import cubing.lib.bukkit.Event.events.PlayInChatEvent;
 import cubingserver.StringList.GlobalString;
 import cubingserver.customEvents.UDPEvent;
 import cubingserver.libs.User;
@@ -21,7 +22,7 @@ public class ServerEvent {
         if (rs[0].equals("o") && rs[1].equals("1")) {
             speedcubingServer.AllPlayers = Integer.parseInt(rs[2]);
             for (Member u : Member.users.values()) {
-               ((CraftPlayer) u.player).getHandle().playerConnection.sendPacket(new PacketPlayOutPlayerListHeaderFooter(GlobalString.LobbyTabList[0][u.lang], GlobalString.LobbyTabList[1][u.lang].replace("%int%", rs[2])));
+               ((CraftPlayer) u.player).getHandle().playerConnection.sendPacket(OutPlayerListHeaderFooter.a(GlobalString.LobbyTabList[0][u.lang], GlobalString.LobbyTabList[1][u.lang].replace("%int%", rs[2])));
             }
         }
     }
