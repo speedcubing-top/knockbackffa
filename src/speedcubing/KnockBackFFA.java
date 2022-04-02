@@ -67,16 +67,8 @@ public class KnockBackFFA extends JavaPlugin {
                     ba.add(b);
                 }
             }
-            for (Player
-                    p : Bukkit.getOnlinePlayers()) {
-                PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
-                for (PacketPlayOutBlockBreakAnimation packet : a) {
-                    c.sendPacket(packet);
-                }
-            }
-            for (BlockPosition b : ba) {
-                KnockBackFFA.Diff.remove(b);
-            }
+            Bukkit.getOnlinePlayers().forEach(b -> a.forEach(((CraftPlayer) b).getHandle().playerConnection::sendPacket));
+            ba.forEach(KnockBackFFA.Diff::remove);
             for (Integer[] x : KnockBackFFA.Diff.values()) {
                 x[1] += 1;
             }
@@ -110,8 +102,6 @@ public class KnockBackFFA extends JavaPlugin {
 
     public void onDisable() {
         World world = Bukkit.getWorld("world");
-        for (BlockPosition b : KnockBackFFA.Diff.keySet()) {
-            world.getBlockAt(b.getX(), b.getY(), b.getZ()).setType(Material.AIR);
-        }
+        KnockBackFFA.Diff.keySet().forEach(a -> world.getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
     }
 }

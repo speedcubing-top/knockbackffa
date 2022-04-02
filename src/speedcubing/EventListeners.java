@@ -138,21 +138,21 @@ public class EventListeners implements Listener {
                             Member user = Member.users.get(uuid);
                             player.sendMessage(GlobalString.SavedSettings[user.lang]);
                             List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
-                            String newcfg = "";
+                            StringBuilder newcfg = new StringBuilder();
                             List<Integer> empty = new ArrayList<>(Sets.newHashSet(0, 1, 2, 3, 4, 5, 6, 7, 8));
                             for (int i = 0; i < 7; i++) {
                                 Material m = t.get(i);
                                 int rm = -1;
                                 for (Integer j : empty) {
                                     if (inv.getItem(j) != null && inv.getItem(j).getType().equals(m)) {
-                                        newcfg += j;
+                                        newcfg.append(j);
                                         rm = j;
                                         break;
                                     }
                                 }
                                 empty.remove(Integer.valueOf(rm));
                             }
-                            user.SQLCache = newcfg;
+                            user.SQLCache = newcfg.toString();
                             new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + user.SQLCache + "'", "uuid='" + uuid + "'")).start();
                             inv.clear();
                             inv.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);

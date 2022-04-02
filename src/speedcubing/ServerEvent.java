@@ -21,9 +21,7 @@ public class ServerEvent {
         String[] rs = e.rs;
         if (rs[0].equals("o") && rs[1].equals("1")) {
             speedcubingServer.AllPlayers = Integer.parseInt(rs[2]);
-            for (Member u : Member.users.values()) {
-               ((CraftPlayer) u.player).getHandle().playerConnection.sendPacket(OutPlayerListHeaderFooter.a(GlobalString.LobbyTabList[0][u.lang], GlobalString.LobbyTabList[1][u.lang].replace("%int%", rs[2])));
-            }
+            Member.users.values().forEach(a -> ((CraftPlayer) a.player).getHandle().playerConnection.sendPacket(OutPlayerListHeaderFooter.a(GlobalString.LobbyTabList[0][a.lang], GlobalString.LobbyTabList[1][a.lang].replace("%int%", rs[2]))));
         }
     }
 
@@ -50,9 +48,7 @@ public class ServerEvent {
                         str[2].replace("%text%", text).replace("%text2%", formats[2] + message),
                         str[3].replace("%text%", text).replace("%text2%", formats[2] + message)
                 };
-                for (Member u : Member.users.values()) {
-                    u.player.sendMessage(out[u.lang]);
-                }
+                Member.users.values().forEach(a -> a.player.sendMessage(out[a.lang]));
                 Console.sendColoredConsole("§7[§aChatLog§7] [§b" + player.getWorld().getName() + "§7] " + out[1]);
                 speedcubingServer.lastmsg.put(uuid, message);
             }

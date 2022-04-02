@@ -91,9 +91,7 @@ public class Member {
         Bukkit.getScheduler().scheduleSyncDelayedTask(KnockBackFFA.getPlugin(KnockBackFFA.class), () -> player.setFireTicks(0), 1);
         player.setFireTicks(0);
         if (pearls != null)
-            for (EnderPearl pearl : pearls) {
-                pearl.remove();
-            }
+            pearls.forEach(EnderPearl::remove);
         Kills = 0;
     }
 
