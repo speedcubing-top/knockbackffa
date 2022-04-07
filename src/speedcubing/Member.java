@@ -33,7 +33,7 @@ public class Member {
     public Member(Player player) {
         UUID uuid = player.getUniqueId();
         this.player = player;
-        lang = User.getLang(uuid);
+        this.lang = User.getLang(uuid);
         users.put(uuid, this);
         PlayerUtils.teleport(((CraftPlayer) player).getHandle().playerConnection, KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, 90, 0);
         new Thread(() -> SQLCache = speedcubingServer.connection.selectString("playersdata", "kbffa_inventory", "uuid='" + uuid + "'")).start();
