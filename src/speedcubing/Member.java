@@ -21,11 +21,11 @@ public class Member {
     public static Map<UUID, Member> users = new HashMap<>();
 
     public Player player;
-    public int Kills;
+    public int Kills = 0;
     public UUID Damage;
     public Long KillTime;
     public boolean iseditingkit;
-    public Set<EnderPearl> pearls;
+    public Set<EnderPearl> pearls = new HashSet<>();
     public boolean isFighting;
     public String SQLCache;
     public int lang;
@@ -34,8 +34,6 @@ public class Member {
         UUID uuid = player.getUniqueId();
         this.player = player;
         lang = User.getLang(uuid);
-        pearls = new HashSet<>();
-        Kills = 0;
         users.put(uuid, this);
         PlayerUtils.teleport(((CraftPlayer) player).getHandle().playerConnection, KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, 90, 0);
         new Thread(() -> SQLCache = speedcubingServer.connection.selectString("playersdata", "kbffa_inventory", "uuid='" + uuid + "'")).start();
