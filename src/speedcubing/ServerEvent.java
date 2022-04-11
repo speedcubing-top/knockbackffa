@@ -1,19 +1,15 @@
 package speedcubing;
 
-import cubing.lib.bukkit.packetwrapper.OutPlayerListHeaderFooter;
-import cubing.lib.utils.Console;
 import cubing.lib.bukkit.Event.ServerEventHandler;
 import cubing.lib.bukkit.Event.events.PlayInChatEvent;
+import cubing.lib.bukkit.packetwrapper.OutPlayerListHeaderFooter;
+import cubing.lib.utils.Console;
 import cubingserver.StringList.GlobalString;
 import cubingserver.customEvents.UDPEvent;
 import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
-import cubingserver.things.events.PlayerJoin;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 public class ServerEvent {
     @ServerEventHandler
@@ -27,32 +23,21 @@ public class ServerEvent {
 
     @ServerEventHandler
     public void PlayInChatEvent(PlayInChatEvent e) {
-        e.setCancelled(true);
         Player player = e.player;
         String message = e.packet.a();
-        long time = System.currentTimeMillis();
-        UUID uuid = player.getUniqueId();
-        boolean spam = PlayerJoin.Canspam.contains(uuid);
-        if (!spam && time - speedcubingServer.spam.get(uuid) < 500)
-            player.sendMessage(GlobalString.spam[User.getLang(uuid)]);
-        else if (message.charAt(0) != '/') {
-            if (!spam && speedcubingServer.lastmsg.get(uuid).equals(message))
-                player.sendMessage(GlobalString.samemsg[User.getLang(uuid)]);
-            else {
-                String[] formats = User.getFormat(User.getRank(uuid));
-                String text = formats[0] + player.getName();
-                String[] str = GlobalString.MessageFormat[0];
-                String[] out = new String[]{
-                        str[0].replace("%text%", text).replace("%text2%", formats[2] + message),
-                        str[1].replace("%text%", text).replace("%text2%", formats[2] + message),
-                        str[2].replace("%text%", text).replace("%text2%", formats[2] + message),
-                        str[3].replace("%text%", text).replace("%text2%", formats[2] + message)
-                };
-                Member.users.values().forEach(a -> a.player.sendMessage(out[a.lang]));
-                Console.sendColoredConsole("§7[§aChatLog§7] [§b" + player.getWorld().getName() + "§7] " + out[1]);
-                speedcubingServer.lastmsg.put(uuid, message);
-            }
-        } else e.setCancelled(false);
-        speedcubingServer.spam.put(uuid, time);
+        if (message.charAt(0) != '/') {
+            e.setCancelled(true);
+            String[] formats = User.getFormat(User.getRank(player.getUniqueId()));
+            String text = formats[0] + player.getName();
+            String[] str = GlobalString.MessageFormat[0];
+            String[] out = new String[]{
+                    str[0].replace("%text%", text).replace("%text2%", formats[2] + message),
+                    str[1].replace("%text%", text).replace("%text2%", formats[2] + message),
+                    str[2].replace("%text%", text).replace("%text2%", formats[2] + message),
+                    str[3].replace("%text%", text).replace("%text2%", formats[2] + message)
+            };
+            Member.users.values().forEach(a -> a.player.sendMessage(out[a.lang]));
+            Console.sendColoredConsole("§7[§aChatLog§7] [§b" + player.getWorld().getName() + "§7] " + out[1]);
+        }
     }
 }
