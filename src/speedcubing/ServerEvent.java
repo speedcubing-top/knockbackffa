@@ -23,9 +23,9 @@ public class ServerEvent {
 
     @ServerEventHandler
     public void PlayInChatEvent(PlayInChatEvent e) {
-        Player player = e.player;
         String message = e.packet.a();
         if (message.charAt(0) != '/') {
+            Player player = e.player;
             e.setCancelled(true);
             String[] formats = User.getFormat(User.getRank(player.getUniqueId()));
             String text = formats[0] + player.getName();
