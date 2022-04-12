@@ -19,6 +19,9 @@ import java.util.*;
 
 public class Member {
     public static Map<UUID, Member> users = new HashMap<>();
+    public static Member getMember(UUID uuid){
+        return users.get(uuid);
+    }
 
     public Player player;
     public int Kills = 0;
@@ -63,7 +66,7 @@ public class Member {
                 if (damager != null) {
                     damager.playSound(damager.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
                     damager.setHealth(20);
-                    Member Damager = Member.users.get(damager.getUniqueId());
+                    Member Damager = getMember(damager.getUniqueId());
                     Damager.Kills += 1;
                     Damager.item(true);
                     damager.setLevel(Damager.Kills);
