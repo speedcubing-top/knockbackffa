@@ -1,11 +1,11 @@
 package speedcubing;
 
 import com.google.common.collect.Sets;
-import cubing.lib.bukkit.InventoryUtils;
-import cubing.lib.bukkit.PlayerUtils;
-import cubingserver.StringList.GlobalString;
-import cubingserver.speedcubingServer;
-import cubingserver.things.events.PlayerJoin;
+import speedcubing.lib.bukkit.InventoryUtils;
+import speedcubing.lib.bukkit.PlayerUtils;
+import speedcubing.server.StringList.GlobalString;
+import speedcubing.server.speedcubingServer;
+import speedcubing.server.things.events.PlayerJoin;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
