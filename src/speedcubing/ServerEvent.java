@@ -1,15 +1,15 @@
 package speedcubing;
 
-import speedcubing.spigot.Event.ServerEventHandler;
-import speedcubing.spigot.Event.events.PlayInChatEvent;
-import speedcubing.lib.bukkit.packetwrapper.OutPlayerListHeaderFooter;
-import speedcubing.lib.utils.Console;
-import speedcubing.server.StringList.GlobalString;
-import speedcubing.server.events.UDPEvent;
-import speedcubing.server.libs.User;
-import speedcubing.server.speedcubingServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import speedcubing.lib.bukkit.packetwrapper.OutPlayerListHeaderFooter;
+import speedcubing.lib.utils.Console;
+import speedcubing.server.events.UDPEvent;
+import speedcubing.server.libs.GlobalString;
+import speedcubing.server.libs.User;
+import speedcubing.server.speedcubingServer;
+import speedcubing.spigot.Event.ServerEventHandler;
+import speedcubing.spigot.Event.events.PlayInChatEvent;
 
 public class ServerEvent {
     @ServerEventHandler
@@ -27,7 +27,7 @@ public class ServerEvent {
         if (message.charAt(0) != '/') {
             Player player = e.player;
             e.setCancelled(true);
-            String[] formats = User.getFormat(User.getRank(player.getUniqueId()));
+            String[] formats = speedcubingServer.getFormat(User.getUser(player.getUniqueId()).rank);
             String text = formats[0] + player.getName();
             String[] str = GlobalString.MessageFormat[0];
             String[] out = new String[]{

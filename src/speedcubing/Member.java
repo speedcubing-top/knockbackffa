@@ -17,7 +17,7 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
 
-public class Member {
+public class Member extends User{
     public static Map<UUID, Member> users = new HashMap<>();
     public static Member getMember(UUID uuid){
         return users.get(uuid);
@@ -31,12 +31,10 @@ public class Member {
     public Set<EnderPearl> pearls = new HashSet<>();
     public boolean isFighting;
     public String SQLCache;
-    public int lang;
 
     public Member(Player player) {
         UUID uuid = player.getUniqueId();
         this.player = player;
-        this.lang = User.getLang(uuid);
         users.put(uuid, this);
         PlayerUtils.teleport(((CraftPlayer) player).getHandle().playerConnection, KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, 90, 0);
         new Thread(() -> SQLCache = speedcubingServer.connection.selectString("playersdata", "kbffa_inventory", "uuid='" + uuid + "'")).start();
@@ -70,8 +68,8 @@ public class Member {
                     Damager.Kills += 1;
                     Damager.item(true);
                     damager.setLevel(Damager.Kills);
-                    String ft = User.getFormat(User.getRank(damager.getUniqueId()))[1];
-                    String ft2 = User.getFormat(User.getRank(player.getUniqueId()))[1];
+                    String ft = speedcubingServer.getFormat(User.getUser(damager.getUniqueId()).rank)[1];
+                    String ft2 = speedcubingServer.getFormat(rank)[1];
                     for (Member u : users.values()) {
                         u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", damager.getName()));
                     }

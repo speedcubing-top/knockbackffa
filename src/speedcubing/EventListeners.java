@@ -1,11 +1,6 @@
 package speedcubing;
 
 import com.google.common.collect.Sets;
-import speedcubing.lib.bukkit.InventoryUtils;
-import speedcubing.lib.bukkit.PlayerUtils;
-import speedcubing.server.StringList.GlobalString;
-import speedcubing.server.speedcubingServer;
-import speedcubing.server.things.events.PlayerJoin;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -24,6 +19,11 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import speedcubing.lib.bukkit.InventoryUtils;
+import speedcubing.lib.bukkit.PlayerUtils;
+import speedcubing.server.libs.GlobalString;
+import speedcubing.server.listeners.PlayerJoin;
+import speedcubing.server.speedcubingServer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
