@@ -1,20 +1,21 @@
 package speedcubing;
 
-import speedcubing.spigot.Event.ServerEventManager;
-import speedcubing.lib.bukkit.InventoryUtils;
-import speedcubing.lib.bukkit.ItemBuilder;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import speedcubing.lib.bukkit.InventoryUtils;
+import speedcubing.lib.bukkit.ItemBuilder;
+import speedcubing.spigot.Event.ServerEventManager;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,7 +47,13 @@ public class KnockBackFFA extends JavaPlugin {
     }
 
     public void onEnable() {
-        Bukkit.getPluginCommand("map").setExecutor(new map());
+        Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
+            if (commandSender instanceof ConsoleCommandSender) {
+                KnockBackFFA.switchMap(Integer.parseInt(strings[0]), Integer.parseInt(strings[1]), Integer.parseInt(strings[2]));
+                commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2]);
+            }
+            return true;
+        });
         Bukkit.getPluginManager().registerEvents(new EventListeners(), this);
         World world = Bukkit.getWorld("world");
         world.setDifficulty(Difficulty.EASY);
