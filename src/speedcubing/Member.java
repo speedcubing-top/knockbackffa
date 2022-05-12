@@ -25,7 +25,7 @@ public class Member extends User {
     }
 
     public Player player;
-    public int Kills = 0;
+    public int Kills;
     public UUID Damage;
     public Long KillTime;
     public boolean iseditingkit;
