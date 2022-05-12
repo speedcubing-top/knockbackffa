@@ -1,8 +1,5 @@
 package speedcubing;
 
-import speedcubing.lib.bukkit.PlayerUtils;
-import speedcubing.server.libs.User;
-import speedcubing.server.speedcubingServer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -14,12 +11,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
+import speedcubing.lib.bukkit.PlayerUtils;
+import speedcubing.server.libs.User;
+import speedcubing.server.speedcubingServer;
 
 import java.util.*;
 
-public class Member extends User{
+public class Member extends User {
     public static Map<UUID, Member> users = new HashMap<>();
-    public static Member getMember(UUID uuid){
+
+    public static Member getMember(UUID uuid) {
         return users.get(uuid);
     }
 
@@ -34,6 +35,7 @@ public class Member extends User{
 
     public Member(Player player) {
         UUID uuid = player.getUniqueId();
+        super.init(this, uuid);
         this.player = player;
         users.put(uuid, this);
         PlayerUtils.teleport(((CraftPlayer) player).getHandle().playerConnection, KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, 90, 0);
@@ -68,7 +70,7 @@ public class Member extends User{
                     Damager.Kills += 1;
                     Damager.item(true);
                     damager.setLevel(Damager.Kills);
-                    String ft = speedcubingServer.getFormat(User.getUser(damager.getUniqueId()).rank)[1];
+                    String ft = speedcubingServer.getFormat(Damager.rank)[1];
                     String ft2 = speedcubingServer.getFormat(rank)[1];
                     for (Member u : users.values()) {
                         u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", damager.getName()));

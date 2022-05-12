@@ -27,7 +27,7 @@ public class ServerEvent {
         if (message.charAt(0) != '/') {
             Player player = e.player;
             e.setCancelled(true);
-            String[] formats = speedcubingServer.getFormat(User.getUser(player.getUniqueId()).rank);
+            String[] formats = speedcubingServer.getFormat(Member.getMember(player.getUniqueId()).rank);
             String text = formats[0] + player.getName();
             String[] str = GlobalString.MessageFormat[0];
             String[] out = new String[]{
