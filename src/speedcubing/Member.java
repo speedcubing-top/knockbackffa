@@ -72,9 +72,8 @@ public class Member extends User {
                     damager.setLevel(Damager.Kills);
                     String ft = speedcubingServer.getFormat(Damager.rank)[1];
                     String ft2 = speedcubingServer.getFormat(rank)[1];
-                    for (Member u : users.values()) {
-                        u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", damager.getName()));
-                    }
+                    Player finalDamager = damager;
+                    users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", finalDamager.getName())));
                 }
             }
         }
