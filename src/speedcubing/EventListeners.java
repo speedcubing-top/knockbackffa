@@ -1,7 +1,6 @@
 package speedcubing;
 
 import com.google.common.collect.Sets;
-import com.mojang.authlib.BaseUserAuthentication;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import org.bukkit.*;
 import org.bukkit.block.Block;

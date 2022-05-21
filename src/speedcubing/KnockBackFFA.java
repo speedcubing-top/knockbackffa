@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
@@ -17,7 +16,6 @@ import speedcubing.lib.bukkit.InventoryUtils;
 import speedcubing.lib.bukkit.ItemBuilder;
 import speedcubing.lib.bukkit.SideBarAPI;
 import speedcubing.server.config;
-import speedcubing.server.libs.GlobalString;
 import speedcubing.server.speedcubingServer;
 import speedcubing.spigot.Event.ServerEventManager;
 
@@ -46,22 +44,22 @@ public class KnockBackFFA extends JavaPlugin {
             {"§9§f", "§8§f", "§7§f", "§6§f", "§5§f", "§4§f", "§3§f", "§2§f", "§1§f", "§0§f", "§6" + config.SERVERIP, "§3KnockBackFFA"}
     };
 
-    public static int centerX = 0;
-    public static int centerZ = 0;
-    public static int offsetY = 0;
+    public static double centerX = 0;
+    public static double centerZ = 0;
+    public static double offsetY = 100;
+    public static float yaw = 90;
 
-    public static void switchMap(int newX, int newZ, int newY) {
+    public static void switchMap(double newX, double newZ, double newY, float newYaw) {
         centerX = newX;
         centerZ = newZ;
         offsetY = newY;
+        yaw = newYaw;
     }
 
     public void onEnable() {
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
-            if (commandSender instanceof ConsoleCommandSender) {
-                KnockBackFFA.switchMap(Integer.parseInt(strings[0]), Integer.parseInt(strings[1]), Integer.parseInt(strings[2]));
-                commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2]);
-            }
+            KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]));
+            commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
             return true;
         });
         Bukkit.getPluginManager().registerEvents(new EventListeners(), this);
