@@ -1,11 +1,9 @@
 package speedcubing;
 
 import com.google.common.collect.Sets;
+import com.mojang.authlib.BaseUserAuthentication;
 import net.minecraft.server.v1_8_R3.BlockPosition;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
@@ -19,6 +17,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import speedcubing.lib.bukkit.InventoryUtils;
 import speedcubing.lib.bukkit.PlayerUtils;
 import speedcubing.server.libs.GlobalString;
@@ -227,6 +227,20 @@ public class EventListeners implements Listener {
         if (PlayerJoin.JoinPackets.containsKey(uuid)) {
             PlayerUtils.removeArrows(((CraftPlayer) player).getHandle().getDataWatcher());
             Member.users.remove(uuid);
+            int i = KnockBackFFA.session.indexOf(uuid);
+            KnockBackFFA.session.remove(uuid);
+            KnockBackFFA.score.remove(uuid);
+            if (i != -1 && i < 10) {
+                List<String>[] s = KnockBackFFA.getSideBar();
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    Scoreboard scoreboard = p.getScoreboard();
+                    for (int j = 0; j < 10; j++) {
+                        Team t = scoreboard.getTeam("§" + j + "§f");
+                        t.setPrefix(s[0].get(j));
+                        t.setSuffix(s[1].get(j));
+                    }
+                }
+            }
         }
     }
 

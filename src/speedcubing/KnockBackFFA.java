@@ -15,12 +15,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import speedcubing.lib.bukkit.InventoryUtils;
 import speedcubing.lib.bukkit.ItemBuilder;
+import speedcubing.lib.bukkit.SideBarAPI;
+import speedcubing.server.config;
+import speedcubing.server.libs.GlobalString;
+import speedcubing.server.speedcubingServer;
 import speedcubing.spigot.Event.ServerEventManager;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class KnockBackFFA extends JavaPlugin {
     public static final ItemStack[] Invalid = new ItemStack[4];
@@ -29,11 +30,20 @@ public class KnockBackFFA extends JavaPlugin {
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
     public static final Map<BlockPosition, Integer[]> Diff = new HashMap<>();
+    public static final Map<UUID, Integer> score = new HashMap<>();
+    public static final List<UUID> session = new ArrayList<>();
     public static String[] Kill = {
             "%format0%%name0%§7 was killed by %format1%%name1%§7.",
             "%format0%%name0%§7 was killed by %format1%%name1%§7.",
             "%format0%%name0%§7 was killed by %format1%%name1%§7.",
             "%format0%%name0%§7 was killed by %format1%%name1%§7."
+    };
+
+    public static String[][] sidebar = {
+            {"§9§f", "§8§f", "§7§f", "§6§f", "§5§f", "§4§f", "§3§f", "§2§f", "§1§f", "§0§f", "§6" + config.SERVERIP, "§3KnockBackFFA"},
+            {"§9§f", "§8§f", "§7§f", "§6§f", "§5§f", "§4§f", "§3§f", "§2§f", "§1§f", "§0§f", "§6" + config.SERVERIP, "§3KnockBackFFA"},
+            {"§9§f", "§8§f", "§7§f", "§6§f", "§5§f", "§4§f", "§3§f", "§2§f", "§1§f", "§0§f", "§6" + config.SERVERIP, "§3KnockBackFFA"},
+            {"§9§f", "§8§f", "§7§f", "§6§f", "§5§f", "§4§f", "§3§f", "§2§f", "§1§f", "§0§f", "§6" + config.SERVERIP, "§3KnockBackFFA"}
     };
 
     public static int centerX = 0;
@@ -108,5 +118,29 @@ public class KnockBackFFA extends JavaPlugin {
     public void onDisable() {
         World world = Bukkit.getWorld("world");
         KnockBackFFA.Diff.keySet().forEach(a -> world.getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
+    }
+
+    public static List<String>[] getSideBar() {
+        List<String> prefix = new ArrayList<>();
+        List<String> suffix = new ArrayList<>();
+        int size = session.size();
+        for (int j = 0; j < 10; j++) {
+            if (size <= j) {
+                prefix.add("§7-,---");
+                suffix.add("");
+            } else {
+                UUID ses = session.get(j);
+                int sc = score.get(ses);
+                if (sc == 0) {
+                    prefix.add("§7-,---");
+                    suffix.add("");
+                } else {
+                    String[] x = SideBarAPI.prefixSuffixSplit(speedcubingServer.getFormat(Member.getMember(ses).rank)[1] + Bukkit.getPlayer(ses).getName() + "§8: §e" + sc);
+                    prefix.add(x[0]);
+                    suffix.add(x[1]);
+                }
+            }
+        }
+        return new List[]{prefix, suffix};
     }
 }
