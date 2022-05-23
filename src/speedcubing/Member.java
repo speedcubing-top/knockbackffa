@@ -102,6 +102,7 @@ public class Member extends User {
 
     public void death(Player damager) {
         isFighting = false;
+        int i = 0;
         if (KillTime != null) {
             if (System.currentTimeMillis() - this.KillTime < 2500) {
                 if (damager == null)
@@ -112,8 +113,7 @@ public class Member extends User {
                     UUID uuid = damager.getUniqueId();
                     Member Damager = getMember(uuid);
                     int a = KnockBackFFA.score.get(uuid);
-                    int i;
-                    for (i = 0; i < KnockBackFFA.session.size(); i++) {
+                    for (; i < KnockBackFFA.session.size(); i++) {
                         if (KnockBackFFA.score.get(KnockBackFFA.session.get(i)) < a + 1 || KnockBackFFA.score.get(KnockBackFFA.session.get(i)) == 0) {
                             KnockBackFFA.session.remove(uuid);
                             KnockBackFFA.session.add(i, uuid);
@@ -121,25 +121,25 @@ public class Member extends User {
                         }
                     }
                     KnockBackFFA.score.put(uuid, a + 1);
-                    KnockBackFFA.session.remove(player.getUniqueId());
-                    KnockBackFFA.session.add(player.getUniqueId());
-                    KnockBackFFA.score.put(player.getUniqueId(), 0);
-                    if (i < 10) {
-                        List<String>[] s = KnockBackFFA.getSideBar();
-                        for (int j = 0; j < 10; j++) {
-                            for (Player p : Bukkit.getOnlinePlayers()) {
-                                Team t = p.getScoreboard().getTeam("§" + j + "§f");
-                                t.setPrefix(s[0].get(j));
-                                t.setSuffix(s[1].get(j));
-                            }
-                        }
-                    }
                     Damager.item(true);
                     damager.setLevel(a + 1);
                     String ft = speedcubingServer.getFormat(Damager.rank)[1];
                     String ft2 = speedcubingServer.getFormat(rank)[1];
                     Player finalDamager = damager;
                     users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", finalDamager.getName())));
+                }
+            }
+        }
+        KnockBackFFA.session.remove(player.getUniqueId());
+        KnockBackFFA.session.add(player.getUniqueId());
+        KnockBackFFA.score.put(player.getUniqueId(), 0);
+        if (i < 10) {
+            List<String>[] s = KnockBackFFA.getSideBar();
+            for (int j = 0; j < 10; j++) {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    Team t = p.getScoreboard().getTeam("§" + j + "§f");
+                    t.setPrefix(s[0].get(j));
+                    t.setSuffix(s[1].get(j));
                 }
             }
         }
