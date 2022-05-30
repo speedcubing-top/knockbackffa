@@ -135,7 +135,7 @@ public class EventListeners implements Listener {
                         if (cursor.getType() == Material.AIR) {
                             UUID uuid = player.getUniqueId();
                             Member user = Member.getMember(uuid);
-                            player.sendMessage(GlobalString.SavedSettings[user.lang]);
+                            player.sendMessage(GlobalString.SavedSettings[user.user.lang]);
                             List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
                             StringBuilder newcfg = new StringBuilder();
                             List<Integer> empty = new ArrayList<>(Sets.newHashSet(0, 1, 2, 3, 4, 5, 6, 7, 8));
@@ -154,7 +154,7 @@ public class EventListeners implements Listener {
                             user.SQLCache = newcfg.toString();
                             new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + user.SQLCache + "'", "uuid='" + uuid + "'")).start();
                             inv.clear();
-                            inv.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
+                            inv.setItem(4, KnockBackFFA.itemStacks[user.user.lang][11]);
                             user.iseditingkit = false;
                             player.closeInventory();
                         } else {
@@ -183,10 +183,10 @@ public class EventListeners implements Listener {
             Member user = Member.getMember(player.getUniqueId());
             if (user.iseditingkit) {
                 user.iseditingkit = false;
-                player.sendMessage(GlobalString.UnSavedSettings[user.lang]);
+                player.sendMessage(GlobalString.UnSavedSettings[user.user.lang]);
                 Inventory inventory = player.getInventory();
                 inventory.clear();
-                inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
+                inventory.setItem(4, KnockBackFFA.itemStacks[user.user.lang][11]);
             }
         }
     }
@@ -200,7 +200,7 @@ public class EventListeners implements Listener {
             player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
             Inventory inventory = player.getInventory();
             inventory.setItem(4, new ItemStack(Material.AIR));
-            ItemStack[] itemStacks = KnockBackFFA.itemStacks[user.lang];
+            ItemStack[] itemStacks = KnockBackFFA.itemStacks[user.user.lang];
             char[] cfg = user.SQLCache.toCharArray();
             inventory.setItem(cfg[0] - 48, itemStacks[4]);
             inventory.setItem(cfg[1] - 48, itemStacks[5]);
@@ -210,8 +210,8 @@ public class EventListeners implements Listener {
             inventory.setItem(cfg[5] - 48, itemStacks[9]);
             inventory.setItem(cfg[6] - 48, itemStacks[10]);
             user.iseditingkit = true;
-            player.openInventory(KnockBackFFA.KitEditor[user.lang]);
-            InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[user.lang]);
+            player.openInventory(KnockBackFFA.KitEditor[user.user.lang]);
+            InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[user.user.lang]);
         }
         if (player.getLocation().getY() > 148) {
             e.setCancelled(true);

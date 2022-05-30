@@ -20,13 +20,14 @@ import speedcubing.server.speedcubingServer;
 
 import java.util.*;
 
-public class Member extends User {
+public class Member {
     public static Map<UUID, Member> users = new HashMap<>();
 
     public static Member getMember(UUID uuid) {
         return users.get(uuid);
     }
 
+    public User user;
     public Player player;
     public UUID Damage;
     public Long KillTime;
@@ -37,7 +38,7 @@ public class Member extends User {
 
     public Member(Player player) {
         UUID uuid = player.getUniqueId();
-        super.init(this, uuid);
+        user = User.getUser(uuid);
         this.player = player;
         users.put(uuid, this);
         PlayerUtils.teleport(((CraftPlayer) player).getHandle().playerConnection, KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0);
@@ -55,12 +56,12 @@ public class Member extends User {
         inventory.setLeggings(new ItemStack(Material.AIR));
         inventory.setBoots(new ItemStack(Material.AIR));
         inventory.clear();
-        inventory.setItem(4, KnockBackFFA.itemStacks[lang][11]);
+        inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("sidebar", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         int size = KnockBackFFA.session.size();
-        String[] sidebar = KnockBackFFA.sidebar[lang];
+        String[] sidebar = KnockBackFFA.sidebar[user.lang];
         objective.setDisplayName(sidebar[11]);
         SideBarAPI.sidebarTeams(scoreboard, new String[][]{
                 {sidebar[10]},
@@ -87,7 +88,7 @@ public class Member extends User {
                     prefix = "§7-,---";
                     suffix = "";
                 } else {
-                    String[] xx = SideBarAPI.prefixSuffixSplit(speedcubingServer.getFormat(Member.getMember(ses).rank)[1] + Bukkit.getPlayer(ses).getName() + "§8: §e" + sc);
+                    String[] xx = SideBarAPI.prefixSuffixSplit(speedcubingServer.getFormat(Member.getMember(ses).user.rank)[1] + Bukkit.getPlayer(ses).getName() + "§8: §e" + sc);
                     prefix = xx[0];
                     suffix = xx[1];
                 }
@@ -123,10 +124,10 @@ public class Member extends User {
                     KnockBackFFA.score.put(uuid, a + 1);
                     Damager.item(true);
                     damager.setLevel(a + 1);
-                    String ft = speedcubingServer.getFormat(Damager.rank)[1];
-                    String ft2 = speedcubingServer.getFormat(rank)[1];
+                    String ft = speedcubingServer.getFormat(Damager.user.rank)[1];
+                    String ft2 = speedcubingServer.getFormat(user.rank)[1];
                     Player finalDamager = damager;
-                    users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", finalDamager.getName())));
+                    users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.user.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", finalDamager.getName())));
                 }
             }
         }
@@ -149,7 +150,7 @@ public class Member extends User {
         inventory.setChestplate(new ItemStack(Material.AIR));
         inventory.setLeggings(new ItemStack(Material.AIR));
         inventory.setBoots(new ItemStack(Material.AIR));
-        inventory.setItem(4, KnockBackFFA.itemStacks[lang][11]);
+        inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
         player.setLevel(0);
         player.setHealth(20);
         PlayerUtils.removeArrows(((CraftPlayer) player).getHandle().getDataWatcher());
@@ -165,7 +166,7 @@ public class Member extends User {
         char[] cfg = SQLCache.toCharArray();
         PlayerInventory inventory = player.getInventory();
         // blocks
-        ItemStack[] stack = KnockBackFFA.itemStacks[lang];
+        ItemStack[] stack = KnockBackFFA.itemStacks[user.lang];
         pearls.clear();
         if (win) {
             if (inventory.contains(Material.ENDER_PEARL)) {

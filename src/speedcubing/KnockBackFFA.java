@@ -133,7 +133,7 @@ public class KnockBackFFA extends JavaPlugin {
                     prefix.add("§7-,---");
                     suffix.add("");
                 } else {
-                    String[] x = SideBarAPI.prefixSuffixSplit(speedcubingServer.getFormat(Member.getMember(ses).rank)[1] + Bukkit.getPlayer(ses).getName() + "§8: §e" + sc);
+                    String[] x = SideBarAPI.prefixSuffixSplit(speedcubingServer.getFormat(Member.getMember(ses).user.rank)[1] + Bukkit.getPlayer(ses).getName() + "§8: §e" + sc);
                     prefix.add(x[0]);
                     suffix.add(x[1]);
                 }
