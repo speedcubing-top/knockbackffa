@@ -137,21 +137,14 @@ public class EventListeners implements Listener {
                             Member user = Member.getMember(uuid);
                             player.sendMessage(GlobalString.SavedSettings[user.user.lang]);
                             List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
-                            StringBuilder newcfg = new StringBuilder();
-                            List<Integer> empty = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8);
-                            for (int i = 0; i < t.size(); i++) {
-                                Material m = t.get(i);
-                                int rm = -1;
-                                for (Integer j : empty) {
-                                    if (inv.getItem(j) != null && inv.getItem(j).getType().equals(m)) {
-                                        newcfg.append(j);
-                                        rm = j;
-                                        break;
-                                    }
+                            String s = "       ";
+                            for (int i = 0; i < 9; i++) {
+                                if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
+                                    int index = t.indexOf(inv.getItem(i).getType());
+                                    s = s.substring(0, index) + i + s.substring(index);
                                 }
-                                empty.remove(Integer.valueOf(rm));
                             }
-                            user.SQLCache = newcfg.toString();
+                            user.SQLCache = s;
                             new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + user.SQLCache + "'", "uuid='" + uuid + "'")).start();
                             inv.clear();
                             inv.setItem(4, KnockBackFFA.itemStacks[user.user.lang][11]);
