@@ -138,8 +138,8 @@ public class EventListeners implements Listener {
                             player.sendMessage(GlobalString.SavedSettings[user.user.lang]);
                             List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
                             StringBuilder newcfg = new StringBuilder();
-                            List<Integer> empty = new ArrayList<>(Sets.newHashSet(0, 1, 2, 3, 4, 5, 6, 7, 8));
-                            for (int i = 0; i < 7; i++) {
+                            List<Integer> empty = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8);
+                            for (int i = 0; i < t.size(); i++) {
                                 Material m = t.get(i);
                                 int rm = -1;
                                 for (Integer j : empty) {
