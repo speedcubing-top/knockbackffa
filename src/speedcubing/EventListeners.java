@@ -173,6 +173,7 @@ public class EventListeners implements Listener {
     public void InventoryCloseEvent(InventoryCloseEvent e) {
         if (e.getInventory().getHolder() == KnockBackFFA.KitEditorHolder) {
             Player player = (Player) e.getPlayer();
+            player.setItemOnCursor(new ItemStack(Material.AIR));
             Member user = Member.getMember(player.getUniqueId());
             if (user.iseditingkit) {
                 user.iseditingkit = false;
