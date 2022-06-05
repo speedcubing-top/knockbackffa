@@ -125,7 +125,7 @@ public class EventListeners implements Listener {
                 if (e.getWhoClicked().getGameMode() == GameMode.SURVIVAL)
                     e.setCancelled(true);
             } else if (inventory.getHolder() == KnockBackFFA.KitEditorHolder) {
-                if (e.getAction() == InventoryAction.PICKUP_HALF || RawSlot < 36)
+                if (e.getAction() == InventoryAction.PICKUP_HALF || RawSlot < 36 || e.getAction() == InventoryAction.PLACE_ONE)
                     e.setCancelled(true);
                 Player player = (Player) e.getWhoClicked();
                 switch (RawSlot) {
