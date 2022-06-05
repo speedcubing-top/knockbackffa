@@ -141,7 +141,7 @@ public class EventListeners implements Listener {
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
                                     int index = t.indexOf(inv.getItem(i).getType());
-                                    s = s.substring(0, index) + i + s.substring(index);
+                                    s = s.substring(0, index) + i + s.substring(index + 1);
                                 }
                             }
                             user.SQLCache = s;
