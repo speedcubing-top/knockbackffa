@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.*;
@@ -123,47 +124,49 @@ public class EventListeners implements Listener {
             if (inventory.getName().equals("container.crafting")) {
                 if (e.getWhoClicked().getGameMode() == GameMode.SURVIVAL)
                     e.setCancelled(true);
-            } else if (inventory.getHolder() == KnockBackFFA.KitEditorHolder && RawSlot <= 35) {
+            } else if (inventory.getHolder() == KnockBackFFA.KitEditorHolder) {
                 e.setCancelled(true);
-                Player player = (Player) e.getWhoClicked();
-                player.updateInventory();
-                switch (RawSlot) {
-                    case 3:
-                        ItemStack cursor = e.getCursor();
-                        player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
-                        Inventory inv = player.getInventory();
-                        if (cursor.getType() == Material.AIR) {
-                            UUID uuid = player.getUniqueId();
-                            Member user = Member.getMember(uuid);
-                            player.sendMessage(GlobalString.SavedSettings[user.user.lang]);
-                            List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
-                            String s = "       ";
-                            for (int i = 0; i < 9; i++) {
-                                if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
-                                    int index = t.indexOf(inv.getItem(i).getType());
-                                    s = s.substring(0, index) + i + s.substring(index + 1);
+                if (e.getAction() != InventoryAction.PICKUP_HALF) {
+                    Player player = (Player) e.getWhoClicked();
+                    player.updateInventory();
+                    switch (RawSlot) {
+                        case 3:
+                            ItemStack cursor = e.getCursor();
+                            player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
+                            Inventory inv = player.getInventory();
+                            if (cursor.getType() == Material.AIR) {
+                                UUID uuid = player.getUniqueId();
+                                Member user = Member.getMember(uuid);
+                                player.sendMessage(GlobalString.SavedSettings[user.user.lang]);
+                                List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
+                                String s = "       ";
+                                for (int i = 0; i < 9; i++) {
+                                    if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
+                                        int index = t.indexOf(inv.getItem(i).getType());
+                                        s = s.substring(0, index) + i + s.substring(index + 1);
+                                    }
                                 }
+                                user.SQLCache = s;
+                                new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + user.SQLCache + "'", "uuid='" + uuid + "'")).start();
+                                inv.clear();
+                                inv.setItem(4, KnockBackFFA.itemStacks[user.user.lang][11]);
+                                user.iseditingkit = false;
+                                player.closeInventory();
+                            } else {
+                                for (int i = 0; i < 9; i++) {
+                                    if (inv.getItem(i) == null) {
+                                        inv.setItem(i, cursor);
+                                        break;
+                                    }
+                                }
+                                player.setItemOnCursor(new ItemStack(Material.AIR));
                             }
-                            user.SQLCache = s;
-                            new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + user.SQLCache + "'", "uuid='" + uuid + "'")).start();
-                            inv.clear();
-                            inv.setItem(4, KnockBackFFA.itemStacks[user.user.lang][11]);
-                            user.iseditingkit = false;
+                            break;
+                        case 5:
+                            player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
                             player.closeInventory();
-                        } else {
-                            for (int i = 0; i < 9; i++) {
-                                if (inv.getItem(i) == null) {
-                                    inv.setItem(i, cursor);
-                                    break;
-                                }
-                            }
-                            player.setItemOnCursor(new ItemStack(Material.AIR));
-                        }
-                        break;
-                    case 5:
-                        player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
-                        player.closeInventory();
-                        break;
+                            break;
+                    }
                 }
             }
         }
