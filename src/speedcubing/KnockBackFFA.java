@@ -111,6 +111,12 @@ public class KnockBackFFA extends JavaPlugin {
             KitEditor[i].setItem(5, new ItemBuilder(Material.INK_SACK).durability(1).name(unsave[i]).build());
             Invalid[i] = new ItemBuilder(Material.STAINED_GLASS_PANE).durability(8).name(display[i]).build();
         }
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                speedcubingServer.tcp.sendClean(25576 - Bukkit.getPort() % 2, "online|4|" + Bukkit.getOnlinePlayers().size());
+            }
+        }, 0, 1000);
     }
 
     public void onDisable() {
