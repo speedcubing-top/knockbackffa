@@ -1,15 +1,15 @@
 package speedcubing;
 
 import org.bukkit.entity.Player;
+import speedcubing.lib.event.LibEventHandler;
 import speedcubing.lib.utils.Console;
+import speedcubing.server.events.packet.PlayInChatEvent;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.speedcubingServer;
-import speedcubing.spigot.Event.ServerEventHandler;
-import speedcubing.spigot.Event.events.PlayInChatEvent;
 
 public class ServerEvent {
 
-    @ServerEventHandler
+    @LibEventHandler
     public void PlayInChatEvent(PlayInChatEvent e) {
         String message = e.packet.a();
         if (message.charAt(0) != '/') {

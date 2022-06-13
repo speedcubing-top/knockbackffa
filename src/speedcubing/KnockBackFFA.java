@@ -15,9 +15,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import speedcubing.lib.bukkit.InventoryUtils;
 import speedcubing.lib.bukkit.ItemBuilder;
 import speedcubing.lib.bukkit.SideBarAPI;
+import speedcubing.lib.event.LibEventManager;
 import speedcubing.server.config;
 import speedcubing.server.speedcubingServer;
-import speedcubing.spigot.Event.ServerEventManager;
 
 import java.util.*;
 
@@ -66,7 +66,7 @@ public class KnockBackFFA extends JavaPlugin {
         World world = Bukkit.getWorld("world");
         world.setDifficulty(Difficulty.EASY);
         world.setTime(6000);
-        ServerEventManager.registerListeners(new ServerEvent());
+        LibEventManager.registerListeners(new ServerEvent());
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Set<PacketPlayOutBlockBreakAnimation> a = new HashSet<>();
             Set<BlockPosition> ba = new HashSet<>();
