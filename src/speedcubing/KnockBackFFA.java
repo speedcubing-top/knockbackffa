@@ -12,10 +12,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import speedcubing.lib.bukkit.InventoryUtils;
-import speedcubing.lib.bukkit.ItemBuilder;
 import speedcubing.lib.bukkit.SideBarAPI;
-import speedcubing.lib.event.LibEventManager;
+import speedcubing.lib.bukkit.inventory.InventoryUtils;
+import speedcubing.lib.bukkit.inventory.ItemBuilder;
+import speedcubing.lib.eventbus.LibEventManager;
 import speedcubing.server.config;
 import speedcubing.server.speedcubingServer;
 

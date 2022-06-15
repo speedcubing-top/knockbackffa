@@ -1,9 +1,9 @@
 package speedcubing;
 
 import org.bukkit.entity.Player;
-import speedcubing.lib.event.LibEventHandler;
+import speedcubing.lib.bukkit.event.PlayInChatEvent;
+import speedcubing.lib.eventbus.LibEventHandler;
 import speedcubing.lib.utils.Console;
-import speedcubing.server.events.packet.PlayInChatEvent;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.speedcubingServer;
 
@@ -14,7 +14,7 @@ public class ServerEvent {
         String message = e.packet.a();
         if (message.charAt(0) != '/') {
             Player player = e.player;
-            e.setCancelled(true);
+            e.isCancelled = true;
             String[] formats = speedcubingServer.getFormat(Member.getMember(player.getUniqueId()).user.rank);
             String text = formats[0] + player.getName();
             String[] str = GlobalString.MessageFormat[0];

@@ -20,7 +20,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import speedcubing.lib.bukkit.InventoryUtils;
+import speedcubing.lib.bukkit.inventory.InventoryUtils;
 import speedcubing.lib.bukkit.PlayerUtils;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.listeners.PlayerJoin;
