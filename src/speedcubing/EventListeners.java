@@ -44,7 +44,7 @@ public class EventListeners implements Listener {
         if (e.getPlayer().getGameMode() == GameMode.SURVIVAL) {
             Block block = e.getBlock();
             Material old = e.getBlockReplacedState().getType();
-            if (block.getY() > 144 || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
+            if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
                 e.setCancelled(true);
             else {
                 KnockBackFFA.Diff.put(new BlockPosition(block.getX(), block.getY(), block.getZ()), new Integer[]{KnockBackFFA.id, 0});
@@ -60,7 +60,7 @@ public class EventListeners implements Listener {
         if (player.getGameMode() == GameMode.SURVIVAL) {
             Member user = Member.getMember(player.getUniqueId());
             Location to = e.getTo();
-            if (to.getY() < 148 && !user.isFighting) {
+            if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
             } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5))
@@ -82,7 +82,7 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void EntityShootBowEvent(EntityShootBowEvent e) {
-        if (e.getEntity().getLocation().getY() > 148)
+        if (e.getEntity().getLocation().getY() > KnockBackFFA.spawnprotectY)
             e.setCancelled(true);
     }
 
@@ -216,7 +216,7 @@ public class EventListeners implements Listener {
             player.openInventory(KnockBackFFA.KitEditor[user.user.lang]);
             InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[user.user.lang]);
         }
-        if (player.getLocation().getY() > 148) {
+        if (player.getLocation().getY() > KnockBackFFA.spawnprotectY) {
             e.setCancelled(true);
             player.updateInventory();
         }
@@ -264,7 +264,7 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void PlayerTeleportEvent(PlayerTeleportEvent e) {
-        if (e.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL && e.getTo().getY() >= 148)
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL && e.getTo().getY() >= KnockBackFFA.spawnprotectY)
             e.setCancelled(true);
     }
 

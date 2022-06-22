@@ -48,6 +48,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static double centerZ = 0;
     public static double offsetY = 100;
     public static float yaw = 90;
+    public static final int spawnprotectY = 146;
 
     public static void switchMap(double newX, double newZ, double newY, float newYaw) {
         centerX = newX;
