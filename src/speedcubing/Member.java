@@ -145,6 +145,7 @@ public class Member {
             }
         }
         if (!quit) {
+            Damage = null;
             PlayerInventory inventory = player.getInventory();
             inventory.clear();
             inventory.setHelmet(new ItemStack(Material.AIR));
