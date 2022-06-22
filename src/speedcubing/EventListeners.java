@@ -1,6 +1,5 @@
 package speedcubing;
 
-import com.google.common.collect.Sets;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -10,7 +9,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -20,13 +22,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import speedcubing.lib.bukkit.inventory.InventoryUtils;
 import speedcubing.lib.bukkit.PlayerUtils;
+import speedcubing.lib.bukkit.inventory.InventoryUtils;
 import speedcubing.server.libs.GlobalString;
-import speedcubing.server.listeners.PlayerJoin;
 import speedcubing.server.speedcubingServer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -64,7 +64,7 @@ public class EventListeners implements Listener {
                 user.isFighting = true;
                 user.item(false);
             } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5))
-                user.death(null);
+                user.death(null, false);
         }
     }
 
@@ -73,17 +73,11 @@ public class EventListeners implements Listener {
         Entity entity = e.getEntity();
         if (entity instanceof Player) {
             EntityDamageEvent.DamageCause cause = e.getCause();
-            if (!Member.getMember(entity.getUniqueId()).isFighting || cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.FIRE_TICK)
+            if (cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.FIRE_TICK)
                 e.setCancelled(true);
             else if ((cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.DROWNING) && ((Player) entity).getHealth() - e.getFinalDamage() < 0)
-                Member.getMember(entity.getUniqueId()).death(null);
+                Member.getMember(entity.getUniqueId()).death(null, false);
         }
-    }
-
-    @EventHandler
-    public void EntityShootBowEvent(EntityShootBowEvent e) {
-        if (e.getEntity().getLocation().getY() > KnockBackFFA.spawnprotectY)
-            e.setCancelled(true);
     }
 
     @EventHandler
@@ -103,19 +97,24 @@ public class EventListeners implements Listener {
                 damager = (Player) ((Arrow) e.getDamager()).getShooter();
             else if (damage instanceof Player)
                 damager = (Player) e.getDamager();
+            UUID victimuuid = victim.getUniqueId();
             if (damager != null) {
-                UUID victimuuid = victim.getUniqueId();
-                if (victim.getHealth() - e.getFinalDamage() <= 0) {
-                    Member.getMember(victimuuid).death(damager);
-                    e.setCancelled(true);
-                    victim.damage(0);
-                }
-                Member user = Member.getMember(victimuuid);
-                user.Damage = damage.getUniqueId();
-                user.KillTime = System.currentTimeMillis();
+                Member victimMember = Member.getMember(victimuuid);
+                UUID damagerUUID = damager.getUniqueId();
+                if (victimMember.isFighting && Member.getMember(damagerUUID).isFighting) {
+                    if (victim.getHealth() - e.getFinalDamage() <= 0) {
+                        victimMember.death(damager, false);
+                        e.setCancelled(true);
+                        victim.damage(0);
+                    }
+                    if (!victimuuid.equals(damagerUUID))
+                        victimMember.Damage = damagerUUID;
+                    victimMember.KillTime = System.currentTimeMillis();
+                } else e.setCancelled(true);
             }
         }
     }
+
     @EventHandler
     public void InventoryDragEvent(InventoryDragEvent e) {
         if (e.getCursor() != null && e.getCursor().getAmount() != 1)
@@ -226,21 +225,20 @@ public class EventListeners implements Listener {
     public void PlayerQuitEvent(PlayerQuitEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
-        if (PlayerJoin.JoinPackets.containsKey(uuid)) {
-            PlayerUtils.removeArrows(((CraftPlayer) player).getHandle().getDataWatcher());
-            Member.users.remove(uuid);
-            int i = KnockBackFFA.session.indexOf(uuid);
-            KnockBackFFA.session.remove(uuid);
-            KnockBackFFA.score.remove(uuid);
-            if (i != -1 && i < 10) {
-                List<String>[] s = KnockBackFFA.getSideBar();
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    Scoreboard scoreboard = p.getScoreboard();
-                    for (int j = 0; j < 10; j++) {
-                        Team t = scoreboard.getTeam("§" + j + "§f");
-                        t.setPrefix(s[0].get(j));
-                        t.setSuffix(s[1].get(j));
-                    }
+        PlayerUtils.removeArrows(((CraftPlayer) player).getHandle().getDataWatcher());
+        Member.getMember(uuid).death(null, true);
+        Member.users.remove(uuid);
+        int i = KnockBackFFA.session.indexOf(uuid);
+        KnockBackFFA.session.remove(uuid);
+        KnockBackFFA.score.remove(uuid);
+        if (i != -1 && i < 10) {
+            List<String>[] s = KnockBackFFA.getSideBar();
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                Scoreboard scoreboard = p.getScoreboard();
+                for (int j = 0; j < 10; j++) {
+                    Team t = scoreboard.getTeam("§" + j + "§f");
+                    t.setPrefix(s[0].get(j));
+                    t.setSuffix(s[1].get(j));
                 }
             }
         }

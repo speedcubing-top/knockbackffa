@@ -101,11 +101,11 @@ public class Member {
         player.setScoreboard(scoreboard);
     }
 
-    public void death(Player damager) {
+    public void death(Player damager,boolean quit) {
         isFighting = false;
         int i = 0;
         if (KillTime != null) {
-            if (System.currentTimeMillis() - this.KillTime < 2500) {
+            if (System.currentTimeMillis() - this.KillTime < 100000) {
                 if (damager == null)
                     damager = Bukkit.getPlayer(Damage);
                 if (damager != null) {
@@ -144,23 +144,24 @@ public class Member {
                 }
             }
         }
-        PlayerInventory inventory = player.getInventory();
-        inventory.clear();
-        inventory.setHelmet(new ItemStack(Material.AIR));
-        inventory.setChestplate(new ItemStack(Material.AIR));
-        inventory.setLeggings(new ItemStack(Material.AIR));
-        inventory.setBoots(new ItemStack(Material.AIR));
-        inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
-        player.setLevel(0);
-        player.setHealth(20);
-        PlayerUtils.removeArrows(((CraftPlayer) player).getHandle().getDataWatcher());
-        PlayerUtils.teleport(((CraftPlayer) player).getHandle().playerConnection, KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(KnockBackFFA.getPlugin(KnockBackFFA.class), () -> player.setFireTicks(0), 1);
-        player.setFireTicks(0);
-        if (pearls != null)
-            pearls.forEach(EnderPearl::remove);
+        if (!quit) {
+            PlayerInventory inventory = player.getInventory();
+            inventory.clear();
+            inventory.setHelmet(new ItemStack(Material.AIR));
+            inventory.setChestplate(new ItemStack(Material.AIR));
+            inventory.setLeggings(new ItemStack(Material.AIR));
+            inventory.setBoots(new ItemStack(Material.AIR));
+            inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
+            player.setLevel(0);
+            player.setHealth(20);
+            PlayerUtils.removeArrows(((CraftPlayer) player).getHandle().getDataWatcher());
+            PlayerUtils.teleport(((CraftPlayer) player).getHandle().playerConnection, KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(KnockBackFFA.getPlugin(KnockBackFFA.class), () -> player.setFireTicks(0), 1);
+            player.setFireTicks(0);
+            if (pearls != null)
+                pearls.forEach(EnderPearl::remove);
+        }
     }
-
     public void item(boolean win) {
         player.closeInventory();
         char[] cfg = SQLCache.toCharArray();
