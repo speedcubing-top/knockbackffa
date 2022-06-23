@@ -101,7 +101,7 @@ public class Member {
         player.setScoreboard(scoreboard);
     }
 
-    public void death(Player damager,boolean quit) {
+    public void death(Player damager, boolean quit) {
         isFighting = false;
         int i = 0;
         if (KillTime != null) {
@@ -163,6 +163,7 @@ public class Member {
                 pearls.forEach(EnderPearl::remove);
         }
     }
+
     public void item(boolean win) {
         player.closeInventory();
         char[] cfg = SQLCache.toCharArray();
@@ -171,13 +172,15 @@ public class Member {
         ItemStack[] stack = KnockBackFFA.itemStacks[user.lang];
         pearls.clear();
         if (win) {
-            if (inventory.contains(Material.ENDER_PEARL)) {
-                inventory.addItem(stack[6]);
+            if (isFighting) {
                 inventory.setItem(cfg[3] - 48, stack[7]);
                 inventory.setItem(cfg[4] - 48, stack[8]);
                 inventory.setItem(cfg[5] - 48, stack[9]);
-            } else
-                inventory.setItem(cfg[2] - 48, stack[6]);
+                if (inventory.contains(Material.ENDER_PEARL))
+                    inventory.addItem(stack[6]);
+                else
+                    inventory.setItem(cfg[2] - 48, stack[6]);
+            }
         } else {
             inventory.setItem(4, new ItemStack(Material.AIR));
             inventory.setItem(cfg[0] - 48, stack[4]);
