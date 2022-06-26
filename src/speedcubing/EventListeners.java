@@ -1,7 +1,10 @@
 package speedcubing;
 
 import net.minecraft.server.v1_8_R3.BlockPosition;
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
@@ -232,9 +235,9 @@ public class EventListeners implements Listener {
         KnockBackFFA.score.remove(uuid);
         if (i != -1 && i < 10) {
             List<String> s = KnockBackFFA.getSideBar();
-            for (Player p : Bukkit.getOnlinePlayers()) {
+            for (SideBar sideBar : SideBar.getSidebars()) {
                 for (int j = 0; j < 10; j++) {
-                    SideBar.setLine(p, s.get(j), j);
+                    sideBar.setLine(s.get(j), j + 2);
                 }
             }
         }

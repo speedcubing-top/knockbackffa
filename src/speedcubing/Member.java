@@ -56,7 +56,7 @@ public class Member {
         inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
         int size = KnockBackFFA.session.size();
         String[] sidebar = KnockBackFFA.sidebar[user.lang];
-        SideBar sideBar = new SideBar(sidebar[1])
+        SideBar sideBar = new SideBar(player, sidebar[1])
                 .staticLine(sidebar[0], 10);
         for (int j = 0; j < 10; j++) {
             String result;
@@ -70,10 +70,10 @@ public class Member {
                 else
                     result = speedcubingServer.getFormat(Member.getMember(ses).user.rank)[1] + Bukkit.getPlayer(ses).getName() + "§8: §e" + sc;
             }
-            sideBar = sideBar.changeableLine(result, 9 - j);
+            sideBar.changeableLine(result, 9 - j);
         }
         sideBar.scoreboard.registerNewObjective("§c❤", "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
-        player.setScoreboard(sideBar.scoreboard);
+        sideBar.create();
     }
 
     public void death(Player damager, boolean quit) {
@@ -111,9 +111,9 @@ public class Member {
         KnockBackFFA.score.put(player.getUniqueId(), 0);
         if (i < 10) {
             List<String> s = KnockBackFFA.getSideBar();
-            for (int j = 0; j < 10; j++) {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    SideBar.setLine(p, s.get(j), j);
+            for (SideBar sideBar : SideBar.getSidebars()) {
+                for (int j = 0; j < 10; j++) {
+                    sideBar.setLine(s.get(j), j + 2);
                 }
             }
         }
