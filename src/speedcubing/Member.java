@@ -27,7 +27,7 @@ public class Member {
     public User user;
     public Player player;
     public UUID Damage;
-    public Long KillTime;
+    public long KillTime;
     public boolean iseditingkit;
     public Set<EnderPearl> pearls = new HashSet<>();
     public boolean isFighting;
