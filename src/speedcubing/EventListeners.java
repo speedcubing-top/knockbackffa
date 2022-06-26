@@ -20,9 +20,8 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 import speedcubing.lib.bukkit.PlayerUtils;
+import speedcubing.lib.bukkit.SideBar;
 import speedcubing.lib.bukkit.inventory.InventoryUtils;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.speedcubingServer;
@@ -232,13 +231,10 @@ public class EventListeners implements Listener {
         KnockBackFFA.session.remove(uuid);
         KnockBackFFA.score.remove(uuid);
         if (i != -1 && i < 10) {
-            List<String>[] s = KnockBackFFA.getSideBar();
+            List<String> s = KnockBackFFA.getSideBar();
             for (Player p : Bukkit.getOnlinePlayers()) {
-                Scoreboard scoreboard = p.getScoreboard();
                 for (int j = 0; j < 10; j++) {
-                    Team t = scoreboard.getTeam("§" + j + "§f");
-                    t.setPrefix(s[0].get(j));
-                    t.setSuffix(s[1].get(j));
+                    SideBar.setLine(p, s.get(j), j);
                 }
             }
         }

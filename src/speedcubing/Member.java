@@ -10,11 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 import speedcubing.lib.bukkit.PlayerUtils;
-import speedcubing.lib.bukkit.SideBarAPI;
+import speedcubing.lib.bukkit.SideBar;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 
@@ -57,48 +54,26 @@ public class Member {
         inventory.setBoots(new ItemStack(Material.AIR));
         inventory.clear();
         inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
-        Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        Objective objective = scoreboard.registerNewObjective("sidebar", "dummy");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         int size = KnockBackFFA.session.size();
         String[] sidebar = KnockBackFFA.sidebar[user.lang];
-        objective.setDisplayName(sidebar[11]);
-        SideBarAPI.sidebarTeams(scoreboard, new String[][]{
-                {sidebar[10]},
-                {"", sidebar[9], ""},
-                {"", sidebar[8], ""},
-                {"", sidebar[7], ""},
-                {"", sidebar[6], ""},
-                {"", sidebar[5], ""},
-                {"", sidebar[4], ""},
-                {"", sidebar[3], ""},
-                {"", sidebar[2], ""},
-                {"", sidebar[1], ""},
-                {"", sidebar[0], ""},
-        }, new int[]{10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0});
+        SideBar sideBar = new SideBar(sidebar[1])
+                .staticLine(sidebar[0], 10);
         for (int j = 0; j < 10; j++) {
-            String prefix, suffix;
+            String result;
             if (size <= j) {
-                prefix = "§7-,---";
-                suffix = "";
+                result = "§7-,---";
             } else {
                 UUID ses = KnockBackFFA.session.get(j);
                 int sc = KnockBackFFA.score.get(ses);
-                if (sc == 0) {
-                    prefix = "§7-,---";
-                    suffix = "";
-                } else {
-                    String[] xx = SideBarAPI.prefixSuffixSplit(speedcubingServer.getFormat(Member.getMember(ses).user.rank)[1] + Bukkit.getPlayer(ses).getName() + "§8: §e" + sc);
-                    prefix = xx[0];
-                    suffix = xx[1];
-                }
+                if (sc == 0)
+                    result = "§7-,---";
+                else
+                    result = speedcubingServer.getFormat(Member.getMember(ses).user.rank)[1] + Bukkit.getPlayer(ses).getName() + "§8: §e" + sc;
             }
-            Team t = scoreboard.getTeam("§" + j + "§f");
-            t.setPrefix(prefix);
-            t.setSuffix(suffix);
+            sideBar = sideBar.changeableLine(result, 9 - j);
         }
-        scoreboard.registerNewObjective("§c❤", "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
-        player.setScoreboard(scoreboard);
+        sideBar.scoreboard.registerNewObjective("§c❤", "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
+        player.setScoreboard(sideBar.scoreboard);
     }
 
     public void death(Player damager, boolean quit) {
@@ -135,12 +110,10 @@ public class Member {
         KnockBackFFA.session.add(player.getUniqueId());
         KnockBackFFA.score.put(player.getUniqueId(), 0);
         if (i < 10) {
-            List<String>[] s = KnockBackFFA.getSideBar();
+            List<String> s = KnockBackFFA.getSideBar();
             for (int j = 0; j < 10; j++) {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    Team t = p.getScoreboard().getTeam("§" + j + "§f");
-                    t.setPrefix(s[0].get(j));
-                    t.setSuffix(s[1].get(j));
+                    SideBar.setLine(p, s.get(j), j);
                 }
             }
         }

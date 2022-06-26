@@ -12,7 +12,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import speedcubing.lib.bukkit.SideBarAPI;
 import speedcubing.lib.bukkit.inventory.InventoryUtils;
 import speedcubing.lib.bukkit.inventory.ItemBuilder;
 import speedcubing.lib.eventbus.LibEventManager;
@@ -38,10 +37,10 @@ public class KnockBackFFA extends JavaPlugin {
     };
 
     public static String[][] sidebar = {
-            {"§9§f", "§8§f", "§7§f", "§6§f", "§5§f", "§4§f", "§3§f", "§2§f", "§1§f", "§0§f", "§6" + config.SERVERIP, "§3KnockBackFFA"},
-            {"§9§f", "§8§f", "§7§f", "§6§f", "§5§f", "§4§f", "§3§f", "§2§f", "§1§f", "§0§f", "§6" + config.SERVERIP, "§3KnockBackFFA"},
-            {"§9§f", "§8§f", "§7§f", "§6§f", "§5§f", "§4§f", "§3§f", "§2§f", "§1§f", "§0§f", "§6" + config.SERVERIP, "§3KnockBackFFA"},
-            {"§9§f", "§8§f", "§7§f", "§6§f", "§5§f", "§4§f", "§3§f", "§2§f", "§1§f", "§0§f", "§6" + config.SERVERIP, "§3KnockBackFFA"}
+            {"§6" + config.SERVERIP, "§3KnockBackFFA"},
+            {"§6" + config.SERVERIP, "§3KnockBackFFA"},
+            {"§6" + config.SERVERIP, "§3KnockBackFFA"},
+            {"§6" + config.SERVERIP, "§3KnockBackFFA"}
     };
 
     public static double centerX = 0;
@@ -125,27 +124,21 @@ public class KnockBackFFA extends JavaPlugin {
         KnockBackFFA.Diff.keySet().forEach(a -> world.getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
     }
 
-    public static List<String>[] getSideBar() {
-        List<String> prefix = new ArrayList<>();
-        List<String> suffix = new ArrayList<>();
+    public static List<String> getSideBar() {
+        List<String> result = new ArrayList<>();
         int size = session.size();
         for (int j = 0; j < 10; j++) {
-            if (size <= j) {
-                prefix.add("§7-,---");
-                suffix.add("");
-            } else {
+            if (size <= j)
+                result.add("§7-,---");
+            else {
                 UUID ses = session.get(j);
                 int sc = score.get(ses);
-                if (sc == 0) {
-                    prefix.add("§7-,---");
-                    suffix.add("");
-                } else {
-                    String[] x = SideBarAPI.prefixSuffixSplit(speedcubingServer.getFormat(Member.getMember(ses).user.rank)[1] + Bukkit.getPlayer(ses).getName() + "§8: §e" + sc);
-                    prefix.add(x[0]);
-                    suffix.add(x[1]);
-                }
+                if (sc == 0)
+                    result.add("§7-,---");
+                else
+                    result.add(speedcubingServer.getFormat(Member.getMember(ses).user.rank)[1] + Bukkit.getPlayer(ses).getName() + "§8: §e" + sc);
             }
         }
-        return new List[]{prefix, suffix};
+        return result;
     }
 }
