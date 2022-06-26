@@ -79,31 +79,29 @@ public class Member {
     public void death(Player damager, boolean quit) {
         isFighting = false;
         int i = 0;
-        if (KillTime != null) {
-            if (System.currentTimeMillis() - this.KillTime < 100000) {
-                if (damager == null)
-                    damager = Bukkit.getPlayer(Damage);
-                if (damager != null) {
-                    damager.playSound(damager.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
-                    damager.setHealth(20);
-                    UUID uuid = damager.getUniqueId();
-                    Member Damager = getMember(uuid);
-                    int a = KnockBackFFA.score.get(uuid);
-                    for (; i < KnockBackFFA.session.size(); i++) {
-                        if (KnockBackFFA.score.get(KnockBackFFA.session.get(i)) < a + 1 || KnockBackFFA.score.get(KnockBackFFA.session.get(i)) == 0) {
-                            KnockBackFFA.session.remove(uuid);
-                            KnockBackFFA.session.add(i, uuid);
-                            break;
-                        }
+        if (System.currentTimeMillis() - this.KillTime < 100000) {
+            if (damager == null)
+                damager = Bukkit.getPlayer(Damage);
+            if (damager != null) {
+                damager.playSound(damager.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
+                damager.setHealth(20);
+                UUID uuid = damager.getUniqueId();
+                Member Damager = getMember(uuid);
+                int a = KnockBackFFA.score.get(uuid);
+                for (; i < KnockBackFFA.session.size(); i++) {
+                    if (KnockBackFFA.score.get(KnockBackFFA.session.get(i)) < a + 1 || KnockBackFFA.score.get(KnockBackFFA.session.get(i)) == 0) {
+                        KnockBackFFA.session.remove(uuid);
+                        KnockBackFFA.session.add(i, uuid);
+                        break;
                     }
-                    KnockBackFFA.score.put(uuid, a + 1);
-                    Damager.item(true);
-                    damager.setLevel(a + 1);
-                    String ft = speedcubingServer.getFormat(Damager.user.rank)[1];
-                    String ft2 = speedcubingServer.getFormat(user.rank)[1];
-                    Player finalDamager = damager;
-                    users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.user.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", finalDamager.getName())));
                 }
+                KnockBackFFA.score.put(uuid, a + 1);
+                Damager.item(true);
+                damager.setLevel(a + 1);
+                String ft = speedcubingServer.getFormat(Damager.user.rank)[1];
+                String ft2 = speedcubingServer.getFormat(user.rank)[1];
+                Player finalDamager = damager;
+                users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.user.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", finalDamager.getName())));
             }
         }
         KnockBackFFA.session.remove(player.getUniqueId());

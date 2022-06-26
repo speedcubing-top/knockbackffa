@@ -108,8 +108,7 @@ public class EventListeners implements Listener {
                         victimMember.death(damager, false);
                         e.setCancelled(true);
                         victim.damage(0);
-                    }
-                    if (!victimuuid.equals(damagerUUID))
+                    } else if (!victimuuid.equals(damagerUUID))
                         victimMember.Damage = damagerUUID;
                     victimMember.KillTime = System.currentTimeMillis();
                 } else e.setCancelled(true);
