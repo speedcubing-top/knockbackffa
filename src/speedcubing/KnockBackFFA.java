@@ -37,10 +37,10 @@ public class KnockBackFFA extends JavaPlugin {
     };
 
     public static String[][] sidebar = {
-            {"§6" + config.SERVERIP, "§3KnockBackFFA"},
-            {"§6" + config.SERVERIP, "§3KnockBackFFA"},
-            {"§6" + config.SERVERIP, "§3KnockBackFFA"},
-            {"§6" + config.SERVERIP, "§3KnockBackFFA"}
+            {"§3KnockBackFFA", "§6" + config.SERVERIP},
+            {"§3KnockBackFFA", "§6" + config.SERVERIP},
+            {"§3KnockBackFFA", "§6" + config.SERVERIP},
+            {"§3KnockBackFFA", "§6" + config.SERVERIP}
     };
 
     public static double centerX = 0;

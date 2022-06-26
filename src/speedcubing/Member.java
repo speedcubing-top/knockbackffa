@@ -56,8 +56,8 @@ public class Member {
         inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
         int size = KnockBackFFA.session.size();
         String[] sidebar = KnockBackFFA.sidebar[user.lang];
-        SideBar sideBar = new SideBar(player, sidebar[1])
-                .staticLine(sidebar[0], 10);
+        SideBar sideBar = new SideBar(player, sidebar[0])
+                .staticLine(sidebar[1], 10);
         for (int j = 0; j < 10; j++) {
             String result;
             if (size <= j) {
