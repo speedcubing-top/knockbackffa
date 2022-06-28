@@ -1,9 +1,6 @@
 package speedcubing;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
@@ -38,7 +35,7 @@ public class Member {
         user = User.getUser(uuid);
         this.player = player;
         users.put(uuid, this);
-        PlayerUtils.teleport(((CraftPlayer) player).getHandle().playerConnection, KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0);
+        player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
         new Thread(() -> SQLCache = speedcubingServer.connection.selectString("playersdata", "kbffa_inventory", "uuid='" + uuid + "'")).start();
         KnockBackFFA.score.put(uuid, 0);
         KnockBackFFA.session.add(uuid);
@@ -126,8 +123,8 @@ public class Member {
             inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
             player.setLevel(0);
             player.setHealth(20);
-            PlayerUtils.removeArrows(((CraftPlayer) player).getHandle().getDataWatcher());
-            PlayerUtils.teleport(((CraftPlayer) player).getHandle().playerConnection, KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0);
+            PlayerUtils.removeArrows(player);
+            player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
             Bukkit.getScheduler().scheduleSyncDelayedTask(KnockBackFFA.getPlugin(KnockBackFFA.class), () -> player.setFireTicks(0), 1);
             player.setFireTicks(0);
             if (pearls != null)

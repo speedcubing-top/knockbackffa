@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -226,7 +225,7 @@ public class EventListeners implements Listener {
     public void PlayerQuitEvent(PlayerQuitEvent e) {
         Player player = e.getPlayer();
         UUID uuid = player.getUniqueId();
-        PlayerUtils.removeArrows(((CraftPlayer) player).getHandle().getDataWatcher());
+        PlayerUtils.removeArrows(player);
         Member.getMember(uuid).death(null, true);
         Member.users.remove(uuid);
         int i = KnockBackFFA.session.indexOf(uuid);
@@ -244,9 +243,7 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void PlayerJoinEvent(PlayerJoinEvent e) {
-        Player player = e.getPlayer();
-        if (player.isOnline())
-            new Member(player);
+        new Member(e.getPlayer());
     }
 
     @EventHandler
