@@ -59,7 +59,7 @@ public class EventListeners implements Listener {
     public void PlayerMoveEvent(PlayerMoveEvent e) {
         Player player = e.getPlayer();
         if (player.getGameMode() == GameMode.SURVIVAL) {
-            Member user = Member.getMember(player.getUniqueId());
+            Member user = Member.getMember(player);
             Location to = e.getTo();
             if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
@@ -77,7 +77,7 @@ public class EventListeners implements Listener {
             if (cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.FIRE_TICK)
                 e.setCancelled(true);
             else if ((cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.DROWNING) && ((Player) entity).getHealth() - e.getFinalDamage() < 0)
-                Member.getMember(entity.getUniqueId()).death(null, false);
+                Member.getMember(entity).death(null, false);
         }
     }
 
@@ -91,24 +91,23 @@ public class EventListeners implements Listener {
     @EventHandler
     public void EntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player) {
-            Player victim = (Player) e.getEntity();
             Entity damage = e.getDamager();
             Player damager = null;
             if (damage instanceof Arrow)
                 damager = (Player) ((Arrow) e.getDamager()).getShooter();
             else if (damage instanceof Player)
                 damager = (Player) e.getDamager();
-            UUID victimuuid = victim.getUniqueId();
             if (damager != null) {
-                Member victimMember = Member.getMember(victimuuid);
-                UUID damagerUUID = damager.getUniqueId();
-                if (victimMember.isFighting && Member.getMember(damagerUUID).isFighting) {
+                Player victim = (Player) e.getEntity();
+                Member victimMember = Member.getMember(victim);
+                Member Damager = Member.getMember(damager);
+                if (victimMember.isFighting && Damager.isFighting) {
                     if (victim.getHealth() - e.getFinalDamage() <= 0) {
                         victimMember.death(damager, false);
                         e.setCancelled(true);
                         victim.damage(0);
-                    } else if (!victimuuid.equals(damagerUUID))
-                        victimMember.Damage = damagerUUID;
+                    } else if (victim != damager)
+                        victimMember.Damage = Damager.id;
                     victimMember.KillTime = System.currentTimeMillis();
                 } else e.setCancelled(true);
             }
@@ -142,8 +141,8 @@ public class EventListeners implements Listener {
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
                             UUID uuid = player.getUniqueId();
-                            Member user = Member.getMember(uuid);
-                            player.sendMessage(GlobalString.SavedSettings[user.user.lang]);
+                            Member user = Member.getMember(player);
+                            player.sendMessage(GlobalString.SavedSettings[user.lang]);
                             List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
                             String s = "       ";
                             for (int i = 0; i < 9; i++) {
@@ -155,7 +154,7 @@ public class EventListeners implements Listener {
                             user.SQLCache = s;
                             new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + user.SQLCache + "'", "uuid='" + uuid + "'")).start();
                             inv.clear();
-                            inv.setItem(4, KnockBackFFA.itemStacks[user.user.lang][11]);
+                            inv.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
                             user.iseditingkit = false;
                             player.closeInventory();
                         } else {
@@ -179,16 +178,16 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void InventoryCloseEvent(InventoryCloseEvent e) {
-        if (e.getInventory().getHolder() == KnockBackFFA.KitEditorHolder) {
+        if (e.getInventory().getHolder().equals(KnockBackFFA.KitEditorHolder)) {
             Player player = (Player) e.getPlayer();
             player.setItemOnCursor(new ItemStack(Material.AIR));
-            Member user = Member.getMember(player.getUniqueId());
+            Member user = Member.getMember(player);
             if (user.iseditingkit) {
                 user.iseditingkit = false;
-                player.sendMessage(GlobalString.UnSavedSettings[user.user.lang]);
+                player.sendMessage(GlobalString.UnSavedSettings[user.lang]);
                 Inventory inventory = player.getInventory();
                 inventory.clear();
-                inventory.setItem(4, KnockBackFFA.itemStacks[user.user.lang][11]);
+                inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
             }
         }
     }
@@ -198,12 +197,12 @@ public class EventListeners implements Listener {
     public void PlayerInteractEvent(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         if (player.getItemInHand().getType().equals(Material.CHEST)) {
-            Member user = Member.getMember(player.getUniqueId());
+            Member member = Member.getMember(player);
             player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
             Inventory inventory = player.getInventory();
             inventory.setItem(4, new ItemStack(Material.AIR));
-            ItemStack[] itemStacks = KnockBackFFA.itemStacks[user.user.lang];
-            char[] cfg = user.SQLCache.toCharArray();
+            ItemStack[] itemStacks = KnockBackFFA.itemStacks[member.lang];
+            char[] cfg = member.SQLCache.toCharArray();
             inventory.setItem(cfg[0] - 48, itemStacks[4]);
             inventory.setItem(cfg[1] - 48, itemStacks[5]);
             inventory.setItem(cfg[2] - 48, itemStacks[6]);
@@ -211,9 +210,9 @@ public class EventListeners implements Listener {
             inventory.setItem(cfg[4] - 48, itemStacks[8]);
             inventory.setItem(cfg[5] - 48, itemStacks[9]);
             inventory.setItem(cfg[6] - 48, itemStacks[10]);
-            user.iseditingkit = true;
-            player.openInventory(KnockBackFFA.KitEditor[user.user.lang]);
-            InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[user.user.lang]);
+            member.iseditingkit = true;
+            player.openInventory(KnockBackFFA.KitEditor[member.lang]);
+            InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.lang]);
         }
         if (player.getLocation().getY() > KnockBackFFA.spawnprotectY) {
             e.setCancelled(true);
@@ -224,13 +223,13 @@ public class EventListeners implements Listener {
     @EventHandler
     public void PlayerQuitEvent(PlayerQuitEvent e) {
         Player player = e.getPlayer();
-        UUID uuid = player.getUniqueId();
         PlayerUtils.removeArrows(player);
-        Member.getMember(uuid).death(null, true);
-        Member.users.remove(uuid);
-        int i = KnockBackFFA.session.indexOf(uuid);
-        KnockBackFFA.session.remove(uuid);
-        KnockBackFFA.score.remove(uuid);
+        Member member = Member.getMember(player);
+        member.death(null, true);
+        Member.users.remove(member.id);
+        int i = KnockBackFFA.session.indexOf(member.id);
+        KnockBackFFA.session.remove(Integer.valueOf(member.id));
+        KnockBackFFA.score.remove(member.id);
         if (i != -1 && i < 10) {
             List<String> s = KnockBackFFA.getSideBar();
             for (SideBar sideBar : SideBar.getSidebars()) {
@@ -266,7 +265,7 @@ public class EventListeners implements Listener {
         Projectile projectile = e.getEntity();
         if (projectile instanceof EnderPearl) {
             EnderPearl pearl = (EnderPearl) projectile;
-            Member.getMember(((Player) pearl.getShooter()).getUniqueId()).pearls.add(pearl);
+            Member.getMember((Player) pearl.getShooter()).pearls.add(pearl);
         }
     }
 }
