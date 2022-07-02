@@ -27,8 +27,8 @@ public class KnockBackFFA extends JavaPlugin {
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
     public static final Map<BlockPosition, Integer[]> Diff = new HashMap<>();
-    public static final Map<Integer, Integer> score = new HashMap<>();
-    public static final List<Integer> session = new ArrayList<>();
+    public static final Map<Member, Integer> score = new HashMap<>();
+    public static final List<Member> session = new ArrayList<>();
     public static String[] Kill = {
             "%format0%%name0%§7 was killed by %format1%%name1%§7.",
             "%format0%%name0%§7 was killed by %format1%%name1%§7.",
@@ -131,13 +131,12 @@ public class KnockBackFFA extends JavaPlugin {
             if (size <= j)
                 result.add("§7-,---");
             else {
-                int ses = session.get(j);
+                Member ses = session.get(j);
                 int sc = score.get(ses);
                 if (sc == 0)
                     result.add("§7-,---");
                 else {
-                    Member member = Member.getMember(ses);
-                    result.add(speedcubingServer.getFormat(member.rank)[1] + member.player.getName() + "§8: §e" + sc);
+                    result.add(speedcubingServer.getFormat(ses.rank)[1] + ses.player.getName() + "§8: §e" + sc);
                 }
             }
         }

@@ -29,7 +29,7 @@ public class Member extends User {
         return users.get(id);
     }
 
-    public int Damage;
+    public Member Damage;
     public long KillTime;
     public boolean iseditingkit;
     public Set<EnderPearl> pearls = new HashSet<>();
@@ -41,8 +41,8 @@ public class Member extends User {
         users.put(id, this);
         player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
         new Thread(() -> SQLCache = speedcubingServer.connection.selectString("playersdata", "kbffa_inventory", "id='" + id + "'")).start();
-        KnockBackFFA.score.put(id, 0);
-        KnockBackFFA.session.add(id);
+        KnockBackFFA.score.put(this, 0);
+        KnockBackFFA.session.add(this);
         player.setLevel(0);
         player.setHealth(20);
         player.setGameMode(GameMode.SURVIVAL);
@@ -64,13 +64,12 @@ public class Member extends User {
             if (size <= j) {
                 result = "§7-,---";
             } else {
-                int ses = KnockBackFFA.session.get(j);
+                Member ses = KnockBackFFA.session.get(j);
                 int sc = KnockBackFFA.score.get(ses);
                 if (sc == 0)
                     result = "§7-,---";
                 else {
-                    Member member = Member.getMember(ses);
-                    result = speedcubingServer.getFormat(member.rank)[1] + member.player.getName() + "§8: §e" + sc;
+                    result = speedcubingServer.getFormat(ses.rank)[1] + ses.player.getName() + "§8: §e" + sc;
                 }
             }
             sideBar.changeableLine(result, 9 - j);
@@ -83,33 +82,32 @@ public class Member extends User {
         isFighting = false;
         int i = 0;
         if (System.currentTimeMillis() - this.KillTime < 100000) {
-            Member Damager = Member.getMember(Damage);
             if (damager == null)
-                if (Damager != null)
-                    damager = Damager.player;
+                if (Damage != null)
+                    damager = Damage.player;
             if (damager != null) {
                 damager.playSound(damager.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
                 damager.setHealth(20);
-                int a = KnockBackFFA.score.get(Damager.id);
+                int a = KnockBackFFA.score.get(Damage);
                 for (; i < KnockBackFFA.session.size(); i++) {
                     if (KnockBackFFA.score.get(KnockBackFFA.session.get(i)) < a + 1 || KnockBackFFA.score.get(KnockBackFFA.session.get(i)) == 0) {
-                        KnockBackFFA.session.remove(Integer.valueOf(Damage));
+                        KnockBackFFA.session.remove(Damage);
                         KnockBackFFA.session.add(i, Damage);
                         break;
                     }
                 }
-                KnockBackFFA.score.put(Damager.id, a + 1);
-                Damager.item(true);
+                KnockBackFFA.score.put(Damage, a + 1);
+                Damage.item(true);
                 damager.setLevel(a + 1);
-                String ft = speedcubingServer.getFormat(Damager.rank)[1];
+                String ft = speedcubingServer.getFormat(Damage.rank)[1];
                 String ft2 = speedcubingServer.getFormat(rank)[1];
                 Player finalDamager = damager;
                 users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", finalDamager.getName())));
             }
         }
-        KnockBackFFA.session.remove(Integer.valueOf(id));
-        KnockBackFFA.session.add(id);
-        KnockBackFFA.score.put(id, 0);
+        KnockBackFFA.session.remove(this);
+        KnockBackFFA.session.add(this);
+        KnockBackFFA.score.put(this, 0);
         if (i < 10) {
             List<String> s = KnockBackFFA.getSideBar();
             for (SideBar sideBar : SideBar.getSidebars()) {
@@ -119,7 +117,7 @@ public class Member extends User {
             }
         }
         if (!quit) {
-            Damage = 0;
+            Damage = null;
             PlayerInventory inventory = player.getInventory();
             inventory.clear();
             inventory.setHelmet(new ItemStack(Material.AIR));
