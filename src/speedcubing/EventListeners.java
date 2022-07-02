@@ -30,7 +30,6 @@ import speedcubing.server.speedcubingServer;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class EventListeners implements Listener {
 
@@ -140,7 +139,6 @@ public class EventListeners implements Listener {
                         player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
-                            UUID uuid = player.getUniqueId();
                             Member user = Member.getMember(player);
                             player.sendMessage(GlobalString.SavedSettings[user.lang]);
                             List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
@@ -152,7 +150,7 @@ public class EventListeners implements Listener {
                                 }
                             }
                             user.SQLCache = s;
-                            new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + user.SQLCache + "'", "uuid='" + uuid + "'")).start();
+                            new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + user.SQLCache + "'", "id=" + user.id)).start();
                             inv.clear();
                             inv.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
                             user.iseditingkit = false;

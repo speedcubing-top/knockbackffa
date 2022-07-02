@@ -40,7 +40,7 @@ public class Member extends User {
         super(player.getUniqueId());
         users.put(id, this);
         player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
-        new Thread(() -> SQLCache = speedcubingServer.connection.selectString("playersdata", "kbffa_inventory", "uuid='" + player.getUniqueId() + "'")).start();
+        new Thread(() -> SQLCache = speedcubingServer.connection.selectString("playersdata", "kbffa_inventory", "id='" + id + "'")).start();
         KnockBackFFA.score.put(id, 0);
         KnockBackFFA.session.add(id);
         player.setLevel(0);
