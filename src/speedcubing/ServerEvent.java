@@ -5,6 +5,9 @@ import org.bukkit.entity.Player;
 import speedcubing.lib.bukkit.event.PlayInEvent;
 import speedcubing.lib.eventbus.LibEventHandler;
 import speedcubing.lib.utils.Console;
+import speedcubing.server.events.player.NickEvent;
+import speedcubing.server.events.player.SkinEvent;
+import speedcubing.server.events.player.ToggleFlyEvent;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.speedcubingServer;
 
@@ -30,5 +33,23 @@ public class ServerEvent {
                 Console.sendColoredConsole("§7[§aChatLog§7] [§b" + player.getWorld().getName() + "§7] " + out[1]);
             }
         }
+    }
+
+    @LibEventHandler
+    public void ToggleFlyEvent(ToggleFlyEvent e) {
+        e.isCancelled = true;
+        e.player.sendMessage(GlobalString.OnlyInHub[Member.getMember(e.player).lang]);
+    }
+
+    @LibEventHandler
+    public void NickEvent(NickEvent e) {
+        e.isCancelled = true;
+        e.player.sendMessage(GlobalString.OnlyInHub[Member.getMember(e.player).lang]);
+    }
+
+    @LibEventHandler
+    public void SkinEvent(SkinEvent e) {
+        e.isCancelled = true;
+        e.player.sendMessage(GlobalString.OnlyInHub[Member.getMember(e.player).lang]);
     }
 }
