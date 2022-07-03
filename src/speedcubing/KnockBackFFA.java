@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
@@ -26,7 +27,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static final Inventory[] KitEditor = new Inventory[4];
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
-    public static final Map<BlockPosition, Integer[]> Diff = new HashMap<>();
+    public static final Map<Block, Integer[]> Diff = new HashMap<>();
     public static final Map<Member, Integer> score = new HashMap<>();
     public static final List<Member> session = new ArrayList<>();
     public static String[] Kill = {
@@ -69,23 +70,23 @@ public class KnockBackFFA extends JavaPlugin {
         LibEventManager.registerListeners(new ServerEvent());
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Set<PacketPlayOutBlockBreakAnimation> a = new HashSet<>();
-            Set<BlockPosition> ba = new HashSet<>();
-            for (Map.Entry<BlockPosition, Integer[]> x : KnockBackFFA.Diff.entrySet()) {
+            Set<Block> ba = new HashSet<>();
+            for (Map.Entry<Block, Integer[]> x : Diff.entrySet()) {
                 int age = x.getValue()[1];
-                BlockPosition b = x.getKey();
-                if (age % 10 == 0)
-                    a.add(new PacketPlayOutBlockBreakAnimation(x.getValue()[0], b, age / 10 - 1));
-                if (age == 110) {
-                    world.getBlockAt(b.getX(), b.getY(), b.getZ()).setType(Material.AIR);
-                    ba.add(b);
+                Block block = x.getKey();
+                BlockPosition b = new BlockPosition(block.getX(), block.getY(), block.getZ());
+                a.add(new PacketPlayOutBlockBreakAnimation(x.getValue()[0], b, age));
+                if (age == 10) {
+                    block.setType(Material.AIR);
+                    ba.add(block);
                 }
             }
             Bukkit.getOnlinePlayers().forEach(b -> a.forEach(((CraftPlayer) b).getHandle().playerConnection::sendPacket));
-            ba.forEach(KnockBackFFA.Diff::remove);
-            for (Integer[] x : KnockBackFFA.Diff.values()) {
+            ba.forEach(Diff::remove);
+            for (Integer[] x : Diff.values()) {
                 x[1] += 1;
             }
-        }, 0, 1);
+        }, 0, 10);
 
         String[] inv = {"§bInventar", "§bInventory", "§b物品欄", "§b物品栏"};
         String[] title = {"§cKnockBack FFA Inventar", "§cKnockBack FFA Inventory", "§cKnockBack FFA 物品欄", "§cKnockBack FFA 物品栏"};
