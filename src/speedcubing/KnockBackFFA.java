@@ -74,10 +74,9 @@ public class KnockBackFFA extends JavaPlugin {
             for (Map.Entry<Block, Integer[]> x : Diff.entrySet()) {
                 int age = x.getValue()[1];
                 Block block = x.getKey();
-                BlockPosition b = new BlockPosition(block.getX(), block.getY(), block.getZ());
-                a.add(new PacketPlayOutBlockBreakAnimation(x.getValue()[0], b, age));
+                a.add(new PacketPlayOutBlockBreakAnimation(x.getValue()[0], new BlockPosition(block.getX(), block.getY(), block.getZ()), age));
                 if (age == 10) {
-                    block.setType(Material.AIR);
+                    block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).setType(Material.AIR);
                     ba.add(block);
                 }
             }
