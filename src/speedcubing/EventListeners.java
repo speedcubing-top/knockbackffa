@@ -226,7 +226,7 @@ public class EventListeners implements Listener {
         member.death(null, true);
         Member.users.remove(member.id);
         int i = KnockBackFFA.session.indexOf(member);
-        KnockBackFFA.session.remove(member.id);
+        KnockBackFFA.session.remove(member);
         KnockBackFFA.score.remove(member);
         if (i != -1 && i < 10) {
             List<String> s = KnockBackFFA.getSideBar();
