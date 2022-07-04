@@ -80,7 +80,8 @@ public class Member extends User {
 
     public void death(Player damager, boolean quit) {
         isFighting = false;
-        int i = 0;
+        int i;
+        int a = KnockBackFFA.score.get(Damage);
         if (System.currentTimeMillis() - this.KillTime < 100000) {
             if (damager == null)
                 if (Damage != null)
@@ -88,14 +89,6 @@ public class Member extends User {
             if (damager != null) {
                 damager.playSound(damager.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
                 damager.setHealth(20);
-                int a = KnockBackFFA.score.get(Damage);
-                for (; i < KnockBackFFA.session.size(); i++) {
-                    if (KnockBackFFA.score.get(KnockBackFFA.session.get(i)) < a + 1 || KnockBackFFA.score.get(KnockBackFFA.session.get(i)) == 0) {
-                        KnockBackFFA.session.remove(Damage);
-                        KnockBackFFA.session.add(i, Damage);
-                        break;
-                    }
-                }
                 KnockBackFFA.score.put(Damage, a + 1);
                 Damage.item(true);
                 damager.setLevel(a + 1);
@@ -105,9 +98,15 @@ public class Member extends User {
                 users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", finalDamager.getName())));
             }
         }
+        for (i = 0; i < KnockBackFFA.session.size(); i++) {
+            if (KnockBackFFA.score.get(KnockBackFFA.session.get(i)) < a + 1 || KnockBackFFA.score.get(KnockBackFFA.session.get(i)) == 0) {
+                KnockBackFFA.session.remove(Damage);
+                KnockBackFFA.session.add(i, Damage);
+                break;
+            }
+        }
         KnockBackFFA.session.remove(this);
-        KnockBackFFA.session.add(this);
-        KnockBackFFA.score.put(this, 0);
+        KnockBackFFA.score.remove(this);
         if (i < 10) {
             List<String> s = KnockBackFFA.getSideBar();
             for (SideBar sideBar : SideBar.getSidebars()) {

@@ -1,6 +1,5 @@
 package speedcubing;
 
-import net.minecraft.server.v1_8_R3.BlockPosition;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
