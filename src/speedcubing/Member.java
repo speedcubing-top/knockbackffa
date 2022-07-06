@@ -41,8 +41,7 @@ public class Member extends User {
         users.put(id, this);
         player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
         new Thread(() -> SQLCache = speedcubingServer.connection.selectString("playersdata", "kbffa_inventory", "id='" + id + "'")).start();
-        KnockBackFFA.score.put(this, 0);
-        KnockBackFFA.session.add(this);
+        KnockBackFFA.session.add(player);
         player.setLevel(0);
         player.setHealth(20);
         player.setGameMode(GameMode.SURVIVAL);
@@ -64,12 +63,12 @@ public class Member extends User {
             if (size <= j) {
                 result = "§7-,---";
             } else {
-                Member ses = KnockBackFFA.session.get(j);
-                int sc = KnockBackFFA.score.get(ses);
+                Player ses = KnockBackFFA.session.get(j);
+                int sc = ses.getLevel();
                 if (sc == 0)
                     result = "§7-,---";
                 else {
-                    result = speedcubingServer.getFormat(ses.rank)[1] + ses.player.getName() + "§8: §e" + sc;
+                    result = speedcubingServer.getFormat(Member.getMember(ses).rank)[1] + ses.getName() + "§8: §e" + sc;
                 }
             }
             sideBar.changeableLine(result, 9 - j);
@@ -78,42 +77,27 @@ public class Member extends User {
         sideBar.create();
     }
 
-    public void death(Player damager, boolean quit) {
+    public void death(boolean quit) {
         isFighting = false;
         int i = 0;
         if (System.currentTimeMillis() - this.KillTime < 100000) {
-            if (damager == null)
-                if (Damage != null)
-                    damager = Damage.player;
-            if (damager != null) {
-                damager.playSound(damager.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
-                damager.setHealth(20);
-                int a = KnockBackFFA.score.get(Damage);
+            if (Damage != null) {
+                Damage.player.playSound(Damage.player.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
+                Damage.player.setHealth(20);
+                int a = Damage.player.getLevel();
                 for (; i < KnockBackFFA.session.size(); i++) {
-                    if (KnockBackFFA.score.get(KnockBackFFA.session.get(i)) < a + 1 || KnockBackFFA.score.get(KnockBackFFA.session.get(i)) == 0) {
-                        KnockBackFFA.session.remove(Damage);
-                        KnockBackFFA.session.add(i, Damage);
+                    Player p = KnockBackFFA.session.get(i);
+                    if (p.getLevel() < a + 1 || p.getLevel() == 0) {
+                        KnockBackFFA.session.remove(Damage.player);
+                        KnockBackFFA.session.add(i, Damage.player);
                         break;
                     }
                 }
-                KnockBackFFA.score.put(Damage, a + 1);
                 Damage.item(true);
-                damager.setLevel(a + 1);
+                Damage.player.setLevel(Damage.player.getLevel() + 1);
                 String ft = speedcubingServer.getFormat(Damage.rank)[1];
                 String ft2 = speedcubingServer.getFormat(rank)[1];
-                Player finalDamager = damager;
-                users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", finalDamager.getName())));
-            }
-        }
-        KnockBackFFA.session.remove(this);
-        KnockBackFFA.session.add(this);
-        KnockBackFFA.score.put(this, 0);
-        if (i < 10) {
-            List<String> s = KnockBackFFA.getSideBar();
-            for (SideBar sideBar : SideBar.getSidebars()) {
-                for (int j = 0; j < 10; j++) {
-                    sideBar.setLine(s.get(j), j + 2);
-                }
+                users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", Damage.player.getName())));
             }
         }
         if (!quit) {
@@ -136,6 +120,16 @@ public class Member extends User {
             player.setFireTicks(0);
             if (pearls != null)
                 pearls.forEach(EnderPearl::remove);
+        }
+        KnockBackFFA.session.remove(player);
+        KnockBackFFA.session.add(player);
+        if (i < 10) {
+            List<String> s = KnockBackFFA.getSideBar();
+            for (SideBar sideBar : SideBar.getSidebars()) {
+                for (int j = 0; j < 10; j++) {
+                    sideBar.setLine(s.get(j), j + 2);
+                }
+            }
         }
     }
 

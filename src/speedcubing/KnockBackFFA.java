@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -28,8 +29,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
     public static final Map<Block, Integer[]> Diff = new HashMap<>();
-    public static final Map<Member, Integer> score = new HashMap<>();
-    public static final List<Member> session = new ArrayList<>();
+    public static final List<Player> session = new ArrayList<>();
     public static String[] Kill = {
             "%format0%%name0%§7 was killed by %format1%%name1%§7.",
             "%format0%%name0%§7 was killed by %format1%%name1%§7.",
@@ -131,12 +131,12 @@ public class KnockBackFFA extends JavaPlugin {
             if (size <= j)
                 result.add("§7-,---");
             else {
-                Member ses = session.get(j);
-                int sc = score.get(ses);
+                Player ses = session.get(j);
+                int sc = ses.getLevel();
                 if (sc == 0)
                     result.add("§7-,---");
                 else {
-                    result.add(speedcubingServer.getFormat(ses.rank)[1] + ses.player.getName() + "§8: §e" + sc);
+                    result.add(speedcubingServer.getFormat(Member.getMember(ses).rank)[1] + ses.getName() + "§8: §e" + sc);
                 }
             }
         }

@@ -63,7 +63,7 @@ public class EventListeners implements Listener {
                 user.isFighting = true;
                 user.item(false);
             } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5))
-                user.death(null, false);
+                user.death( false);
         }
     }
 
@@ -75,7 +75,7 @@ public class EventListeners implements Listener {
             if (cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.FIRE_TICK)
                 e.setCancelled(true);
             else if ((cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.DROWNING) && ((Player) entity).getHealth() - e.getFinalDamage() < 0)
-                Member.getMember(entity).death(null, false);
+                Member.getMember(entity).death( false);
         }
     }
 
@@ -100,12 +100,13 @@ public class EventListeners implements Listener {
                 Member victimMember = Member.getMember(victim);
                 Member Damager = Member.getMember(damager);
                 if (victimMember.isFighting && Damager.isFighting) {
+                    if (victim != damager)
+                        victimMember.Damage = Damager;
                     if (victim.getHealth() - e.getFinalDamage() <= 0) {
-                        victimMember.death(damager, false);
+                        victimMember.death(false);
                         e.setCancelled(true);
                         victim.damage(0);
-                    } else if (victim != damager)
-                        victimMember.Damage = Damager;
+                    }
                     victimMember.KillTime = System.currentTimeMillis();
                 } else e.setCancelled(true);
             }
@@ -222,11 +223,10 @@ public class EventListeners implements Listener {
         Player player = e.getPlayer();
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
-        member.death(null, true);
+        member.death( true);
         Member.users.remove(member.id);
-        int i = KnockBackFFA.session.indexOf(member);
-        KnockBackFFA.session.remove(member);
-        KnockBackFFA.score.remove(member);
+        int i = KnockBackFFA.session.indexOf(player);
+        KnockBackFFA.session.remove(player);
         if (i != -1 && i < 10) {
             List<String> s = KnockBackFFA.getSideBar();
             for (SideBar sideBar : SideBar.getSidebars()) {
