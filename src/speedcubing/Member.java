@@ -9,6 +9,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
 import speedcubing.lib.bukkit.PlayerUtils;
 import speedcubing.lib.bukkit.SideBar;
+import speedcubing.lib.utils.SQL.SQLUtils;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 
@@ -40,7 +41,7 @@ public class Member extends User {
         super(player.getUniqueId());
         users.put(id, this);
         player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
-        new Thread(() -> SQLCache = speedcubingServer.connection.selectString("playersdata", "kbffa_inventory", "id='" + id + "'")).start();
+        new Thread(() -> SQLCache = SQLUtils.getString(speedcubingServer.connection.select("playersdata", "kbffa_inventory", "id='" + id + "'"))).start();
         KnockBackFFA.session.add(player);
         player.setLevel(0);
         player.setHealth(20);
