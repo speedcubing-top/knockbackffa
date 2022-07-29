@@ -1,7 +1,10 @@
 package speedcubing;
 
+import net.minecraft.server.v1_8_R3.*;
+import org.bukkit.Material;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,6 +12,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
 import speedcubing.lib.bukkit.PlayerUtils;
 import speedcubing.lib.bukkit.SideBar;
+import speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
 import speedcubing.lib.utils.SQL.SQLUtils;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
@@ -16,6 +20,7 @@ import speedcubing.server.speedcubingServer;
 import java.util.*;
 
 public class Member extends User {
+    private static final String obj = "§c❤";
     public static Map<Integer, Member> users = new HashMap<>();
 
     public static Member getMember(CommandSender sender) {
@@ -34,12 +39,13 @@ public class Member extends User {
     public long KillTime;
     public boolean iseditingkit;
     public Set<EnderPearl> pearls = new HashSet<>();
+    private final PacketPlayOutScoreboardScore maxHealPacket;
     public boolean isFighting;
     public String SQLCache;
 
     public Member(Player player) {
         super(player.getUniqueId());
-        users.put(id, this);
+        maxHealPacket = new OutScoreboardScore().a(player.getName()).b(obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
         player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
         new Thread(() -> SQLCache = SQLUtils.getString(speedcubingServer.connection.select("playersdata", "kbffa_inventory", "id='" + id + "'"))).start();
         KnockBackFFA.session.add(player);
@@ -55,6 +61,7 @@ public class Member extends User {
         inventory.setBoots(new ItemStack(Material.AIR));
         inventory.clear();
         inventory.setItem(4, KnockBackFFA.itemStacks[lang][11]);
+        PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
         int size = KnockBackFFA.session.size();
         String[] sidebar = KnockBackFFA.sidebar[lang];
         SideBar sideBar = new SideBar(player, sidebar[0])
@@ -74,8 +81,13 @@ public class Member extends User {
             }
             sideBar.changeableLine(result, 9 - j);
         }
-        sideBar.scoreboard.registerNewObjective("§c❤", "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
+        sideBar.scoreboard.registerNewObjective(obj, "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
         sideBar.create();
+        for (Member m : Member.users.values()) {
+            if (m.player.getHealth() > 19)
+                connection.sendPacket(m.maxHealPacket);
+        }
+        users.put(id, this);
     }
 
     public void death(boolean quit) {
