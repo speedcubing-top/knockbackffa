@@ -10,10 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -21,6 +18,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import speedcubing.lib.bukkit.PlayerUtils;
 import speedcubing.lib.bukkit.SideBar;
 import speedcubing.lib.bukkit.inventory.InventoryUtils;
@@ -31,6 +29,36 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EventListeners implements Listener {
+
+    //BOW BOOST PLUGIN
+    @EventHandler
+    public void onShoot(EntityShootBowEvent e) {
+        LivingEntity livingEntity = e.getEntity();
+        Vector dir = livingEntity.getLocation().getDirection();
+        Arrow a = (Arrow) e.getProjectile();
+        double speed = a.getVelocity().length();
+        Vector vel = dir.multiply(speed);
+        a.setVelocity(vel);
+    }
+
+    @EventHandler
+    public void onVelo(PlayerVelocityEvent e) {
+        Player p = e.getPlayer();
+        Vector velo = e.getVelocity();
+        EntityDamageEvent event = p.getLastDamageCause();
+        if (event != null && !event.isCancelled() && event instanceof EntityDamageByEntityEvent) {
+            Entity damager = ((EntityDamageByEntityEvent) event).getDamager();
+            if (damager instanceof Arrow) {
+                Arrow a = (Arrow) damager;
+                if (a.getShooter().equals(p)) {
+                    double speed = Math.sqrt(velo.getX() * velo.getX() + velo.getZ() * velo.getZ());
+                    Vector dir = a.getLocation().getDirection().normalize();
+                    Vector newvelo = new Vector(dir.getX() * speed * -1.0D, velo.getY(), dir.getZ() * speed);
+                    e.setVelocity(newvelo);
+                }
+            }
+        }
+    }
 
     @EventHandler
     public void BlocKBreakEvent(BlockBreakEvent e) {
@@ -63,7 +91,7 @@ public class EventListeners implements Listener {
                 user.isFighting = true;
                 user.item(false);
             } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5))
-                user.death( false);
+                user.death(false);
         }
     }
 
@@ -75,7 +103,7 @@ public class EventListeners implements Listener {
             if (cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.FIRE_TICK)
                 e.setCancelled(true);
             else if ((cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.DROWNING) && ((Player) entity).getHealth() - e.getFinalDamage() < 0)
-                Member.getMember(entity).death( false);
+                Member.getMember(entity).death(false);
         }
     }
 
@@ -212,7 +240,7 @@ public class EventListeners implements Listener {
             player.openInventory(KnockBackFFA.KitEditor[member.lang]);
             InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.lang]);
         }
-        if (player.getLocation().getY() > KnockBackFFA.spawnprotectY) {
+        if (player.getLocation().getY() > KnockBackFFA.spawnprotectY && player.getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);
             player.updateInventory();
         }
@@ -223,10 +251,10 @@ public class EventListeners implements Listener {
         Player player = e.getPlayer();
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
-        member.death( true);
+        member.death(true);
         Member.users.remove(member.id);
-        int i = KnockBackFFA.session.indexOf(player);
-        KnockBackFFA.session.remove(player);
+        int i = KnockBackFFA.session.indexOf(member);
+        KnockBackFFA.session.remove(member);
         if (i != -1 && i < 10) {
             List<String> s = KnockBackFFA.getSideBar();
             for (SideBar sideBar : SideBar.getSidebars()) {

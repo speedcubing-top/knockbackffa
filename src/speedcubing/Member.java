@@ -1,7 +1,8 @@
 package speedcubing;
 
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.Material;
+import com.google.gson.Gson;
+import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
+import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -45,10 +46,21 @@ public class Member extends User {
 
     public Member(Player player) {
         super(player.getUniqueId());
+
+        String r = SQLUtils.getString(speedcubingServer.connection.select("playersdata", "forgemod", "id=" + id));
+        if (r != null) {
+            Map<String, String> mod = new Gson().fromJson(r, HashMap.class);
+            for (String m : mod.keySet()) {
+                if (m.toLowerCase().contains("fdpc")) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/proxycommand ban " + player.getName() + " 0 [System] Unfair Advantages");
+                }
+            }
+        }
+
         maxHealPacket = new OutScoreboardScore().a(player.getName()).b(obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
         player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
         new Thread(() -> SQLCache = SQLUtils.getString(speedcubingServer.connection.select("playersdata", "kbffa_inventory", "id='" + id + "'"))).start();
-        KnockBackFFA.session.add(player);
+        KnockBackFFA.session.add(this);
         player.setLevel(0);
         player.setHealth(20);
         player.setGameMode(GameMode.SURVIVAL);
@@ -71,12 +83,12 @@ public class Member extends User {
             if (size <= j) {
                 result = "§7-,---";
             } else {
-                Player ses = KnockBackFFA.session.get(j);
-                int sc = ses.getLevel();
+                Member ses = KnockBackFFA.session.get(j);
+                int sc = ses.player.getLevel();
                 if (sc == 0)
                     result = "§7-,---";
                 else {
-                    result = speedcubingServer.getFormat(Member.getMember(ses).rank)[1] + ses.getName() + "§8: §e" + sc;
+                    result = speedcubingServer.getFormat(ses.rank)[1] + ses.player.getName() + "§8: §e" + sc;
                 }
             }
             sideBar.changeableLine(result, 9 - j);
@@ -99,10 +111,10 @@ public class Member extends User {
                 Damage.player.setHealth(20);
                 int a = Damage.player.getLevel();
                 for (; i < KnockBackFFA.session.size(); i++) {
-                    Player p = KnockBackFFA.session.get(i);
-                    if (p.getLevel() < a + 1 || p.getLevel() == 0) {
-                        KnockBackFFA.session.remove(Damage.player);
-                        KnockBackFFA.session.add(i, Damage.player);
+                    Member p = KnockBackFFA.session.get(i);
+                    if (p.player.getLevel() < a + 1 || p.player.getLevel() == 0) {
+                        KnockBackFFA.session.remove(Damage);
+                        KnockBackFFA.session.add(i, Damage);
                         break;
                     }
                 }
@@ -134,8 +146,8 @@ public class Member extends User {
             if (pearls != null)
                 pearls.forEach(EnderPearl::remove);
         }
-        KnockBackFFA.session.remove(player);
-        KnockBackFFA.session.add(player);
+        KnockBackFFA.session.remove(this);
+        KnockBackFFA.session.add(this);
         if (i < 10) {
             List<String> s = KnockBackFFA.getSideBar();
             for (SideBar sideBar : SideBar.getSidebars()) {
@@ -150,7 +162,6 @@ public class Member extends User {
         player.closeInventory();
         char[] cfg = SQLCache.toCharArray();
         PlayerInventory inventory = player.getInventory();
-        // blocks
         ItemStack[] stack = KnockBackFFA.itemStacks[lang];
         pearls.clear();
         if (win) {
