@@ -42,7 +42,9 @@ public class Member extends User {
     public Set<EnderPearl> pearls = new HashSet<>();
     private final PacketPlayOutScoreboardScore maxHealPacket;
     public boolean isFighting;
-    public String SQLCache;
+    public String inventory;
+    public int kill;
+    public int death;
 
     public Member(Player player) {
         super(player.getUniqueId());
@@ -58,8 +60,11 @@ public class Member extends User {
         }
 
         maxHealPacket = new OutScoreboardScore().a(player.getName()).b(obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
+        String[] s = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "kbffa_inventory,kbffa_kill,kbffa_death", "id=" + id));
+        inventory = s[0];
+        kill = Integer.parseInt(s[1]);
+        death = Integer.parseInt(s[2]);
         player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
-        new Thread(() -> SQLCache = SQLUtils.getString(speedcubingServer.connection.select("playersdata", "kbffa_inventory", "id='" + id + "'"))).start();
         KnockBackFFA.session.add(this);
         player.setLevel(0);
         player.setHealth(20);
@@ -118,6 +123,7 @@ public class Member extends User {
                         break;
                     }
                 }
+                Damage.kill += 1;
                 Damage.item(true);
                 Damage.player.setLevel(Damage.player.getLevel() + 1);
                 String ft = speedcubingServer.getFormat(Damage.rank)[1];
@@ -125,8 +131,14 @@ public class Member extends User {
                 users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", Damage.player.getName())));
             }
         }
+        if (!quit || Damage != null)
+            death += 1;
         if (!quit) {
             Damage = null;
+            for (Member m : users.values()) {
+                if (m.Damage == this)
+                    m.Damage = null;
+            }
             PlayerInventory inventory = player.getInventory();
             inventory.clear();
             inventory.setHelmet(new ItemStack(Material.AIR));
@@ -160,7 +172,7 @@ public class Member extends User {
 
     public void item(boolean win) {
         player.closeInventory();
-        char[] cfg = SQLCache.toCharArray();
+        char[] cfg = inventory.toCharArray();
         PlayerInventory inventory = player.getInventory();
         ItemStack[] stack = KnockBackFFA.itemStacks[lang];
         pearls.clear();

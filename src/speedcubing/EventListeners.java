@@ -44,15 +44,14 @@ public class EventListeners implements Listener {
     @EventHandler
     public void onVelo(PlayerVelocityEvent e) {
         Player p = e.getPlayer();
-        Vector velo = e.getVelocity();
         EntityDamageEvent event = p.getLastDamageCause();
         if (event != null && !event.isCancelled() && event instanceof EntityDamageByEntityEvent) {
             Entity damager = ((EntityDamageByEntityEvent) event).getDamager();
             if (damager instanceof Arrow) {
-                Arrow a = (Arrow) damager;
-                if (a.getShooter().equals(p)) {
+                if (((Arrow) damager).getShooter().equals(p)) {
+                    Vector velo = e.getVelocity();
                     double speed = Math.sqrt(velo.getX() * velo.getX() + velo.getZ() * velo.getZ());
-                    Vector dir = a.getLocation().getDirection().normalize();
+                    Vector dir = damager.getLocation().getDirection().normalize();
                     Vector newvelo = new Vector(dir.getX() * speed * -1.0D, velo.getY(), dir.getZ() * speed);
                     e.setVelocity(newvelo);
                 }
@@ -170,15 +169,12 @@ public class EventListeners implements Listener {
                             Member user = Member.getMember(player);
                             player.sendMessage(GlobalString.SavedSettings[user.lang]);
                             List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
-                            String s = "       ";
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
                                     int index = t.indexOf(inv.getItem(i).getType());
-                                    s = s.substring(0, index) + i + s.substring(index + 1);
+                                    user.inventory = user.inventory.substring(0, index) + i + user.inventory.substring(index + 1);
                                 }
                             }
-                            user.SQLCache = s;
-                            new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + user.SQLCache + "'", "id=" + user.id)).start();
                             inv.clear();
                             inv.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
                             user.iseditingkit = false;
@@ -228,7 +224,7 @@ public class EventListeners implements Listener {
             Inventory inventory = player.getInventory();
             inventory.setItem(4, new ItemStack(Material.AIR));
             ItemStack[] itemStacks = KnockBackFFA.itemStacks[member.lang];
-            char[] cfg = member.SQLCache.toCharArray();
+            char[] cfg = member.inventory.toCharArray();
             inventory.setItem(cfg[0] - 48, itemStacks[4]);
             inventory.setItem(cfg[1] - 48, itemStacks[5]);
             inventory.setItem(cfg[2] - 48, itemStacks[6]);
@@ -252,6 +248,7 @@ public class EventListeners implements Listener {
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
         member.death(true);
+        new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_death=" + member.death, "id=" + member.id)).start();
         Member.users.remove(member.id);
         int i = KnockBackFFA.session.indexOf(member);
         KnockBackFFA.session.remove(member);
