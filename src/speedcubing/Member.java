@@ -48,17 +48,6 @@ public class Member extends User {
 
     public Member(Player player) {
         super(player.getUniqueId());
-
-        String r = SQLUtils.getString(speedcubingServer.connection.select("playersdata", "forgemod", "id=" + id));
-        if (r != null) {
-            Map<String, String> mod = new Gson().fromJson(r, HashMap.class);
-            for (String m : mod.keySet()) {
-                if (m.toLowerCase().contains("fdpc")) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "/proxycommand ban " + player.getName() + " 0 [System] Unfair Advantages");
-                }
-            }
-        }
-
         maxHealPacket = new OutScoreboardScore().a(player.getName()).b(obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
         String[] s = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "kbffa_inventory,kbffa_kill,kbffa_death", "id=" + id));
         inventory = s[0];
