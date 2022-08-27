@@ -166,18 +166,18 @@ public class EventListeners implements Listener {
                         player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
-                            Member user = Member.getMember(player);
-                            player.sendMessage(GlobalString.SavedSettings[user.lang]);
+                            Member member = Member.getMember(player);
+                            player.sendMessage(GlobalString.SavedSettings[member.user.lang]);
                             List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
                                     int index = t.indexOf(inv.getItem(i).getType());
-                                    user.inventory = user.inventory.substring(0, index) + i + user.inventory.substring(index + 1);
+                                    member.inventory = member.inventory.substring(0, index) + i + member.inventory.substring(index + 1);
                                 }
                             }
                             inv.clear();
-                            inv.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
-                            user.iseditingkit = false;
+                            inv.setItem(4, KnockBackFFA.itemStacks[member.user.lang][11]);
+                            member.iseditingkit = false;
                             player.closeInventory();
                         } else {
                             for (int i = 0; i < 9; i++) {
@@ -203,13 +203,13 @@ public class EventListeners implements Listener {
         if (e.getInventory().getHolder().equals(KnockBackFFA.KitEditorHolder)) {
             Player player = (Player) e.getPlayer();
             player.setItemOnCursor(new ItemStack(Material.AIR));
-            Member user = Member.getMember(player);
-            if (user.iseditingkit) {
-                user.iseditingkit = false;
-                player.sendMessage(GlobalString.UnSavedSettings[user.lang]);
+            Member member = Member.getMember(player);
+            if (member.iseditingkit) {
+                member.iseditingkit = false;
+                player.sendMessage(GlobalString.UnSavedSettings[member.user.lang]);
                 Inventory inventory = player.getInventory();
                 inventory.clear();
-                inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
+                inventory.setItem(4, KnockBackFFA.itemStacks[member.user.lang][11]);
             }
         }
     }
@@ -223,7 +223,7 @@ public class EventListeners implements Listener {
             player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
             Inventory inventory = player.getInventory();
             inventory.setItem(4, new ItemStack(Material.AIR));
-            ItemStack[] itemStacks = KnockBackFFA.itemStacks[member.lang];
+            ItemStack[] itemStacks = KnockBackFFA.itemStacks[member.user.lang];
             char[] cfg = member.inventory.toCharArray();
             inventory.setItem(cfg[0] - 48, itemStacks[4]);
             inventory.setItem(cfg[1] - 48, itemStacks[5]);
@@ -233,8 +233,8 @@ public class EventListeners implements Listener {
             inventory.setItem(cfg[5] - 48, itemStacks[9]);
             inventory.setItem(cfg[6] - 48, itemStacks[10]);
             member.iseditingkit = true;
-            player.openInventory(KnockBackFFA.KitEditor[member.lang]);
-            InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.lang]);
+            player.openInventory(KnockBackFFA.KitEditor[member.user.lang]);
+            InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.user.lang]);
         }
         if (player.getLocation().getY() > KnockBackFFA.spawnprotectY && player.getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);
@@ -248,8 +248,8 @@ public class EventListeners implements Listener {
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
         member.death(true);
-        new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_death=" + member.death, "id=" + member.id)).start();
-        Member.users.remove(member.id);
+        new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_death=" + member.death, "id=" + member.user.id)).start();
+        Member.users.remove(member.user.id);
         int i = KnockBackFFA.session.indexOf(member);
         KnockBackFFA.session.remove(member);
         if (i != -1 && i < 10) {

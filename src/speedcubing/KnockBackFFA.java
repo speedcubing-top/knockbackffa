@@ -132,11 +132,11 @@ public class KnockBackFFA extends JavaPlugin {
                 result.add("§7-,---");
             else {
                 Member ses = session.get(j);
-                int sc = ses.player.getLevel();
+                int sc = ses.user.player.getLevel();
                 if (sc == 0)
                     result.add("§7-,---");
                 else {
-                    result.add(speedcubingServer.getFormat(ses.rank)[1] + ses.player.getName() + "§8: §e" + sc);
+                    result.add(speedcubingServer.getFormat(ses.user.rank)[1] + ses.user.player.getName() + "§8: §e" + sc);
                 }
             }
         }

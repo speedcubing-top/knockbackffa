@@ -1,6 +1,5 @@
 package speedcubing;
 
-import com.google.gson.Gson;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.*;
@@ -20,22 +19,19 @@ import speedcubing.server.speedcubingServer;
 
 import java.util.*;
 
-public class Member extends User {
+public class Member {
     private static final String obj = "§c❤";
     public static Map<Integer, Member> users = new HashMap<>();
 
     public static Member getMember(CommandSender sender) {
-        return getMember((Player) sender);
-    }
-
-    public static Member getMember(Player player) {
-        return getMember(User.getUser(player).id);
+        return getMember(User.getUser(sender).id);
     }
 
     public static Member getMember(int id) {
         return users.get(id);
     }
 
+    public final User user;
     public Member Damage;
     public long KillTime;
     public boolean iseditingkit;
@@ -47,9 +43,9 @@ public class Member extends User {
     public int death;
 
     public Member(Player player) {
-        super(player.getUniqueId());
+        this.user = User.getUser(player);
         maxHealPacket = new OutScoreboardScore().a(player.getName()).b(obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
-        String[] s = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "kbffa_inventory,kbffa_kill,kbffa_death", "id=" + id));
+        String[] s = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "kbffa_inventory,kbffa_kill,kbffa_death", "id=" + user.id));
         inventory = s[0];
         kill = Integer.parseInt(s[1]);
         death = Integer.parseInt(s[2]);
@@ -66,10 +62,10 @@ public class Member extends User {
         inventory.setLeggings(new ItemStack(Material.AIR));
         inventory.setBoots(new ItemStack(Material.AIR));
         inventory.clear();
-        inventory.setItem(4, KnockBackFFA.itemStacks[lang][11]);
+        inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
         int size = KnockBackFFA.session.size();
-        String[] sidebar = KnockBackFFA.sidebar[lang];
+        String[] sidebar = KnockBackFFA.sidebar[user.lang];
         SideBar sideBar = new SideBar(player, sidebar[0])
                 .staticLine(sidebar[1], 10);
         for (int j = 0; j < 10; j++) {
@@ -78,11 +74,11 @@ public class Member extends User {
                 result = "§7-,---";
             } else {
                 Member ses = KnockBackFFA.session.get(j);
-                int sc = ses.player.getLevel();
+                int sc = ses.user.player.getLevel();
                 if (sc == 0)
                     result = "§7-,---";
                 else {
-                    result = speedcubingServer.getFormat(ses.rank)[1] + ses.player.getName() + "§8: §e" + sc;
+                    result = speedcubingServer.getFormat(ses.user.rank)[1] + ses.user.player.getName() + "§8: §e" + sc;
                 }
             }
             sideBar.changeableLine(result, 9 - j);
@@ -90,10 +86,10 @@ public class Member extends User {
         sideBar.scoreboard.registerNewObjective(obj, "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
         sideBar.create();
         for (Member m : Member.users.values()) {
-            if (m.player.getHealth() > 19)
+            if (m.user.player.getHealth() > 19)
                 connection.sendPacket(m.maxHealPacket);
         }
-        users.put(id, this);
+        users.put(user.id, this);
     }
 
     public void death(boolean quit) {
@@ -101,12 +97,12 @@ public class Member extends User {
         int i = 0;
         if (System.currentTimeMillis() - this.KillTime < 100000) {
             if (Damage != null) {
-                Damage.player.playSound(Damage.player.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
-                Damage.player.setHealth(20);
-                int a = Damage.player.getLevel();
+                Damage.user.player.playSound(Damage.user.player.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
+                Damage.user.player.setHealth(20);
+                int a = Damage.user.player.getLevel();
                 for (; i < KnockBackFFA.session.size(); i++) {
                     Member p = KnockBackFFA.session.get(i);
-                    if (p.player.getLevel() < a + 1 || p.player.getLevel() == 0) {
+                    if (p.user.player.getLevel() < a + 1 || p.user.player.getLevel() == 0) {
                         KnockBackFFA.session.remove(Damage);
                         KnockBackFFA.session.add(i, Damage);
                         break;
@@ -114,10 +110,10 @@ public class Member extends User {
                 }
                 Damage.kill += 1;
                 Damage.item(true);
-                Damage.player.setLevel(Damage.player.getLevel() + 1);
-                String ft = speedcubingServer.getFormat(Damage.rank)[1];
-                String ft2 = speedcubingServer.getFormat(rank)[1];
-                users.values().forEach(u -> u.player.sendMessage(KnockBackFFA.Kill[u.lang].replace("%format0%", ft2).replace("%name0%", player.getName()).replace("%format1%", ft).replace("%name1%", Damage.player.getName())));
+                Damage.user.player.setLevel(Damage.user.player.getLevel() + 1);
+                String ft = speedcubingServer.getFormat(Damage.user.rank)[1];
+                String ft2 = speedcubingServer.getFormat(user.rank)[1];
+                users.values().forEach(u -> u.user.player.sendMessage(KnockBackFFA.Kill[u.user.lang].replace("%format0%", ft2).replace("%name0%", user.player.getName()).replace("%format1%", ft).replace("%name1%", Damage.user.player.getName())));
             }
         }
         if (!quit || Damage != null)
@@ -128,22 +124,22 @@ public class Member extends User {
                 if (m.Damage == this)
                     m.Damage = null;
             }
-            PlayerInventory inventory = player.getInventory();
+            PlayerInventory inventory = user.player.getInventory();
             inventory.clear();
             inventory.setHelmet(new ItemStack(Material.AIR));
             inventory.setChestplate(new ItemStack(Material.AIR));
             inventory.setLeggings(new ItemStack(Material.AIR));
             inventory.setBoots(new ItemStack(Material.AIR));
-            inventory.setItem(4, KnockBackFFA.itemStacks[lang][11]);
-            player.setLevel(0);
-            player.setHealth(20);
+            inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
+            user.player.setLevel(0);
+            user.player.setHealth(20);
             Bukkit.getScheduler().scheduleSyncDelayedTask(KnockBackFFA.getPlugin(KnockBackFFA.class), () -> {
-                player.setHealth(20);
-                player.setFireTicks(0);
+                user.player.setHealth(20);
+                user.player.setFireTicks(0);
             }, 1);
-            PlayerUtils.removeArrows(player);
-            player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
-            player.setFireTicks(0);
+            PlayerUtils.removeArrows(user.player);
+            user.player.teleport(new Location(user.player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
+            user.player.setFireTicks(0);
             if (pearls != null)
                 pearls.forEach(EnderPearl::remove);
         }
@@ -160,10 +156,10 @@ public class Member extends User {
     }
 
     public void item(boolean win) {
-        player.closeInventory();
+        user.player.closeInventory();
         char[] cfg = inventory.toCharArray();
-        PlayerInventory inventory = player.getInventory();
-        ItemStack[] stack = KnockBackFFA.itemStacks[lang];
+        PlayerInventory inventory = user.player.getInventory();
+        ItemStack[] stack = KnockBackFFA.itemStacks[user.lang];
         pearls.clear();
         if (win) {
             if (isFighting) {
@@ -189,6 +185,6 @@ public class Member extends User {
             inventory.setLeggings(stack[2]);
             inventory.setBoots(stack[3]);
         }
-        player.updateInventory();
+        user.player.updateInventory();
     }
 }
