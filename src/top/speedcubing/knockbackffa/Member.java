@@ -1,4 +1,4 @@
-package speedcubing;
+package top.speedcubing.knockbackffa;
 
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
@@ -10,12 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
-import speedcubing.lib.bukkit.PlayerUtils;
-import speedcubing.lib.bukkit.SideBar;
-import speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
-import speedcubing.lib.utils.SQL.SQLUtils;
-import speedcubing.server.libs.User;
-import speedcubing.server.speedcubingServer;
+import top.speedcubing.lib.bukkit.PlayerUtils;
+import top.speedcubing.lib.bukkit.SideBar;
+import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
+import top.speedcubing.lib.utils.SQL.SQLUtils;
+import top.speedcubing.server.libs.User;
+import top.speedcubing.server.speedcubingServer;
 
 import java.util.*;
 

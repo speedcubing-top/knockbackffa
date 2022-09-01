@@ -1,15 +1,15 @@
-package speedcubing;
+package top.speedcubing.knockbackffa;
 
 import net.minecraft.server.v1_8_R3.PacketPlayInChat;
 import org.bukkit.entity.Player;
-import speedcubing.lib.bukkit.event.PlayInEvent;
-import speedcubing.lib.eventbus.LibEventHandler;
-import speedcubing.lib.utils.Console;
-import speedcubing.server.events.player.NickEvent;
-import speedcubing.server.events.player.SkinEvent;
-import speedcubing.server.events.player.ToggleFlyEvent;
-import speedcubing.server.libs.GlobalString;
-import speedcubing.server.speedcubingServer;
+import top.speedcubing.lib.bukkit.event.PlayInEvent;
+import top.speedcubing.lib.eventbus.LibEventHandler;
+import top.speedcubing.lib.utils.Console;
+import top.speedcubing.server.events.player.NickEvent;
+import top.speedcubing.server.events.player.SkinEvent;
+import top.speedcubing.server.events.player.ToggleFlyEvent;
+import top.speedcubing.server.libs.GlobalString;
+import top.speedcubing.server.speedcubingServer;
 
 public class ServerEvent {
 

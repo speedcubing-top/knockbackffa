@@ -1,4 +1,4 @@
-package speedcubing;
+package top.speedcubing.knockbackffa;
 
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
@@ -13,11 +13,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import speedcubing.lib.bukkit.inventory.InventoryUtils;
-import speedcubing.lib.bukkit.inventory.ItemBuilder;
-import speedcubing.lib.eventbus.LibEventManager;
-import speedcubing.server.config;
-import speedcubing.server.speedcubingServer;
+import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
+import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
+import top.speedcubing.lib.eventbus.LibEventManager;
+import top.speedcubing.server.config;
+import top.speedcubing.server.speedcubingServer;
 
 import java.util.*;
 

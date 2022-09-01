@@ -1,4 +1,4 @@
-package speedcubing;
+package top.speedcubing.knockbackffa;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -19,11 +19,11 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import speedcubing.lib.bukkit.PlayerUtils;
-import speedcubing.lib.bukkit.SideBar;
-import speedcubing.lib.bukkit.inventory.InventoryUtils;
-import speedcubing.server.libs.GlobalString;
-import speedcubing.server.speedcubingServer;
+import top.speedcubing.lib.bukkit.PlayerUtils;
+import top.speedcubing.lib.bukkit.SideBar;
+import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
+import top.speedcubing.server.libs.GlobalString;
+import top.speedcubing.server.speedcubingServer;
 
 import java.util.Arrays;
 import java.util.List;
