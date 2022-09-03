@@ -1,5 +1,5 @@
 name: KnockBackFFA
-main: speedcubing.KnockBackFFA
+main: top.speedcubing.knockbackffa.KnockBackFFA
 version: 1.0
 depend:
   - speedcubingServer
