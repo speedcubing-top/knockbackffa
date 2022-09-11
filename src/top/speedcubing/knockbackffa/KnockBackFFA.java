@@ -28,7 +28,6 @@ public class KnockBackFFA extends JavaPlugin {
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
     public static final Map<Block, Integer[]> Diff = new HashMap<>();
-    public static final List<Member> session = new ArrayList<>();
     public static String[] Kill = {
             "%format0%%name0%§7 was killed by %format1%%name1%§7.",
             "%format0%%name0%§7 was killed by %format1%%name1%§7.",
@@ -37,10 +36,10 @@ public class KnockBackFFA extends JavaPlugin {
     };
 
     public static String[][] sidebar = {
-            {"§3KnockBackFFA", "§6" + config.SERVERIP},
-            {"§3KnockBackFFA", "§6" + config.SERVERIP},
-            {"§3KnockBackFFA", "§6" + config.SERVERIP},
-            {"§3KnockBackFFA", "§6" + config.SERVERIP}
+            {"§3KnockBackFFA", "§6" + config.SERVERIP,"§3","Current Killstreak","§6","§0","Total Kills","§e","§1","Total Deaths","§c","§2","Killstreak Record","§9"},
+            {"§3KnockBackFFA", "§6" + config.SERVERIP,"§3","Current Killstreak","§6","§0","Total Kills","§e","§1","Total Deaths","§c","§2","Killstreak Record","§9"},
+            {"§3KnockBackFFA", "§6" + config.SERVERIP,"§3","Current Killstreak","§6","§0","Total Kills","§e","§1","Total Deaths","§c","§2","Killstreak Record","§9"},
+            {"§3KnockBackFFA", "§6" + config.SERVERIP,"§3","Current Killstreak","§6","§0","Total Kills","§e","§1","Total Deaths","§c","§2","Killstreak Record","§9"}
     };
 
     public static double centerX = 0;
@@ -121,25 +120,5 @@ public class KnockBackFFA extends JavaPlugin {
     public void onDisable() {
         World world = Bukkit.getWorld("world");
         KnockBackFFA.Diff.keySet().forEach(a -> world.getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
-    }
-
-    public static List<String> getSideBar() {
-        System.out.println(session);
-        List<String> result = new ArrayList<>();
-        int size = session.size();
-        for (int j = 0; j < 10; j++) {
-            if (size <= j)
-                result.add("§7-,---");
-            else {
-                Member ses = session.get(j);
-                int sc = ses.user.player.getLevel();
-                if (sc == 0)
-                    result.add("§7-,---");
-                else {
-                    result.add(speedcubingServer.getFormat(ses.user.rank)[1] + ses.user.player.getName() + "§8: §e" + sc);
-                }
-            }
-        }
-        return result;
     }
 }

@@ -17,7 +17,10 @@ import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Member {
     private static final String obj = "§c❤";
@@ -41,16 +44,18 @@ public class Member {
     public String inventory;
     public int kill;
     public int death;
+    public int killstreak;
+
 
     public Member(Player player) {
         this.user = User.getUser(player);
         maxHealPacket = new OutScoreboardScore().a(player.getName()).b(obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
-        String[] s = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "kbffa_inventory,kbffa_kill,kbffa_death", "id=" + user.id));
+        String[] s = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak", "id=" + user.id));
         inventory = s[0];
         kill = Integer.parseInt(s[1]);
         death = Integer.parseInt(s[2]);
+        killstreak = Integer.parseInt(s[3]);
         player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
-        KnockBackFFA.session.add(this);
         player.setLevel(0);
         player.setHealth(20);
         player.setGameMode(GameMode.SURVIVAL);
@@ -64,25 +69,21 @@ public class Member {
         inventory.clear();
         inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-        int size = KnockBackFFA.session.size();
         String[] sidebar = KnockBackFFA.sidebar[user.lang];
         SideBar sideBar = new SideBar(player, sidebar[0])
-                .staticLine(sidebar[1], 10);
-        for (int j = 0; j < 10; j++) {
-            String result;
-            if (size <= j) {
-                result = "§7-,---";
-            } else {
-                Member ses = KnockBackFFA.session.get(j);
-                int sc = ses.user.player.getLevel();
-                if (sc == 0)
-                    result = "§7-,---";
-                else {
-                    result = speedcubingServer.getFormat(ses.user.rank)[1] + ses.user.player.getName() + "§8: §e" + sc;
-                }
-            }
-            sideBar.changeableLine(result, 9 - j);
-        }
+                .staticLine(sidebar[1], 12)
+                .staticLine(sidebar[2], 11)
+                .staticLine(sidebar[3], 10)
+                .changeableLine(sidebar[4] + 0, 9)
+                .staticLine(sidebar[5], 8)
+                .staticLine(sidebar[6], 7)
+                .changeableLine(sidebar[7] + kill, 6)
+                .staticLine(sidebar[8], 5)
+                .staticLine(sidebar[9], 4)
+                .changeableLine(sidebar[10] + death, 3)
+                .staticLine(sidebar[11], 2)
+                .staticLine(sidebar[12], 1)
+                .changeableLine(sidebar[13] + killstreak, 0);
         sideBar.scoreboard.registerNewObjective(obj, "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
         sideBar.create();
         for (Member m : Member.users.values()) {
@@ -94,43 +95,47 @@ public class Member {
 
     public void death(boolean quit) {
         isFighting = false;
-        int i = 0;
+        boolean killed = false;
         if (System.currentTimeMillis() - this.KillTime < 100000) {
             if (Damage != null) {
-                Damage.user.player.playSound(Damage.user.player.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
-                Damage.user.player.setHealth(20);
-                int a = Damage.user.player.getLevel();
-                for (; i < KnockBackFFA.session.size(); i++) {
-                    Member p = KnockBackFFA.session.get(i);
-                    if (p.user.player.getLevel() < a + 1 || p.user.player.getLevel() == 0) {
-                        KnockBackFFA.session.remove(Damage);
-                        KnockBackFFA.session.add(i, Damage);
-                        break;
-                    }
-                }
+                killed = true;
+                Player damager = Damage.user.player;
+                SideBar sideBar = SideBar.getSidebar(damager);
+                damager.playSound(damager.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
+                damager.setHealth(20);
                 Damage.kill += 1;
+                int currentKillStreak = damager.getLevel() + 1;
+                sideBar.setLine(KnockBackFFA.sidebar[Damage.user.lang][4] + currentKillStreak, 4);
+                sideBar.setLine(KnockBackFFA.sidebar[Damage.user.lang][7] + Damage.kill, 7);
+                damager.setLevel(currentKillStreak);
                 Damage.item(true);
-                Damage.user.player.setLevel(Damage.user.player.getLevel() + 1);
+                if (currentKillStreak > Damage.killstreak) {
+                    Damage.killstreak += 1;
+                    sideBar.setLine(KnockBackFFA.sidebar[Damage.user.lang][13] + Damage.killstreak, 13);
+                }
                 String ft = speedcubingServer.getFormat(Damage.user.rank)[1];
                 String ft2 = speedcubingServer.getFormat(user.rank)[1];
                 users.values().forEach(u -> u.user.player.sendMessage(KnockBackFFA.Kill[u.user.lang].replace("%format0%", ft2).replace("%name0%", user.player.getName()).replace("%format1%", ft).replace("%name1%", Damage.user.player.getName())));
+                death += 1;
             }
         }
-        if (!quit || Damage != null)
-            death += 1;
         if (!quit) {
+            SideBar sideBar = SideBar.getSidebar(user.player);
+            PlayerInventory inventory = user.player.getInventory();
             Damage = null;
             for (Member m : users.values()) {
                 if (m.Damage == this)
                     m.Damage = null;
             }
-            PlayerInventory inventory = user.player.getInventory();
             inventory.clear();
             inventory.setHelmet(new ItemStack(Material.AIR));
             inventory.setChestplate(new ItemStack(Material.AIR));
             inventory.setLeggings(new ItemStack(Material.AIR));
             inventory.setBoots(new ItemStack(Material.AIR));
             inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
+            if (killed)
+                sideBar.setLine(KnockBackFFA.sidebar[user.lang][10] + death, 10);
+            sideBar.setLine(KnockBackFFA.sidebar[user.lang][4] + 0, 4);
             user.player.setLevel(0);
             user.player.setHealth(20);
             Bukkit.getScheduler().scheduleSyncDelayedTask(KnockBackFFA.getPlugin(KnockBackFFA.class), () -> {
@@ -142,16 +147,6 @@ public class Member {
             user.player.setFireTicks(0);
             if (pearls != null)
                 pearls.forEach(EnderPearl::remove);
-        }
-        KnockBackFFA.session.remove(this);
-        KnockBackFFA.session.add(this);
-        if (i < 10) {
-            List<String> s = KnockBackFFA.getSideBar();
-            for (SideBar sideBar : SideBar.getSidebars()) {
-                for (int j = 0; j < 10; j++) {
-                    sideBar.setLine(s.get(j), j + 2);
-                }
-            }
         }
     }
 

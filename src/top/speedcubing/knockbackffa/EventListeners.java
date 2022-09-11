@@ -20,7 +20,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import top.speedcubing.lib.bukkit.PlayerUtils;
-import top.speedcubing.lib.bukkit.SideBar;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.speedcubingServer;
@@ -248,18 +247,8 @@ public class EventListeners implements Listener {
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
         member.death(true);
-        new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_death=" + member.death, "id=" + member.user.id)).start();
+        new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak, "id=" + member.user.id)).start();
         Member.users.remove(member.user.id);
-        int i = KnockBackFFA.session.indexOf(member);
-        KnockBackFFA.session.remove(member);
-        if (i != -1 && i < 10) {
-            List<String> s = KnockBackFFA.getSideBar();
-            for (SideBar sideBar : SideBar.getSidebars()) {
-                for (int j = 0; j < 10; j++) {
-                    sideBar.setLine(s.get(j), j + 2);
-                }
-            }
-        }
     }
 
     @EventHandler
