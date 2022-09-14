@@ -1,6 +1,7 @@
 package top.speedcubing.knockbackffa;
 
 import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
@@ -56,6 +57,7 @@ public class KnockBackFFA extends JavaPlugin {
     }
 
     public void onEnable() {
+        MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
             KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]));
             commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
