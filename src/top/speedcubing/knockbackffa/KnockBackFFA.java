@@ -18,9 +18,11 @@ import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.server.config;
-import top.speedcubing.server.speedcubingServer;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class KnockBackFFA extends JavaPlugin {
     public static final ItemStack[] Invalid = new ItemStack[4];
@@ -37,10 +39,10 @@ public class KnockBackFFA extends JavaPlugin {
     };
 
     public static String[][] sidebar = {
-            {"§3KnockBackFFA", "§6" + config.SERVERIP,"§3","Current Killstreak","§6","§0","Total Kills","§e","§1","Total Deaths","§c","§2","Killstreak Record","§9"},
-            {"§3KnockBackFFA", "§6" + config.SERVERIP,"§3","Current Killstreak","§6","§0","Total Kills","§e","§1","Total Deaths","§c","§2","Killstreak Record","§9"},
-            {"§3KnockBackFFA", "§6" + config.SERVERIP,"§3","Current Killstreak","§6","§0","Total Kills","§e","§1","Total Deaths","§c","§2","Killstreak Record","§9"},
-            {"§3KnockBackFFA", "§6" + config.SERVERIP,"§3","Current Killstreak","§6","§0","Total Kills","§e","§1","Total Deaths","§c","§2","Killstreak Record","§9"}
+            {"§3KnockBackFFA", "§6" + config.SERVERIP, "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
+            {"§3KnockBackFFA", "§6" + config.SERVERIP, "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
+            {"§3KnockBackFFA", "§6" + config.SERVERIP, "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
+            {"§3KnockBackFFA", "§6" + config.SERVERIP, "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"}
     };
 
     public static double centerX = 0;
@@ -111,12 +113,6 @@ public class KnockBackFFA extends JavaPlugin {
             KitEditor[i].setItem(5, new ItemBuilder(Material.INK_SACK).durability(1).name(unsave[i]).build());
             Invalid[i] = new ItemBuilder(Material.STAINED_GLASS_PANE).durability(8).name(display[i]).build();
         }
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                speedcubingServer.tcp.sendClean(25576 - Bukkit.getPort() % 2, "online|4|" + Bukkit.getOnlinePlayers().size());
-            }
-        }, 0, 1000);
     }
 
     public void onDisable() {
