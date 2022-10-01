@@ -17,8 +17,8 @@ public class configuration implements CommandExecutor {
         yaw = KnockBackFFA.getPlugin(KnockBackFFA.class).getConfig().getFloat("yaw");
     }
 
-    public static double centerX = 10000;
-    public static double centerZ = -10000;
+    public static double centerX = 0;
+    public static double centerZ = 0;
     public static double offsetY = 100;
     public static float yaw = 0;
 
