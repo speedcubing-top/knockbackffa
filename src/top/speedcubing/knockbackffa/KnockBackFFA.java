@@ -14,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.LibEventManager;
@@ -44,18 +45,13 @@ public class KnockBackFFA extends JavaPlugin {
             {"§3KnockBackFFA", "§6" + config.SERVERIP, "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
             {"§3KnockBackFFA", "§6" + config.SERVERIP, "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"}
     };
-
-    public static double centerX = 0;
-    public static double centerZ = 0;
-    public static double offsetY = 100;
-    public static float yaw = 90;
     public static final int spawnprotectY = 146;
 
     public static void switchMap(double newX, double newZ, double newY, float newYaw) {
-        centerX = newX;
-        centerZ = newZ;
-        offsetY = newY;
-        yaw = newYaw;
+        configuration.centerX = newX;
+        configuration.centerZ = newZ;
+        configuration.offsetY = newY;
+        configuration.yaw = newYaw;
     }
 
     public void onEnable() {
@@ -65,6 +61,9 @@ public class KnockBackFFA extends JavaPlugin {
             commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
             return true;
         });
+        new configuration().reload();
+        Bukkit.getPluginCommand("reloadconfig").setExecutor(new configuration());
+        TabCompleteUtils.registerEmptyTabComplete("reloadconfig");
         Bukkit.getPluginManager().registerEvents(new EventListeners(), this);
         World world = Bukkit.getWorld("world");
         world.setDifficulty(Difficulty.EASY);
