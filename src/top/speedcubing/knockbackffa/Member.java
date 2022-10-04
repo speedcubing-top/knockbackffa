@@ -105,13 +105,13 @@ public class Member {
                 damager.setHealth(20);
                 Damage.kill += 1;
                 int currentKillStreak = damager.getLevel() + 1;
-                sideBar.setLine(KnockBackFFA.sidebar[Damage.user.lang][4] + currentKillStreak, 4);
-                sideBar.setLine(KnockBackFFA.sidebar[Damage.user.lang][7] + Damage.kill, 7);
+                sideBar.setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][4] + currentKillStreak, 9);
+                sideBar.setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][7] + Damage.kill, 6);
                 damager.setLevel(currentKillStreak);
                 Damage.item(true);
                 if (currentKillStreak > Damage.killstreak) {
                     Damage.killstreak += 1;
-                    sideBar.setLine(KnockBackFFA.sidebar[Damage.user.lang][13] + Damage.killstreak, 13);
+                    sideBar.setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][13] + Damage.killstreak, 0);
                 }
                 String ft = speedcubingServer.getFormat(Damage.user.rank)[1];
                 String ft2 = speedcubingServer.getFormat(user.rank)[1];
@@ -134,8 +134,8 @@ public class Member {
             inventory.setBoots(new ItemStack(Material.AIR));
             inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
             if (killed)
-                sideBar.setLine(KnockBackFFA.sidebar[user.lang][10] + death, 10);
-            sideBar.setLine(KnockBackFFA.sidebar[user.lang][4] + 0, 4);
+                sideBar.setLineByScore(KnockBackFFA.sidebar[user.lang][10] + death, 3);
+            sideBar.setLineByScore(KnockBackFFA.sidebar[user.lang][4] + 0, 9);
             user.player.setLevel(0);
             user.player.setHealth(20);
             Bukkit.getScheduler().scheduleSyncDelayedTask(KnockBackFFA.getPlugin(KnockBackFFA.class), () -> {
