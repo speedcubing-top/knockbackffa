@@ -105,8 +105,7 @@ public class Member {
                 damager.setHealth(20);
                 Damage.kill += 1;
                 int currentKillStreak = damager.getLevel() + 1;
-                sideBar.setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][4] + currentKillStreak, 9);
-                sideBar.setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][7] + Damage.kill, 6);
+                sideBar.setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][4] + currentKillStreak, 9).setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][7] + Damage.kill, 6);
                 damager.setLevel(currentKillStreak);
                 Damage.item(true);
                 if (currentKillStreak > Damage.killstreak) {
