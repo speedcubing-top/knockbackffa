@@ -1,6 +1,7 @@
 package top.speedcubing.knockbackffa;
 
 import net.minecraft.server.v1_8_R3.PacketPlayInChat;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.bukkit.event.PlayInEvent;
 import top.speedcubing.lib.eventbus.LibEventHandler;
@@ -29,7 +30,7 @@ public class ServerEvent {
                         str[2].replace("%text%", text).replace("%text2%", formats[2] + message),
                         str[3].replace("%text%", text).replace("%text2%", formats[2] + message)
                 };
-                Member.users.values().forEach(a -> a.user.player.sendMessage(out[a.user.lang]));
+                speedcubingServer.globalChat(Bukkit.getOnlinePlayers(), player, out);
                 Console.sendColoredConsole("§7[§aChatLog§7] [§b" + player.getWorld().getName() + "§7] " + out[1]);
             }
         }
