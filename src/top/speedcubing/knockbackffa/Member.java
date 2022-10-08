@@ -13,7 +13,6 @@ import org.bukkit.scoreboard.DisplaySlot;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.SideBar;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
-import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
@@ -50,7 +49,7 @@ public class Member {
     public Member(Player player) {
         this.user = User.getUser(player);
         maxHealPacket = new OutScoreboardScore().a(player.getName()).b(obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
-        String[] s = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak", "id=" + user.id));
+        String[] s = speedcubingServer.connection.select("kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak").from("playersdata").where("id=" + user.id).getStringArray();
         inventory = s[0];
         kill = Integer.parseInt(s[1]);
         death = Integer.parseInt(s[2]);
