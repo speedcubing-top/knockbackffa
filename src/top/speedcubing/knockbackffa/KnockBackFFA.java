@@ -154,18 +154,28 @@ public class KnockBackFFA extends JavaPlugin {
             public void run() {
                 String[] arr = speedcubingServer.connection.select("priority,name,kbffa_kill").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
                 String[] arr2 = speedcubingServer.connection.select("priority,name,kbffa_killstreak").from("playersdata").orderBy("kbffa_killstreak DESC, name ASC").limit(0, 10).getStringArray();
+                int lastKill = 0;
+                int index = 0;
+                int a;
                 for (int i = 0; i < killboard.length; i++) {
-                    killboard[i].setName(leaderboard.replace("%i%", Integer.toString(i + 1)).replace("%j%", speedcubingServer.getFormat(arr[i * 3])[0] + arr[i * 3 + 1]).replace("%k%", arr[i * 3 + 2]));
-                    killstreakBoard[i].setName(leaderboard.replace("%i%", Integer.toString(i + 1)).replace("%j%", speedcubingServer.getFormat(arr2[i * 3])[0] + arr2[i * 3 + 1]).replace("%k%", arr2[i * 3 + 2]));
+                    a = Integer.parseInt(arr[i * 3 + 2]);
+                    if (lastKill != a) {
+                        index = i + 1;
+                        lastKill = a;
+                    }
+                    killboard[i].setName(leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", speedcubingServer.getFormat(arr[i * 3])[0] + arr[i * 3 + 1]).replace("%k%", arr[i * 3 + 2]));
                 }
-                String format;
-                for (Member m : Member.users.values()) {
-                    format = speedcubingServer.getFormat(m.user.rank)[0] + m.user.player.getName();
-                    int rank1 = speedcubingServer.connection.select("COUNT(*)").from("playersdata").where("kbffa_kill > (SELECT kbffa_kill FROM playersdata where id=" + m.user.id + ")").getInt() + 1;
-                    int rank2 = speedcubingServer.connection.select("COUNT(*)").from("playersdata").where("kbffa_killstreak > (SELECT kbffa_killstreak FROM playersdata where id=" + m.user.id + ")").getInt() + 1;
-                    m.hologram1.setName(KnockBackFFA.bold(KnockBackFFA.leaderboard.replace("%i%", Integer.toString(rank1)).replace("%j%", format).replace("%k%", Integer.toString(m.kill))));
-                    m.hologram2.setName(KnockBackFFA.bold(KnockBackFFA.leaderboard.replace("%i%", Integer.toString(rank2)).replace("%j%", format).replace("%k%", Integer.toString(m.killstreak))));
+                lastKill = 0;
+                index = 0;
+                for (int i = 0; i < killstreakBoard.length; i++) {
+                    a = Integer.parseInt(arr2[i * 3 + 2]);
+                    if (lastKill != a) {
+                        index = i + 1;
+                        lastKill = a;
+                    }
+                    killstreakBoard[i].setName(leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", speedcubingServer.getFormat(arr2[i * 3])[0] + arr2[i * 3 + 1]).replace("%k%", arr2[i * 3 + 2]));
                 }
+                Member.users.values().forEach(Member::updatePlayerPos);
             }
         }, 0, 5000);
     }

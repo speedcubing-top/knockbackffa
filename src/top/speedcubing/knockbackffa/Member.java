@@ -90,10 +90,9 @@ public class Member {
         String format = speedcubingServer.getFormat(user.rank)[0] + player.getName();
         hologram1 = new Hologram("", false, false).addListener(player).world("world").setLocation(KnockBackFFA.holoX, 150.8, KnockBackFFA.holoZ, 0, 0);
         hologram2 = new Hologram("", false, false).addListener(player).world("world").setLocation(KnockBackFFA.holo2X, 150.8, KnockBackFFA.holo2Z, 0, 0);
-        int rank1 = speedcubingServer.connection.select("COUNT(*)").from("playersdata").where("kbffa_kill > (SELECT kbffa_kill FROM playersdata where id=" + user.id + ")").getInt() + 1;
-        int rank2 = speedcubingServer.connection.select("COUNT(*)").from("playersdata").where("kbffa_killstreak > (SELECT kbffa_killstreak FROM playersdata where id=" + user.id + ")").getInt() + 1;
-        hologram1.setName(KnockBackFFA.bold(KnockBackFFA.leaderboard.replace("%i%", Integer.toString(rank1)).replace("%j%", format).replace("%k%", Integer.toString(kill)))).spawn();
-        hologram2.setName(KnockBackFFA.bold(KnockBackFFA.leaderboard.replace("%i%", Integer.toString(rank2)).replace("%j%", format).replace("%k%", Integer.toString(killstreak)))).spawn();
+        updatePlayerPos();
+        hologram1.spawn();
+        hologram2.spawn();
         sideBar.scoreboard.registerNewObjective(obj, "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
         sideBar.create();
         for (Member m : Member.users.values()) {
@@ -157,6 +156,14 @@ public class Member {
             if (pearls != null)
                 pearls.forEach(EnderPearl::remove);
         }
+    }
+
+    public void updatePlayerPos() {
+        String format = speedcubingServer.getFormat(user.rank)[0] + user.player.getName();
+        int rank1 = speedcubingServer.connection.select("COUNT(*)").from("playersdata").where("kbffa_kill > (SELECT kbffa_kill FROM playersdata where id=" + user.id + ")").getInt() + 1;
+        int rank2 = speedcubingServer.connection.select("COUNT(*)").from("playersdata").where("kbffa_killstreak > (SELECT kbffa_killstreak FROM playersdata where id=" + user.id + ")").getInt() + 1;
+        hologram1.setName(KnockBackFFA.bold(KnockBackFFA.leaderboard.replace("%i%", Integer.toString(rank1)).replace("%j%", format).replace("%k%", Integer.toString(kill))));
+        hologram2.setName(KnockBackFFA.bold(KnockBackFFA.leaderboard.replace("%i%", Integer.toString(rank2)).replace("%j%", format).replace("%k%", Integer.toString(killstreak))));
     }
 
     public void item(boolean win) {
