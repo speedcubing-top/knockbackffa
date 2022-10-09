@@ -117,6 +117,8 @@ public class EventListeners implements Listener {
         if (e.getEntity() instanceof Player) {
             Entity damage = e.getDamager();
             Player damager = null;
+            if (damage instanceof EnderPearl)
+                damager = (Player) ((EnderPearl) e.getDamager()).getShooter();
             if (damage instanceof Arrow)
                 damager = (Player) ((Arrow) e.getDamager()).getShooter();
             else if (damage instanceof Player)

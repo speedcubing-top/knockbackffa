@@ -12,6 +12,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.SideBar;
+import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
@@ -44,6 +45,9 @@ public class Member {
     public int kill;
     public int death;
     public int killstreak;
+
+    public Hologram hologram1;
+    public Hologram hologram2;
 
 
     public Member(Player player) {
@@ -83,6 +87,13 @@ public class Member {
                 .staticLine(sidebar[11], 2)
                 .staticLine(sidebar[12], 1)
                 .changeableLine(sidebar[13] + killstreak, 0);
+        String format = speedcubingServer.getFormat(user.rank)[0] + player.getName();
+        hologram1 = new Hologram("", false, false).addListener(player).world("world").setLocation(KnockBackFFA.holoX, 150.8, KnockBackFFA.holoZ, 0, 0);
+        hologram2 = new Hologram("", false, false).addListener(player).world("world").setLocation(KnockBackFFA.holo2X, 150.8, KnockBackFFA.holo2Z, 0, 0);
+        int rank1 = speedcubingServer.connection.select("COUNT(*)").from("playersdata").where("kbffa_kill > (SELECT kbffa_kill FROM playersdata where id=" + user.id + ")").getInt() + 1;
+        int rank2 = speedcubingServer.connection.select("COUNT(*)").from("playersdata").where("kbffa_killstreak > (SELECT kbffa_killstreak FROM playersdata where id=" + user.id + ")").getInt() + 1;
+        hologram1.setName(KnockBackFFA.bold(KnockBackFFA.leaderboard.replace("%i%", Integer.toString(rank1)).replace("%j%", format).replace("%k%", Integer.toString(kill)))).spawn();
+        hologram2.setName(KnockBackFFA.bold(KnockBackFFA.leaderboard.replace("%i%", Integer.toString(rank2)).replace("%j%", format).replace("%k%", Integer.toString(killstreak)))).spawn();
         sideBar.scoreboard.registerNewObjective(obj, "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
         sideBar.create();
         for (Member m : Member.users.values()) {
