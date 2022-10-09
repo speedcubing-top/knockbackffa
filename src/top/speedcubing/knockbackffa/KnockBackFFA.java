@@ -14,18 +14,28 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import top.speedcubing.lib.bukkit.TabCompleteUtils;
+import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.server.config;
+import top.speedcubing.server.speedcubingServer;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class KnockBackFFA extends JavaPlugin {
+
+    public static double centerX = 0;
+    public static double centerZ = 0;
+    public static double offsetY = 100;
+    public static float yaw = 0;
+    public static double holoX = 100;
+    public static double holoZ = 0;
+    public static double holo2X = 100;
+    public static double holo2Z = 0;
+
+    public static final Hologram[] killboard = new Hologram[10];
+    public static final Hologram[] killstreakBoard = new Hologram[10];
     public static final ItemStack[] Invalid = new ItemStack[4];
     public static final ItemStack[][] itemStacks = new ItemStack[4][12];
     public static final Inventory[] KitEditor = new Inventory[4];
@@ -47,23 +57,24 @@ public class KnockBackFFA extends JavaPlugin {
     };
     public static final int spawnprotectY = 146;
 
-    public static void switchMap(double newX, double newZ, double newY, float newYaw) {
-        configuration.centerX = newX;
-        configuration.centerZ = newZ;
-        configuration.offsetY = newY;
-        configuration.yaw = newYaw;
+    public static void switchMap(double centerX, double centerZ, double offsetY, float yaw, double holoX, double holoZ, double holo2X, double holo2Z) {
+        KnockBackFFA.centerX = centerX;
+        KnockBackFFA.centerZ = centerZ;
+        KnockBackFFA.yaw = yaw;
+        KnockBackFFA.offsetY = offsetY;
+        KnockBackFFA.holoX = holoX;
+        KnockBackFFA.holoZ = holoZ;
+        KnockBackFFA.holo2X = holo2X;
+        KnockBackFFA.holo2Z = holo2Z;
     }
 
     public void onEnable() {
         MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
-            KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]));
+            KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]), Double.parseDouble(strings[4]), Double.parseDouble(strings[5]), Double.parseDouble(strings[6]), Double.parseDouble(strings[7]));
             commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
             return true;
         });
-        new configuration().reload();
-        Bukkit.getPluginCommand("reloadconfig").setExecutor(new configuration());
-        TabCompleteUtils.registerEmptyTabComplete("reloadconfig");
         Bukkit.getPluginManager().registerEvents(new EventListeners(), this);
         World world = Bukkit.getWorld("world");
         world.setDifficulty(Difficulty.EASY);
@@ -87,6 +98,7 @@ public class KnockBackFFA extends JavaPlugin {
                 x[1] += 1;
             }
         }, 0, 10);
+        config.event.call();
 
         String[] inv = {"§bInventar", "§bInventory", "§b物品欄", "§b物品栏"};
         String[] title = {"§cKnockBack FFA Inventar", "§cKnockBack FFA Inventory", "§cKnockBack FFA 物品欄", "§cKnockBack FFA 物品栏"};
@@ -112,6 +124,24 @@ public class KnockBackFFA extends JavaPlugin {
             KitEditor[i].setItem(5, new ItemBuilder(Material.INK_SACK).durability(1).name(unsave[i]).build());
             Invalid[i] = new ItemBuilder(Material.STAINED_GLASS_PANE).durability(8).name(display[i]).build();
         }
+        new Hologram("§b§lLifetime Kills", true, true).setLocation(holoX, 153 + 0.3, holoZ, 0, 0).world("world");
+        new Hologram("§b§lBest Kill Streak", true, true).setLocation(holo2X, 153 + 0.3, holo2Z, 0, 0).world("world");
+        for (int i = 0; i < killboard.length; i++) {
+            System.out.println(holoX + " " + holoZ + " " + (153 - i * 0.3));
+            killboard[i] = new Hologram("", true, true).setLocation(holoX, 153 - i * 0.3, holoZ, 0, 0).world("world");
+            killstreakBoard[i] = new Hologram("", true, true).setLocation(holo2X, 153 - i * 0.3, holo2Z, 0, 0).world("world");
+        }
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                String[] arr = speedcubingServer.connection.select("priority,name,kbffa_kill").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
+                String[] arr2 = speedcubingServer.connection.select("priority,name,kbffa_killstreak").from("playersdata").orderBy("kbffa_killstreak DESC, name ASC").limit(0, 10).getStringArray();
+                for (int i = 0; i < killboard.length; i++) {
+                    killboard[i].setName("§e" + (i + 1) + ". " + speedcubingServer.getFormat(arr[i * 3])[0] + arr[i * 3 + 1] + " §7- " + arr[i * 3 + 2]);
+                    killstreakBoard[i].setName("§e" + (i + 1) + ". " + speedcubingServer.getFormat(arr2[i * 3])[0] + arr2[i * 3 + 1] + " §7- " + arr2[i * 3 + 2]);
+                }
+            }
+        }, 0, 5000);
     }
 
     public void onDisable() {

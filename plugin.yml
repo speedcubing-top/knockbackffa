@@ -5,7 +5,5 @@ depend:
   - speedcubingServer
   - speedcubingLib
 commands:
-  reloadconfig:
-    usage: /reloadconfig
   map:
     usage: /map

@@ -69,7 +69,7 @@ public class EventListeners implements Listener {
         if (e.getPlayer().getGameMode() == GameMode.SURVIVAL) {
             Block block = e.getBlock();
             Material old = e.getBlockReplacedState().getType();
-            if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - configuration.centerZ) > 500 || Math.abs(block.getX() - configuration.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
+            if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
                 e.setCancelled(true);
             else {
                 KnockBackFFA.Diff.put(block, new Integer[]{KnockBackFFA.id, 0});
@@ -88,7 +88,7 @@ public class EventListeners implements Listener {
             if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
-            } else if (to.getY() <= configuration.offsetY || (Math.abs(to.getX() - configuration.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - configuration.centerZ - 0.5) > 499.5))
+            } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5))
                 user.death(false);
         }
     }

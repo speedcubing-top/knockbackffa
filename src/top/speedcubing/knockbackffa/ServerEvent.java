@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import top.speedcubing.lib.bukkit.event.PlayInEvent;
 import top.speedcubing.lib.eventbus.LibEventHandler;
 import top.speedcubing.lib.utils.Console;
+import top.speedcubing.server.config;
+import top.speedcubing.server.events.ConfigReloadEvent;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.events.player.ToggleFlyEvent;
@@ -13,6 +15,19 @@ import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.speedcubingServer;
 
 public class ServerEvent {
+
+    @LibEventHandler
+    public void ConfigReloadEvent(ConfigReloadEvent e) {
+        KnockBackFFA.centerX = config.config.getAsJsonObject("defaultkbffa").get("x").getAsDouble();
+        KnockBackFFA.centerZ = config.config.getAsJsonObject("defaultkbffa").get("z").getAsDouble();
+        KnockBackFFA.offsetY = config.config.getAsJsonObject("defaultkbffa").get("y").getAsDouble();
+        KnockBackFFA.yaw = config.config.getAsJsonObject("defaultkbffa").get("yaw").getAsFloat();
+        KnockBackFFA.holoX = config.config.getAsJsonObject("defaultkbffa").get("holox").getAsDouble();
+        KnockBackFFA.holoZ = config.config.getAsJsonObject("defaultkbffa").get("holoz").getAsDouble();
+        KnockBackFFA.holo2X = config.config.getAsJsonObject("defaultkbffa").get("holo2x").getAsDouble();
+        KnockBackFFA.holo2Z = config.config.getAsJsonObject("defaultkbffa").get("holo2z").getAsDouble();
+    }
+
 
     @LibEventHandler
     public void PlayInEvent(PlayInEvent e) {
