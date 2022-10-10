@@ -53,7 +53,7 @@ public class Member {
     public Member(Player player) {
         this.user = User.getUser(player);
         maxHealPacket = new OutScoreboardScore().a(player.getName()).b(obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
-        String[] s = speedcubingServer.connection.select("kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak").from("playersdata").where("id=" + user.id).getStringArray();
+        String[] s = user.dbSelect("kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak").getStringArray();
         inventory = s[0];
         kill = Integer.parseInt(s[1]);
         death = Integer.parseInt(s[2]);

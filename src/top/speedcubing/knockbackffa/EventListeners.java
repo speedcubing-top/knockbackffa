@@ -22,7 +22,6 @@ import org.bukkit.util.Vector;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.server.libs.GlobalString;
-import top.speedcubing.server.speedcubingServer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -249,7 +248,7 @@ public class EventListeners implements Listener {
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
         member.death(true);
-        new Thread(() -> speedcubingServer.connection.update("playersdata", "kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak, "id=" + member.user.id)).start();
+        member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak);
         Member.users.remove(member.user.id);
     }
 
