@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class Member {
-    private static final String obj = "§c❤";
     public static Map<Integer, Member> users = new HashMap<>();
 
     public static Member getMember(CommandSender sender) {
@@ -43,6 +42,8 @@ public class Member {
     public boolean isFighting;
     public String inventory;
     public int kill;
+    public boolean killed;
+    public int dailyKill;
     public int death;
     public int killstreak;
 
@@ -52,7 +53,7 @@ public class Member {
 
     public Member(Player player) {
         this.user = User.getUser(player);
-        maxHealPacket = new OutScoreboardScore().a(player.getName()).b(obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
+        maxHealPacket = new OutScoreboardScore().a(player.getName()).b(KnockBackFFA.obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
         String[] s = user.dbSelect("kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak").getStringArray();
         inventory = s[0];
         kill = Integer.parseInt(s[1]);
@@ -87,19 +88,25 @@ public class Member {
                 .staticLine(sidebar[11], 2)
                 .staticLine(sidebar[12], 1)
                 .changeableLine(sidebar[13] + killstreak, 0);
-        String format = speedcubingServer.getFormat(user.rank)[0] + player.getName();
         hologram1 = new Hologram("", false, false).addListener(player).world("world").setLocation(KnockBackFFA.holoX, 150.8, KnockBackFFA.holoZ, 0, 0);
         hologram2 = new Hologram("", false, false).addListener(player).world("world").setLocation(KnockBackFFA.holo2X, 150.8, KnockBackFFA.holo2Z, 0, 0);
         updatePlayerPos();
         hologram1.spawn();
         hologram2.spawn();
-        sideBar.scoreboard.registerNewObjective(obj, "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
+        sideBar.scoreboard.registerNewObjective(KnockBackFFA.obj, "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
         sideBar.create();
         for (Member m : Member.users.values()) {
             if (m.user.player.getHealth() > 19)
                 connection.sendPacket(m.maxHealPacket);
         }
         users.put(user.id, this);
+    }
+
+
+    public void kill() {
+        killed = true;
+        kill += 1;
+        dailyKill += 1;
     }
 
     public void death(boolean quit) {
@@ -112,7 +119,7 @@ public class Member {
                 SideBar sideBar = SideBar.getSidebar(damager);
                 damager.playSound(damager.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
                 damager.setHealth(20);
-                Damage.kill += 1;
+                Damage.kill();
                 int currentKillStreak = damager.getLevel() + 1;
                 sideBar.setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][4] + currentKillStreak, 9).setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][7] + Damage.kill, 6);
                 damager.setLevel(currentKillStreak);
@@ -121,9 +128,8 @@ public class Member {
                     Damage.killstreak += 1;
                     sideBar.setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][13] + Damage.killstreak, 0);
                 }
-                String ft = speedcubingServer.getFormat(Damage.user.rank)[1];
-                String ft2 = speedcubingServer.getFormat(user.rank)[1];
-                users.values().forEach(u -> u.user.player.sendMessage(KnockBackFFA.Kill[u.user.lang].replace("%format0%", ft2).replace("%name0%", user.player.getName()).replace("%format1%", ft).replace("%name1%", Damage.user.player.getName())));
+                user.langMessageSender(KnockBackFFA.died).replace("%t%", speedcubingServer.getFormat(Damage.user.rank)[1] + damager.getName()).replace("%h%", Double.toString(Math.round(damager.getHealth() / 2))).send();
+                Damage.user.langMessageSender(KnockBackFFA.Kill).replace("%t%", speedcubingServer.getFormat(user.rank)[1] + user.player.getName()).send();
                 death += 1;
             }
         }

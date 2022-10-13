@@ -50,9 +50,9 @@ public class KnockBackFFA extends JavaPlugin {
     public static double holoZ = 0;
     public static double holo2X = 100;
     public static double holo2Z = 0;
+    public static final String obj = "§c❤";
 
     public static final Hologram[] killboard = new Hologram[10];
-    public static final Hologram[] killstreakBoard = new Hologram[10];
     public static final ItemStack[] Invalid = new ItemStack[4];
     public static final ItemStack[][] itemStacks = new ItemStack[4][12];
     public static final Inventory[] KitEditor = new Inventory[4];
@@ -62,10 +62,17 @@ public class KnockBackFFA extends JavaPlugin {
 
     public static String leaderboard = "§e%i%. %j% §7- §e%k%";
     public static String[] Kill = {
-            "%format0%%name0%§7 was killed by %format1%%name1%§7.",
-            "%format0%%name0%§7 was killed by %format1%%name1%§7.",
-            "%format0%%name0%§7 was killed by %format1%%name1%§7.",
-            "%format0%%name0%§7 was killed by %format1%%name1%§7."
+            "§8[§bKnockBackFFA§8] §7You killed %t%§!",
+            "§8[§bKnockBackFFA§8] §7You killed %t%§!",
+            "§8[§bKnockBackFFA§8] §7You killed %t%§!",
+            "§8[§bKnockBackFFA§8] §7You killed %t%§!"
+    };
+
+    public static String[] died = {
+            "§8[§bKnockBackFFA§8] §cYou were killed by %t%§c! §8[%h%" + obj + "§8]",
+            "§8[§bKnockBackFFA§8] §cYou were killed by %t%§c! §8[%h%" + obj + "§8]",
+            "§8[§bKnockBackFFA§8] §cYou were killed by %t%§c! §8[%h%" + obj + "§8]",
+            "§8[§bKnockBackFFA§8] §cYou were killed by %t%§c! §8[%h%" + obj + "§8]"
     };
 
     public static String[][] sidebar = {
@@ -144,17 +151,21 @@ public class KnockBackFFA extends JavaPlugin {
             Invalid[i] = new ItemBuilder(Material.STAINED_GLASS_PANE).durability(8).name(display[i]).build();
         }
         new Hologram("§b§lLifetime Kills", true, true).setLocation(holoX, 154 + 0.3, holoZ, 0, 0).world("world");
-        new Hologram("§b§lBest Kill Streak", true, true).setLocation(holo2X, 154 + 0.3, holo2Z, 0, 0).world("world");
         for (int i = 0; i < killboard.length; i++) {
             killboard[i] = new Hologram("", true, true).setLocation(holoX, 154 - i * 0.3, holoZ, 0, 0).world("world");
-            killstreakBoard[i] = new Hologram("", true, true).setLocation(holo2X, 154 - i * 0.3, holo2Z, 0, 0).world("world");
         }
-        new Timer().schedule(new TimerTask() {
+        new Timer("Cubing-Leaderboard-Thread").schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
+                    for (Member m : Member.users.values()) {
+                        if (m.killed) {
+                            m.killed = false;
+                            m.user.dbUpdate("kbffa_kill=" + m.kill + ",kbffa_dailykill=" + m.dailyKill);
+                        }
+                        m.updatePlayerPos();
+                    }
                     String[] arr = speedcubingServer.connection.select("priority,name,kbffa_kill").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
-                    String[] arr2 = speedcubingServer.connection.select("priority,name,kbffa_killstreak").from("playersdata").orderBy("kbffa_killstreak DESC, name ASC").limit(0, 10).getStringArray();
                     int lastKill = 0;
                     int index = 0;
                     int a;
@@ -165,19 +176,6 @@ public class KnockBackFFA extends JavaPlugin {
                             lastKill = a;
                         }
                         killboard[i].setName(leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", speedcubingServer.getFormat(arr[i * 3])[0] + arr[i * 3 + 1]).replace("%k%", arr[i * 3 + 2]));
-                    }
-                    lastKill = 0;
-                    index = 0;
-                    for (int i = 0; i < killstreakBoard.length; i++) {
-                        a = Integer.parseInt(arr2[i * 3 + 2]);
-                        if (lastKill != a) {
-                            index = i + 1;
-                            lastKill = a;
-                        }
-                        killstreakBoard[i].setName(leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", speedcubingServer.getFormat(arr2[i * 3])[0] + arr2[i * 3 + 1]).replace("%k%", arr2[i * 3 + 2]));
-                    }
-                    for (Member m : Member.users.values()) {
-                        m.updatePlayerPos();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
