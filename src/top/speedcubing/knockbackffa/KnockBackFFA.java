@@ -61,13 +61,19 @@ public class KnockBackFFA extends JavaPlugin {
     public static final Map<Block, Integer[]> Diff = new HashMap<>();
 
     public static String leaderboard = "§e%i%. %j% §7- §e%k%";
+
     public static String[] Kill = {
             "§8[§bKnockBackFFA§8] §7You killed %t%§!",
             "§8[§bKnockBackFFA§8] §7You killed %t%§!",
             "§8[§bKnockBackFFA§8] §7You killed %t%§!",
             "§8[§bKnockBackFFA§8] §7You killed %t%§!"
     };
-
+    public static String[] diedYourself = {
+            "§8[§bKnockBackFFA§8] §cYou died!",
+            "§8[§bKnockBackFFA§8] §cYou died!",
+            "§8[§bKnockBackFFA§8] §cYou died!",
+            "§8[§bKnockBackFFA§8] §cYou died!"
+    };
     public static String[] died = {
             "§8[§bKnockBackFFA§8] §cYou were killed by %t%§c! §8[%h%" + obj + "§8]",
             "§8[§bKnockBackFFA§8] §cYou were killed by %t%§c! §8[%h%" + obj + "§8]",
@@ -159,8 +165,8 @@ public class KnockBackFFA extends JavaPlugin {
             public void run() {
                 try {
                     for (Member m : Member.users.values()) {
-                        if (m.killed) {
-                            m.killed = false;
+                        if (m.killedPlayer) {
+                            m.killedPlayer = false;
                             m.user.dbUpdate("kbffa_kill=" + m.kill + ",kbffa_dailykill=" + m.dailyKill);
                         }
                         m.updatePlayerPos();
@@ -182,6 +188,17 @@ public class KnockBackFFA extends JavaPlugin {
                 }
             }
         }, 0, 5000);
+        Calendar tomorrow = new GregorianCalendar();
+        tomorrow.add(Calendar.DATE, 1);
+        new Timer("Cubing-Daily-Thread").schedule(new TimerTask() {
+            @Override
+            public void run() {
+                for (Member m : Member.users.values()) {
+                    m.dailyKill = 0;
+                }
+                speedcubingServer.connection.update("playersdata", "kbffa_dailykill=0", "1");
+            }
+        }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis(), 86400000);
     }
 
     public void onDisable() {
