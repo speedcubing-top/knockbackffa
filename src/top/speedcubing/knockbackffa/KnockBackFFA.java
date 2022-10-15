@@ -137,34 +137,38 @@ public class KnockBackFFA extends JavaPlugin {
             int index;
             int a;
             String[] arr;
+            String[] arr2;
 
             @Override
             public void run() {
                 try {
+                    arr = speedcubingServer.connection.select("priority,name,kbffa_kill,id,uuid").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
+                    arr2 = speedcubingServer.connection.select("priority,name,kbffa_dailykill,id,uuid").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).getStringArray();
+                    speedcubingServer.connection.update("champ", "uuid='" + arr[4] + "'", "subject='kbffa_kill'");
+                    speedcubingServer.connection.update("champ", "uuid='" + arr2[4] + "'", "subject='kbffa_dailykill'");
+                    Set<String> champs = speedcubingServer.getChamps();
                     lastKill = 0;
                     index = 0;
-                    arr = speedcubingServer.connection.select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
                     for (int i = 0; i < 10; i++) {
-                        a = Integer.parseInt(arr[i * 4 + 2]);
+                        a = Integer.parseInt(arr[i * 5 + 2]);
                         if (lastKill != a) {
                             index = i + 1;
                             lastKill = a;
                         }
-                        boardName[i] = arr[i * 4 + 3];
-                        board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", speedcubingServer.getFormat(arr[i * 4])[0] + arr[i * 4 + 1]).replace("%k%", arr[i * 4 + 2]);
+                        boardName[i] = arr[i * 5 + 3];
+                        board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", speedcubingServer.getFormat(speedcubingServer.getRank(arr[i * 5], arr[i * 5 + 4], champs))[0] + arr[i * 5 + 1]).replace("%k%", arr[i * 5 + 2]);
 
                     }
                     lastKill = 0;
                     index = 0;
-                    arr = speedcubingServer.connection.select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).getStringArray();
                     for (int i = 0; i < 10; i++) {
-                        a = Integer.parseInt(arr[i * 4 + 2]);
+                        a = Integer.parseInt(arr2[i * 5 + 2]);
                         if (lastKill != a) {
                             index = i + 1;
                             lastKill = a;
                         }
-                        dailyBoardName[i] = arr[i * 4 + 3];
-                        dailyBoard[i] = arr[i * 4 + 2].equals("0") ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", speedcubingServer.getFormat(arr[i * 4])[0] + arr[i * 4 + 1]).replace("%k%", arr[i * 4 + 2]);
+                        dailyBoardName[i] = arr2[i * 5 + 3];
+                        dailyBoard[i] = arr2[i * 5 + 2].equals("0") ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", speedcubingServer.getFormat(speedcubingServer.getRank(arr2[i * 5], arr2[i * 5 + 4], champs))[0] + arr2[i * 5 + 1]).replace("%k%", arr2[i * 5 + 2]);
                     }
                     for (Member m : Member.users.values()) {
                         m.a();
