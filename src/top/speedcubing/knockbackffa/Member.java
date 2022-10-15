@@ -33,31 +33,34 @@ public class Member {
         return users.get(id);
     }
 
-    public final User user;
-    public Member Damage;
-    public long KillTime;
-    public boolean iseditingkit;
-    public Set<EnderPearl> pearls = new HashSet<>();
-    private final PacketPlayOutScoreboardScore maxHealPacket;
-    public boolean isFighting;
-    public String inventory;
-    public int kill;
-    public boolean killedPlayer;
-    public int dailyKill;
-    public int death;
-    public int killstreak;
+    final User user;
+    Member Damage;
+    long KillTime;
+    boolean iseditingkit;
+    Set<EnderPearl> pearls = new HashSet<>();
+    final PacketPlayOutScoreboardScore maxHealPacket;
+    boolean isFighting;
+    String inventory;
+    int kill;
+    boolean killedPlayer;
+    int dailyKill;
+    int death;
+    int killstreak;
+    long lastClick;
+    boolean displayType;
+    final Hologram personal;
 
-    public Hologram hologram1;
-
+    public final Hologram[] killboard = new Hologram[10];
 
     public Member(Player player) {
         this.user = User.getUser(player);
-        maxHealPacket = new OutScoreboardScore().a(player.getName()).b(KnockBackFFA.obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
-        String[] s = user.dbSelect("kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak").getStringArray();
+        maxHealPacket = new OutScoreboardScore().a(player.getName()).b(StringList.obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
+        String[] s = user.dbSelect("kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak,kbffa_dailykill").getStringArray();
         inventory = s[0];
         kill = Integer.parseInt(s[1]);
         death = Integer.parseInt(s[2]);
         killstreak = Integer.parseInt(s[3]);
+        dailyKill = Integer.parseInt(s[4]);
         player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
         player.setLevel(0);
         player.setHealth(20);
@@ -72,7 +75,7 @@ public class Member {
         inventory.clear();
         inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-        String[] sidebar = KnockBackFFA.sidebar[user.lang];
+        String[] sidebar = StringList.sidebar[user.lang];
         SideBar sideBar = new SideBar(player, sidebar[0])
                 .staticLine(sidebar[1], 12)
                 .staticLine(sidebar[2], 11)
@@ -87,18 +90,45 @@ public class Member {
                 .staticLine(sidebar[11], 2)
                 .staticLine(sidebar[12], 1)
                 .changeableLine(sidebar[13] + killstreak, 0);
-        hologram1 = new Hologram("", false, false).addListener(player).world("world").setLocation(KnockBackFFA.holoX, 150.8, KnockBackFFA.holoZ, 0, 0);
-        updatePlayerPos();
-        hologram1.spawn();
-        sideBar.scoreboard.registerNewObjective(KnockBackFFA.obj, "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
+        sideBar.scoreboard.registerNewObjective(StringList.obj, "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
         sideBar.create();
-        for (Member m : Member.users.values()) {
-            if (m.user.player.getHealth() > 19)
-                connection.sendPacket(m.maxHealPacket);
+        Member.users.values().forEach(a -> {
+            if (a.user.player.getHealth() > 19)
+                connection.sendPacket(a.maxHealPacket);
+        });
+        for (int i = 0; i < killboard.length; i++) {
+            killboard[i] = new Hologram("", false, false).setLocation(KnockBackFFA.holoX, 152 - i * 0.3, KnockBackFFA.holoZ, 0, 0).world("world").setClickEvent(KnockBackFFA.clickEvent).setListener(player).spawn();
         }
+        personal = new Hologram("", false, false).world("world").setLocation(KnockBackFFA.holoX, 148.9, KnockBackFFA.holoZ, 0, 0).setClickEvent(KnockBackFFA.clickEvent).setListener(player);
+        setDisplayType(true);
         users.put(user.id, this);
     }
 
+
+    public void setDisplayType(boolean spawn) {
+        long l = System.currentTimeMillis();
+        if (l - lastClick > 1000) {
+            displayType = !displayType;
+            a();
+            if (spawn) {
+                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? StringList.title2[user.lang] : StringList.title[user.lang]).spawn().setListener();
+                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? StringList.type2[user.lang] : StringList.type[user.lang]).spawn().setListener();
+            } else {
+                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? StringList.title2[user.lang] : StringList.title[user.lang]).setListener();
+                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? StringList.type2[user.lang] : StringList.type[user.lang]).setListener();
+            }
+            updatePlayerPos(spawn);
+            lastClick = l;
+        }
+    }
+
+    public void a() {
+        String[] s = displayType ? KnockBackFFA.board : KnockBackFFA.dailyBoard;
+        String[] s2 = displayType ? KnockBackFFA.boardName : KnockBackFFA.dailyBoardName;
+        for (int i = 0; i < 10; i++) {
+            killboard[i].setName(user.id == Integer.parseInt(s2[i]) ? KnockBackFFA.bold(s[i]) : s[i]);
+        }
+    }
 
     public void kill() {
         killedPlayer = true;
@@ -108,28 +138,28 @@ public class Member {
 
     public void death(boolean quit) {
         isFighting = false;
-        boolean killed = false;
-        if (System.currentTimeMillis() - this.KillTime < 100000 && Damage != null) {
+        boolean killed = System.currentTimeMillis() - this.KillTime < 100000 && Damage != null;
+        if (killed) {
             Player damager = Damage.user.player;
-            int health = (int) Math.round(damager.getHealth() / 2);
-            user.langMessageSender(KnockBackFFA.died).replace("%t%", speedcubingServer.getFormat(Damage.user.rank)[1] + damager.getName()).replace("%h%", "§c" + health).send();
-            Damage.user.langMessageSender(KnockBackFFA.Kill).replace("%t%", speedcubingServer.getFormat(user.rank)[1] + user.player.getName()).send();
-            killed = true;
+            double heal = damager.getHealth() / 2;
+            String color = heal > 8.5 ? "§a" : (heal > 6.5 ? "§e" : (heal > 4.5 ? "§6" : "§c"));
+            user.langMessageSender(StringList.died).replace("%t%", speedcubingServer.getFormat(Damage.user.rank)[1] + damager.getName()).replace("%h%", color + (int) Math.round(heal)).send();
+            Damage.user.langMessageSender(StringList.Kill).replace("%t%", speedcubingServer.getFormat(user.rank)[1] + user.player.getName()).send();
             SideBar sideBar = SideBar.getSidebar(damager);
             damager.playSound(damager.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
             damager.setHealth(20);
             Damage.kill();
             int currentKillStreak = damager.getLevel() + 1;
-            sideBar.setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][4] + currentKillStreak, 9).setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][7] + Damage.kill, 6);
+            sideBar.setLineByScore(StringList.sidebar[Damage.user.lang][4] + currentKillStreak, 9).setLineByScore(StringList.sidebar[Damage.user.lang][7] + Damage.kill, 6);
             damager.setLevel(currentKillStreak);
             Damage.item(true);
             if (currentKillStreak > Damage.killstreak) {
                 Damage.killstreak += 1;
-                sideBar.setLineByScore(KnockBackFFA.sidebar[Damage.user.lang][13] + Damage.killstreak, 0);
+                sideBar.setLineByScore(StringList.sidebar[Damage.user.lang][13] + Damage.killstreak, 0);
             }
             death += 1;
         } else if (!quit)
-            user.sendLangMessage(KnockBackFFA.diedYourself);
+            user.sendLangMessage(StringList.diedYourself);
         if (!quit) {
             SideBar sideBar = SideBar.getSidebar(user.player);
             PlayerInventory inventory = user.player.getInventory();
@@ -144,10 +174,9 @@ public class Member {
             inventory.setLeggings(new ItemStack(Material.AIR));
             inventory.setBoots(new ItemStack(Material.AIR));
             inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
-            if (killed) {
-                sideBar.setLineByScore(KnockBackFFA.sidebar[user.lang][10] + death, 3);
-            }
-            sideBar.setLineByScore(KnockBackFFA.sidebar[user.lang][4] + 0, 9);
+            if (killed)
+                sideBar.setLineByScore(StringList.sidebar[user.lang][10] + death, 3);
+            sideBar.setLineByScore(StringList.sidebar[user.lang][4] + 0, 9);
             user.player.setLevel(0);
             user.player.setHealth(20);
             Bukkit.getScheduler().scheduleSyncDelayedTask(KnockBackFFA.getPlugin(KnockBackFFA.class), () -> {
@@ -162,10 +191,15 @@ public class Member {
         }
     }
 
-    public void updatePlayerPos() {
-        String format = speedcubingServer.getFormat(user.rank)[0] + user.player.getName();
-        int rank1 = speedcubingServer.connection.select("COUNT(*)").from("playersdata").where("kbffa_kill > (SELECT kbffa_kill FROM playersdata where id=" + user.id + ")").getInt() + 1;
-        hologram1.setName(KnockBackFFA.bold(KnockBackFFA.leaderboard.replace("%i%", Integer.toString(rank1)).replace("%j%", format).replace("%k%", Integer.toString(kill))));
+    public void updatePlayerPos(boolean spawn) {
+        if ((displayType ? kill : dailyKill) == 0)
+            personal.setName(StringList.noData[0]);
+        else {
+            String format = speedcubingServer.getFormat(user.rank)[0] + user.player.getName();
+            personal.setName(KnockBackFFA.bold(StringList.leaderboard.replace("%i%", Integer.toString(speedcubingServer.connection.select("COUNT(*)").from("playersdata").where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")").getInt() + 1)).replace("%j%", format).replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
+        }
+        if (spawn)
+            personal.spawn();
     }
 
     public void item(boolean win) {

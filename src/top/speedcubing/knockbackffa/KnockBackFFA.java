@@ -14,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import top.speedcubing.lib.bukkit.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
@@ -48,62 +49,34 @@ public class KnockBackFFA extends JavaPlugin {
     public static float yaw = 0;
     public static double holoX = 100;
     public static double holoZ = 0;
-    public static double holo2X = 100;
-    public static double holo2Z = 0;
-    public static final String obj = "§c❤";
+    static final ClickEvent clickEvent = (p, e) -> Member.getMember(p).setDisplayType(false);
+    public static final String[] board = new String[10];
+    public static final String[] dailyBoard = new String[10];
+    public static final String[] boardName = new String[10];
+    public static final String[] dailyBoardName = new String[10];
+    public static final Hologram[] personal = new Hologram[2];
 
-    public static final Hologram[] killboard = new Hologram[10];
     public static final ItemStack[] Invalid = new ItemStack[4];
     public static final ItemStack[][] itemStacks = new ItemStack[4][12];
     public static final Inventory[] KitEditor = new Inventory[4];
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
     public static final Map<Block, Integer[]> Diff = new HashMap<>();
-
-    public static String leaderboard = "§e%i%. %j% §7- §e%k%";
-
-    public static String[] Kill = {
-            "§8[§bKnockBackFFA§8] §7You killed %t%§!",
-            "§8[§bKnockBackFFA§8] §7You killed %t%§!",
-            "§8[§bKnockBackFFA§8] §7You killed %t%§!",
-            "§8[§bKnockBackFFA§8] §7You killed %t%§!"
-    };
-    public static String[] diedYourself = {
-            "§8[§bKnockBackFFA§8] §cYou died!",
-            "§8[§bKnockBackFFA§8] §cYou died!",
-            "§8[§bKnockBackFFA§8] §cYou died!",
-            "§8[§bKnockBackFFA§8] §cYou died!"
-    };
-    public static String[] died = {
-            "§8[§bKnockBackFFA§8] §cYou were killed by %t%§c! §8[%h%" + obj + "§8]",
-            "§8[§bKnockBackFFA§8] §cYou were killed by %t%§c! §8[%h%" + obj + "§8]",
-            "§8[§bKnockBackFFA§8] §cYou were killed by %t%§c! §8[%h%" + obj + "§8]",
-            "§8[§bKnockBackFFA§8] §cYou were killed by %t%§c! §8[%h%" + obj + "§8]"
-    };
-
-    public static String[][] sidebar = {
-            {"§3KnockBackFFA", "§6" + config.SERVERIP, "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
-            {"§3KnockBackFFA", "§6" + config.SERVERIP, "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
-            {"§3KnockBackFFA", "§6" + config.SERVERIP, "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
-            {"§3KnockBackFFA", "§6" + config.SERVERIP, "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"}
-    };
     public static final int spawnprotectY = 146;
 
-    public static void switchMap(double centerX, double centerZ, double offsetY, float yaw, double holoX, double holoZ, double holo2X, double holo2Z) {
+    public static void switchMap(double centerX, double centerZ, double offsetY, float yaw, double holoX, double holoZ) {
         KnockBackFFA.centerX = centerX;
         KnockBackFFA.centerZ = centerZ;
         KnockBackFFA.yaw = yaw;
         KnockBackFFA.offsetY = offsetY;
         KnockBackFFA.holoX = holoX;
         KnockBackFFA.holoZ = holoZ;
-        KnockBackFFA.holo2X = holo2X;
-        KnockBackFFA.holo2Z = holo2Z;
     }
 
     public void onEnable() {
         MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
-            KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]), Double.parseDouble(strings[4]), Double.parseDouble(strings[5]), Double.parseDouble(strings[6]), Double.parseDouble(strings[7]));
+            KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]), Double.parseDouble(strings[4]), Double.parseDouble(strings[5]));
             commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
             return true;
         });
@@ -156,53 +129,68 @@ public class KnockBackFFA extends JavaPlugin {
             KitEditor[i].setItem(5, new ItemBuilder(Material.INK_SACK).durability(1).name(unsave[i]).build());
             Invalid[i] = new ItemBuilder(Material.STAINED_GLASS_PANE).durability(8).name(display[i]).build();
         }
-        new Hologram("§b§lLifetime Kills", true, true).setLocation(holoX, 154 + 0.3, holoZ, 0, 0).world("world");
-        for (int i = 0; i < killboard.length; i++) {
-            killboard[i] = new Hologram("", true, true).setLocation(holoX, 154 - i * 0.3, holoZ, 0, 0).world("world");
-        }
+        personal[0] = new Hologram("", false, false).world("world").setLocation(KnockBackFFA.holoX, 152.4, KnockBackFFA.holoZ, 0, 0).setClickEvent(clickEvent);
+        personal[1] = new Hologram("", false, false).world("world").setLocation(KnockBackFFA.holoX, 148.2, KnockBackFFA.holoZ, 0, 0).setClickEvent(clickEvent);
+        new Hologram("§6§lClick to toggle!", true, true).setLocation(holoX, 148.5, holoZ, 0, 0).world("world").setClickEvent(clickEvent);
         new Timer("Cubing-Leaderboard-Thread").schedule(new TimerTask() {
+            int lastKill;
+            int index;
+            int a;
+            String[] arr;
+
             @Override
             public void run() {
                 try {
-                    for (Member m : Member.users.values()) {
-                        if (m.killedPlayer) {
-                            m.killedPlayer = false;
-                            m.user.dbUpdate("kbffa_kill=" + m.kill + ",kbffa_dailykill=" + m.dailyKill);
-                        }
-                        m.updatePlayerPos();
-                    }
-                    String[] arr = speedcubingServer.connection.select("priority,name,kbffa_kill").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
-                    int lastKill = 0;
-                    int index = 0;
-                    int a;
-                    for (int i = 0; i < killboard.length; i++) {
-                        a = Integer.parseInt(arr[i * 3 + 2]);
+                    lastKill = 0;
+                    index = 0;
+                    arr = speedcubingServer.connection.select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
+                    for (int i = 0; i < 10; i++) {
+                        a = Integer.parseInt(arr[i * 4 + 2]);
                         if (lastKill != a) {
                             index = i + 1;
                             lastKill = a;
                         }
-                        killboard[i].setName(leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", speedcubingServer.getFormat(arr[i * 3])[0] + arr[i * 3 + 1]).replace("%k%", arr[i * 3 + 2]));
+                        boardName[i] = arr[i * 4 + 3];
+                        board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", speedcubingServer.getFormat(arr[i * 4])[0] + arr[i * 4 + 1]).replace("%k%", arr[i * 4 + 2]);
+
+                    }
+                    lastKill = 0;
+                    index = 0;
+                    arr = speedcubingServer.connection.select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).getStringArray();
+                    for (int i = 0; i < 10; i++) {
+                        a = Integer.parseInt(arr[i * 4 + 2]);
+                        if (lastKill != a) {
+                            index = i + 1;
+                            lastKill = a;
+                        }
+                        dailyBoardName[i] = arr[i * 4 + 3];
+                        dailyBoard[i] = arr[i * 4 + 2].equals("0") ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", speedcubingServer.getFormat(arr[i * 4])[0] + arr[i * 4 + 1]).replace("%k%", arr[i * 4 + 2]);
+                    }
+                    for (Member m : Member.users.values()) {
+                        m.a();
+                        if (m.killedPlayer) {
+                            m.killedPlayer = false;
+                            m.user.dbUpdate("kbffa_kill=" + m.kill + ",kbffa_dailykill=" + m.dailyKill);
+                        }
+                        m.updatePlayerPos(false);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }, 0, 5000);
+        }, 0, 1000);
         Calendar tomorrow = new GregorianCalendar();
         tomorrow.add(Calendar.DATE, 1);
         new Timer("Cubing-Daily-Thread").schedule(new TimerTask() {
             @Override
             public void run() {
-                for (Member m : Member.users.values()) {
-                    m.dailyKill = 0;
-                }
+                Member.users.values().forEach(a -> a.dailyKill = 0);
                 speedcubingServer.connection.update("playersdata", "kbffa_dailykill=0", "1");
             }
         }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis(), 86400000);
     }
 
     public void onDisable() {
-        World world = Bukkit.getWorld("world");
-        KnockBackFFA.Diff.keySet().forEach(a -> world.getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
+        KnockBackFFA.Diff.keySet().forEach(a -> Bukkit.getWorld("world").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
     }
 }

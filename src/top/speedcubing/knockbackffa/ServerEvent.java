@@ -24,8 +24,6 @@ public class ServerEvent {
         KnockBackFFA.yaw = config.config.getAsJsonObject("defaultkbffa").get("yaw").getAsFloat();
         KnockBackFFA.holoX = config.config.getAsJsonObject("defaultkbffa").get("holox").getAsDouble();
         KnockBackFFA.holoZ = config.config.getAsJsonObject("defaultkbffa").get("holoz").getAsDouble();
-        KnockBackFFA.holo2X = config.config.getAsJsonObject("defaultkbffa").get("holo2x").getAsDouble();
-        KnockBackFFA.holo2Z = config.config.getAsJsonObject("defaultkbffa").get("holo2z").getAsDouble();
     }
 
 
