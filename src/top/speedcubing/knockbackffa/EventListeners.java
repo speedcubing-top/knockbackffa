@@ -113,15 +113,15 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void EntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof Player) {
+        if (e.getEntity() instanceof Player && e.getCause() != EntityDamageEvent.DamageCause.FALL) {
             Entity damage = e.getDamager();
             Player damager = null;
             if (damage instanceof EnderPearl)
                 damager = (Player) ((EnderPearl) e.getDamager()).getShooter();
-            if (damage instanceof Arrow)
+            else if (damage instanceof Arrow)
                 damager = (Player) ((Arrow) e.getDamager()).getShooter();
             else if (damage instanceof Player)
-                damager = (Player) e.getDamager();
+                damager = (Player) damage;
             if (damager != null) {
                 Player victim = (Player) e.getEntity();
                 Member victimMember = Member.getMember(victim);
