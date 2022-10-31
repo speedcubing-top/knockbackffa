@@ -160,14 +160,14 @@ public class Member {
             death += 1;
         } else if (!quit)
             user.sendLangMessage(StringList.diedYourself);
+        for (Member m : users.values()) {
+            if (m.Damage == this)
+                m.Damage = null;
+        }
         if (!quit) {
             SideBar sideBar = SideBar.getSidebar(user.player);
             PlayerInventory inventory = user.player.getInventory();
             Damage = null;
-            for (Member m : users.values()) {
-                if (m.Damage == this)
-                    m.Damage = null;
-            }
             inventory.clear();
             inventory.setHelmet(new ItemStack(Material.AIR));
             inventory.setChestplate(new ItemStack(Material.AIR));
@@ -185,7 +185,6 @@ public class Member {
             }, 1);
             PlayerUtils.removeArrows(user.player);
             user.player.teleport(new Location(user.player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
-            user.player.setFireTicks(0);
             if (pearls != null)
                 pearls.forEach(EnderPearl::remove);
         }
