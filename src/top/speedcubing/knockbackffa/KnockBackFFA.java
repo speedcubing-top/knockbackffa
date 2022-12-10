@@ -47,7 +47,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static double centerZ = 0;
     public static double offsetY = 100;
     public static float yaw = 0;
-    public static double holoX = 100;
+    public static double holoX = 0;
     public static double holoZ = 0;
     static final ClickEvent clickEvent = (p, e) -> Member.getMember(p).setDisplayType(false);
     public static final String[] board = new String[10];
@@ -71,6 +71,8 @@ public class KnockBackFFA extends JavaPlugin {
         KnockBackFFA.offsetY = offsetY;
         KnockBackFFA.holoX = holoX;
         KnockBackFFA.holoZ = holoZ;
+        personal[0].setLocation(KnockBackFFA.holoX, personal[0].armorStand.locY, KnockBackFFA.holoZ, 0, 0);
+        personal[1].setLocation(KnockBackFFA.holoX, personal[1].armorStand.locY, KnockBackFFA.holoZ, 0, 0);
     }
 
     public void onEnable() {
