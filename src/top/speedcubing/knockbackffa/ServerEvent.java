@@ -36,14 +36,14 @@ public class ServerEvent {
                 e.isCancelled = true;
                 String[] formats = speedcubingServer.getFormat(Member.getMember(player).user.rank);
                 String text = formats[0] + player.getName();
-                String[] str = GlobalString.MessageFormat[0];
+                String[] str = GlobalString.MessageFormat;
                 String[] out = new String[]{
                         str[0].replace("%text%", text).replace("%text2%", formats[2] + message),
                         str[1].replace("%text%", text).replace("%text2%", formats[2] + message),
                         str[2].replace("%text%", text).replace("%text2%", formats[2] + message),
                         str[3].replace("%text%", text).replace("%text2%", formats[2] + message)
                 };
-                speedcubingServer.globalChat(Bukkit.getOnlinePlayers(), player, out);
+                speedcubingServer.globalChat(Bukkit.getOnlinePlayers(), player, out, out);
                 Console.sendColoredConsole("§7[§aChatLog§7] [§b" + player.getWorld().getName() + "§7] " + out[1]);
             }
         }

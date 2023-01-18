@@ -191,12 +191,16 @@ public class Member {
     }
 
     public void updatePlayerPos(boolean spawn) {
-        if ((displayType ? kill : dailyKill) == 0)
-            personal.setName(StringList.noData[0]);
-        else {
-            String format = speedcubingServer.getFormat(user.rank)[0] + user.player.getName();
-            personal.setName(KnockBackFFA.bold(StringList.leaderboard.replace("%i%", Integer.toString(speedcubingServer.connection.select("COUNT(*)").from("playersdata").where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")").getInt() + 1)).replace("%j%", format).replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
-        }
+        personal.setName(
+                (displayType ? kill : dailyKill) == 0 ?
+                        StringList.noData[0] :
+                        KnockBackFFA.bold(
+                                StringList.leaderboard.replace("%i%", Integer.toString(
+                                        speedcubingServer.connection.select("COUNT(*)").from("playersdata")
+                                                .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
+                                                .getInt() + 1))
+                                        .replace("%j%", speedcubingServer.getFormat(user.rank)[0] + user.player.getName())
+                                        .replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
         if (spawn)
             personal.spawn();
     }
