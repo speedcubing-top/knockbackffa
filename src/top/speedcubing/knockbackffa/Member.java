@@ -17,13 +17,12 @@ import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Member {
-    public static Map<Integer, Member> users = new HashMap<>();
+    public static ConcurrentHashMap<Integer, Member> users = new ConcurrentHashMap<>();
 
     public static Member getMember(CommandSender sender) {
         return getMember(User.getUser(sender).id);
