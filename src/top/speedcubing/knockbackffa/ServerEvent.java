@@ -2,16 +2,15 @@ package top.speedcubing.knockbackffa;
 
 import net.minecraft.server.v1_8_R3.PacketPlayInChat;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import top.speedcubing.lib.bukkit.event.PlayInEvent;
 import top.speedcubing.lib.eventbus.LibEventHandler;
-import top.speedcubing.lib.utils.Console;
 import top.speedcubing.server.config;
 import top.speedcubing.server.events.ConfigReloadEvent;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.events.player.ToggleFlyEvent;
 import top.speedcubing.server.libs.GlobalString;
+import top.speedcubing.server.share.Chat;
 import top.speedcubing.server.speedcubingServer;
 
 public class ServerEvent {
@@ -32,19 +31,9 @@ public class ServerEvent {
         if (e.packet instanceof PacketPlayInChat) {
             String message = ((PacketPlayInChat) e.packet).a();
             if (message.charAt(0) != '/') {
-                Player player = e.player;
                 e.isCancelled = true;
-                String[] formats = speedcubingServer.getFormat(Member.getMember(player).user.rank);
-                String text = formats[0] + player.getName();
-                String[] str = GlobalString.MessageFormat;
-                String[] out = new String[]{
-                        str[0].replace("%text%", text).replace("%text2%", formats[2] + message),
-                        str[1].replace("%text%", text).replace("%text2%", formats[2] + message),
-                        str[2].replace("%text%", text).replace("%text2%", formats[2] + message),
-                        str[3].replace("%text%", text).replace("%text2%", formats[2] + message)
-                };
-                speedcubingServer.globalChat(Bukkit.getOnlinePlayers(), player, out, out);
-                Console.sendColoredConsole("§7[§aChatLog§7] [§b" + player.getWorld().getName() + "§7] " + out[1]);
+                String[] formats = speedcubingServer.getFormat(Member.getMember(e.player).user.rank);
+                Chat.globalChat(Bukkit.getOnlinePlayers(), e.player, GlobalString.MessageFormat, message, formats[0] + e.player, formats[2]);
             }
         }
     }
