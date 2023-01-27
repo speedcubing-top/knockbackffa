@@ -33,7 +33,7 @@ public class ServerEvent {
             if (message.charAt(0) != '/') {
                 e.isCancelled = true;
                 String[] formats = speedcubingServer.getFormat(Member.getMember(e.player).user.rank);
-                Chat.globalChat(Bukkit.getOnlinePlayers(), e.player, GlobalString.MessageFormat, message, formats[0] + e.player, formats[2]);
+                Chat.globalChat(Bukkit.getOnlinePlayers(), e.player, GlobalString.MessageFormat, message, formats[0] + e.player.getName(), formats[2]);
             }
         }
     }
