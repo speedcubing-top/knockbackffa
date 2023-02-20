@@ -163,10 +163,10 @@ public class EventListeners implements Listener {
                 switch (RawSlot) {
                     case 3:
                         ItemStack cursor = e.getCursor();
-                        player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
+                        Member member = Member.getMember(player);
+                        member.user.sound(Sound.CLICK);
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
-                            Member member = Member.getMember(player);
                             player.sendMessage(GlobalString.SavedSettings[member.user.lang]);
                             List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
                             for (int i = 0; i < 9; i++) {
@@ -220,7 +220,7 @@ public class EventListeners implements Listener {
         Player player = e.getPlayer();
         if (player.getItemInHand().getType().equals(Material.CHEST)) {
             Member member = Member.getMember(player);
-            player.playSound(player.getLocation(), Sound.CLICK, 1F, 1F);
+            member.user.sound(Sound.CLICK);
             Inventory inventory = player.getInventory();
             inventory.setItem(4, new ItemStack(Material.AIR));
             ItemStack[] itemStacks = KnockBackFFA.itemStacks[member.user.lang];

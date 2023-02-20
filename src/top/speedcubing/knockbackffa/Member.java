@@ -92,7 +92,7 @@ public class Member {
         sideBar.scoreboard.registerNewObjective(StringList.obj, "health").setDisplaySlot(DisplaySlot.BELOW_NAME);
         sideBar.create();
         Member.users.values().forEach(a -> {
-            if (a.user.player.getHealth() > 19)
+            if (a.user.bGetHealth() > 19)
                 connection.sendPacket(a.maxHealPacket);
         });
         for (int i = 0; i < killboard.length; i++) {
@@ -143,9 +143,9 @@ public class Member {
             double heal = damager.getHealth() / 2;
             String color = heal > 8.5 ? "§a" : (heal > 6.5 ? "§e" : (heal > 4.5 ? "§6" : "§c"));
             user.langMessageSender(StringList.died).replace("%t%", speedcubingServer.getFormat(Damage.user.rank)[1] + damager.getName()).replace("%h%", color + (int) Math.round(heal)).send();
-            Damage.user.langMessageSender(StringList.Kill).replace("%t%", speedcubingServer.getFormat(user.rank)[1] + user.player.getName()).send();
+            Damage.user.langMessageSender(StringList.Kill).replace("%t%", speedcubingServer.getFormat(user.rank)[1] + user.bGetName()).send();
             SideBar sideBar = SideBar.getSidebar(damager);
-            damager.playSound(damager.getLocation(), Sound.SUCCESSFUL_HIT, 1F, 1F);
+            Damage.user.sound(Sound.SUCCESSFUL_HIT);
             damager.setHealth(20);
             Damage.kill();
             int currentKillStreak = damager.getLevel() + 1;
@@ -165,7 +165,7 @@ public class Member {
         }
         if (!quit) {
             SideBar sideBar = SideBar.getSidebar(user.player);
-            PlayerInventory inventory = user.player.getInventory();
+            PlayerInventory inventory = user.bGetInventory();
             Damage = null;
             inventory.clear();
             inventory.setHelmet(new ItemStack(Material.AIR));
@@ -176,14 +176,14 @@ public class Member {
             if (killed)
                 sideBar.setLineByScore(StringList.sidebar[user.lang][10] + death, 3);
             sideBar.setLineByScore(StringList.sidebar[user.lang][4] + 0, 9);
-            user.player.setLevel(0);
-            user.player.setHealth(20);
+            user.bSetLevel(0);
+            user.bSetHealth(20);
             Bukkit.getScheduler().scheduleSyncDelayedTask(KnockBackFFA.getPlugin(KnockBackFFA.class), () -> {
-                user.player.setHealth(20);
-                user.player.setFireTicks(0);
+                user.bSetHealth(20);
+                user.bSetFireTicks(0);
             }, 1);
             PlayerUtils.removeArrows(user.player);
-            user.player.teleport(new Location(user.player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
+            user.bTeleport(new Location(user.player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
             if (pearls != null)
                 pearls.forEach(EnderPearl::remove);
         }
@@ -198,16 +198,16 @@ public class Member {
                                         speedcubingServer.connection.select("COUNT(*)").from("playersdata")
                                                 .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
                                                 .getInt() + 1))
-                                        .replace("%j%", speedcubingServer.getFormat(user.rank)[0] + user.player.getName())
+                                        .replace("%j%", speedcubingServer.getFormat(user.rank)[0] + user.bGetName())
                                         .replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
         if (spawn)
             personal.spawn();
     }
 
     public void item(boolean win) {
-        user.player.closeInventory();
+        user.bCloseInventory();
         char[] cfg = inventory.toCharArray();
-        PlayerInventory inventory = user.player.getInventory();
+        PlayerInventory inventory = user.bGetInventory();
         ItemStack[] stack = KnockBackFFA.itemStacks[user.lang];
         pearls.clear();
         if (win) {
@@ -234,6 +234,6 @@ public class Member {
             inventory.setLeggings(stack[2]);
             inventory.setBoots(stack[3]);
         }
-        user.player.updateInventory();
+        user.bUpdateInventory();
     }
 }
