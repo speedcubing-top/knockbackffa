@@ -20,6 +20,7 @@ import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.server.config;
+import top.speedcubing.server.database.Database;
 import top.speedcubing.server.speedcubingServer;
 
 import java.util.*;
@@ -144,10 +145,10 @@ public class KnockBackFFA extends JavaPlugin {
             @Override
             public void run() {
                 try {
-                    arr = speedcubingServer.connection.select("priority,name,kbffa_kill,id,uuid").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
-                    arr2 = speedcubingServer.connection.select("priority,name,kbffa_dailykill,id,uuid").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).getStringArray();
-                    speedcubingServer.connection.update("champ", "uuid='" + arr[4] + "'", "subject='kbffa_kill'");
-                    speedcubingServer.connection.update("champ", "uuid='" + arr2[4] + "'", "subject='kbffa_dailykill'");
+                    arr = Database.connection.select("priority,name,kbffa_kill,id,uuid").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
+                    arr2 = Database.connection.select("priority,name,kbffa_dailykill,id,uuid").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).getStringArray();
+                    Database.connection.update("champ", "uuid='" + arr[4] + "'", "subject='kbffa_kill'");
+                    Database.connection.update("champ", "uuid='" + arr2[4] + "'", "subject='kbffa_dailykill'");
                     Set<String> champs = speedcubingServer.getChamps();
                     lastKill = 0;
                     index = 0;
@@ -191,7 +192,7 @@ public class KnockBackFFA extends JavaPlugin {
             @Override
             public void run() {
                 Member.users.values().forEach(a -> a.dailyKill = 0);
-                speedcubingServer.connection.update("playersdata", "kbffa_dailykill=0", "1");
+                Database.connection.update("playersdata", "kbffa_dailykill=0", "1");
             }
         }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis(), 86400000);
     }

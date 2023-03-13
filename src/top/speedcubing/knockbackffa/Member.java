@@ -14,6 +14,7 @@ import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.SideBar;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
+import top.speedcubing.server.database.Database;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
@@ -195,7 +196,7 @@ public class Member {
                         StringList.noData[0] :
                         KnockBackFFA.bold(
                                 StringList.leaderboard.replace("%i%", Integer.toString(
-                                        speedcubingServer.connection.select("COUNT(*)").from("playersdata")
+                                                Database.connection.select("COUNT(*)").from("playersdata")
                                                 .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
                                                 .getInt() + 1))
                                         .replace("%j%", speedcubingServer.getFormat(user.rank)[0] + user.bGetName())
