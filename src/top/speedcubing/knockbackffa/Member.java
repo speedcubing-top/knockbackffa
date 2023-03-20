@@ -16,7 +16,6 @@ import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.libs.User;
-import top.speedcubing.server.speedcubingServer;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -143,8 +142,8 @@ public class Member {
             Player damager = Damage.user.player;
             double heal = damager.getHealth() / 2;
             String color = heal > 8.5 ? "§a" : (heal > 6.5 ? "§e" : (heal > 4.5 ? "§6" : "§c"));
-            user.langMessageSender(StringList.died).replace("%t%", speedcubingServer.getFormat(Damage.user.rank)[1] + damager.getName()).replace("%h%", color + (int) Math.round(heal)).send();
-            Damage.user.langMessageSender(StringList.Kill).replace("%t%", speedcubingServer.getFormat(user.rank)[1] + user.bGetName()).send();
+            user.langMessageSender(StringList.died).replace("%t%", Damage.user.getFormatName(false)).replace("%h%", color + (int) Math.round(heal)).send();
+            Damage.user.langMessageSender(StringList.Kill).replace("%t%", user.getFormatName(false)).send();
             SideBar sideBar = SideBar.getSidebar(damager);
             Damage.user.sound(Sound.SUCCESSFUL_HIT);
             damager.setHealth(20);
@@ -197,9 +196,9 @@ public class Member {
                         KnockBackFFA.bold(
                                 StringList.leaderboard.replace("%i%", Integer.toString(
                                                 Database.connection.select("COUNT(*)").from("playersdata")
-                                                .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
-                                                .getInt() + 1))
-                                        .replace("%j%", speedcubingServer.getFormat(user.rank)[0] + user.bGetName())
+                                                        .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
+                                                        .getInt() + 1))
+                                        .replace("%j%", user.getPrefixName(false))
                                         .replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
         if (spawn)
             personal.spawn();

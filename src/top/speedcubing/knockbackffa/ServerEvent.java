@@ -32,7 +32,7 @@ public class ServerEvent {
             String message = ((PacketPlayInChat) e.packet).a();
             if (message.charAt(0) != '/') {
                 e.isCancelled = true;
-                String[] formats = speedcubingServer.getFormat(Member.getMember(e.player).user.rank);
+                String[] formats = Member.getMember(e.player).user.getFormat();
                 Chat.globalChat(Bukkit.getOnlinePlayers(), e.player, GlobalString.MessageFormat, message, formats[0] + e.player.getName(), formats[2]);
             }
         }
