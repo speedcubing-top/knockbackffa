@@ -1,27 +1,21 @@
 package top.speedcubing.knockbackffa;
 
-import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.MinecraftServer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
-import org.bukkit.Bukkit;
-import org.bukkit.Difficulty;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.*;
 import org.bukkit.plugin.java.JavaPlugin;
-import top.speedcubing.lib.bukkit.entity.ClickEvent;
-import top.speedcubing.lib.bukkit.entity.Hologram;
+import top.speedcubing.lib.bukkit.entity.*;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
-import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
+import top.speedcubing.lib.bukkit.inventory.*;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.server.config;
-import top.speedcubing.server.database.Database;
-import top.speedcubing.server.database.Rank;
+import top.speedcubing.server.database.*;
 
 import java.util.*;
 
@@ -113,7 +107,9 @@ public class KnockBackFFA extends JavaPlugin {
         String[] save = {"§aÄnderungen speichern", "§aSave Changes", "§a儲存設定", "§a储存设置"};
         String[] unsave = {"§cnicht gespeicherte Änderungen", "§cUnSave Changes", "§c不儲存設定", "§c不储存设置"};
         String[] display = {"§4Sie können die Elemente hier nicht einstellen!", "§4You can't set the items here!", "§4你不能將物品設定於此處!", "§4你不能将物品设定于此处!"};
-        for (int i = 0; i < 4; i++) {
+        for (
+                int i = 0;
+                i < 4; i++) {
             itemStacks[i][0] = new ItemBuilder(Material.LEATHER_HELMET).unBreak().ench(new Enchantment[]{Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE}, new int[]{2, 4}).build();
             itemStacks[i][1] = new ItemBuilder(Material.LEATHER_CHESTPLATE).unBreak().ench(new Enchantment[]{Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE}, new int[]{2, 4}).build();
             itemStacks[i][2] = new ItemBuilder(Material.LEATHER_LEGGINGS).unBreak().ench(new Enchantment[]{Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE}, new int[]{2, 4}).build();
@@ -132,67 +128,111 @@ public class KnockBackFFA extends JavaPlugin {
             KitEditor[i].setItem(5, new ItemBuilder(Material.INK_SACK).durability(1).name(unsave[i]).build());
             Invalid[i] = new ItemBuilder(Material.STAINED_GLASS_PANE).durability(8).name(display[i]).build();
         }
-        personal[0] = new Hologram("", false, false).world("world").setLocation(KnockBackFFA.holoX, 152.4, KnockBackFFA.holoZ, 0, 0).setClickEvent(clickEvent);
-        personal[1] = new Hologram("", false, false).world("world").setLocation(KnockBackFFA.holoX, 148.2, KnockBackFFA.holoZ, 0, 0).setClickEvent(clickEvent);
-        new Hologram("§6§lClick to toggle!", true, true).setLocation(holoX, 148.5, holoZ, 0, 0).world("world").setClickEvent(clickEvent);
-        new Timer("Cubing-Leaderboard-Thread").schedule(new TimerTask() {
-            int lastKill;
-            int index;
-            int a;
-            String[] arr;
-            String[] arr2;
 
-            @Override
-            public void run() {
-                try {
-                    arr = Database.connection.select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
-                    arr2 = Database.connection.select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).getStringArray();
-                    Database.connection.update("champ", "id=" + arr[3], "subject='kbffa_kill'");
-                    Database.connection.update("champ", "id=" + arr2[3], "subject='kbffa_dailykill'");
-                    lastKill = 0;
-                    index = 0;
-                    for (int i = 0; i < 10; i++) {
-                        a = Integer.parseInt(arr[i * 4 + 2]);
-                        if (lastKill != a) {
-                            index = i + 1;
-                            lastKill = a;
+        personal[0] = new
+
+                Hologram("", false, false).
+
+                world("world").
+
+                setLocation(KnockBackFFA.holoX, 152.4, KnockBackFFA.holoZ, 0, 0).
+
+                setClickEvent(clickEvent);
+
+        personal[1] = new
+
+                Hologram("", false, false).
+
+                world("world").
+
+                setLocation(KnockBackFFA.holoX, 148.2, KnockBackFFA.holoZ, 0, 0).
+
+                setClickEvent(clickEvent);
+        new
+
+                Hologram("§6§lClick to toggle!", true, true).
+
+                setLocation(holoX, 148.5, holoZ, 0, 0).
+
+                world("world").
+
+                setClickEvent(clickEvent);
+        new
+
+                Timer("Cubing-Leaderboard-Thread").
+
+                schedule(new TimerTask() {
+                    int lastKill;
+                    int index;
+                    int a;
+                    String[] arr;
+                    String[] arr2;
+
+                    @Override
+                    public void run() {
+                        try {
+                            arr = Database.connection.select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
+                            arr2 = Database.connection.select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).getStringArray();
+                            Database.connection.update("champ", "id=" + arr[3], "subject='kbffa_kill'");
+                            Database.connection.update("champ", "id=" + arr2[3], "subject='kbffa_dailykill'");
+                            lastKill = 0;
+                            index = 0;
+                            for (int i = 0; i < 10; i++) {
+                                a = Integer.parseInt(arr[i * 4 + 2]);
+                                if (lastKill != a) {
+                                    index = i + 1;
+                                    lastKill = a;
+                                }
+                                boardName[i] = arr[i * 4 + 3];
+                                board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr[i * 4], Integer.parseInt(arr[i * 4 + 3]))[0] + arr[i * 4 + 1]).replace("%k%", arr[i * 4 + 2]);
+                            }
+                            lastKill = 0;
+                            index = 0;
+                            for (int i = 0; i < 10; i++) {
+                                a = Integer.parseInt(arr2[i * 4 + 2]);
+                                if (lastKill != a) {
+                                    index = i + 1;
+                                    lastKill = a;
+                                }
+                                dailyBoardName[i] = arr2[i * 4 + 3];
+                                dailyBoard[i] = arr2[i * 4 + 2].equals("0") ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr2[i * 4], Integer.parseInt(arr2[i * 4 + 3]))[0] + arr2[i * 4 + 1]).replace("%k%", arr2[i * 4 + 2]);
+                            }
+                            for (Member m : Member.users.values()) {
+                                m.a();
+                                if (m.killedPlayer) {
+                                    m.killedPlayer = false;
+                                    m.user.dbUpdate("kbffa_kill=" + m.kill + ",kbffa_dailykill=" + m.dailyKill);
+                                }
+                                m.updatePlayerPos(false);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        boardName[i] = arr[i * 4 + 3];
-                        board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr[i * 4], Integer.parseInt(arr[i * 4 + 3]))[0] + arr[i * 4 + 1]).replace("%k%", arr[i * 4 + 2]);
                     }
-                    lastKill = 0;
-                    index = 0;
-                    for (int i = 0; i < 10; i++) {
-                        a = Integer.parseInt(arr2[i * 4 + 2]);
-                        if (lastKill != a) {
-                            index = i + 1;
-                            lastKill = a;
-                        }
-                        dailyBoardName[i] = arr2[i * 4 + 3];
-                        dailyBoard[i] = arr2[i * 4 + 2].equals("0") ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr2[i * 4], Integer.parseInt(arr2[i * 4 + 3]))[0] + arr2[i * 4 + 1]).replace("%k%", arr2[i * 4 + 2]);
-                    }
-                    for (Member m : Member.users.values()) {
-                        m.a();
-                        if (m.killedPlayer) {
-                            m.killedPlayer = false;
-                            m.user.dbUpdate("kbffa_kill=" + m.kill + ",kbffa_dailykill=" + m.dailyKill);
-                        }
-                        m.updatePlayerPos(false);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }, 0, 1000);
+                }, 0, 1000);
         Calendar tomorrow = new GregorianCalendar();
         tomorrow.add(Calendar.DATE, 1);
-        new Timer("Cubing-Daily-Thread").schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Member.users.values().forEach(a -> a.dailyKill = 0);
-                Database.connection.update("playersdata", "kbffa_dailykill=0", "1");
-            }
-        }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis(), 86400000);
+        new
+
+                Timer("Cubing-Daily-Thread").
+
+                schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Member.users.values().forEach(a -> a.dailyKill = 0);
+                        Database.connection.update("playersdata", "kbffa_dailykill=0", "1");
+                    }
+                }, new
+
+                        GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.
+
+                        get(Calendar.MONTH), tomorrow.
+
+                        get(Calendar.DATE), 0, 0).
+
+                        getTime().
+
+                        getTime() - System.currentTimeMillis(), 86400000);
     }
 
     public void onDisable() {

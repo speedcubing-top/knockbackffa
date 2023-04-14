@@ -48,6 +48,7 @@ public class Member {
     long lastClick;
     boolean displayType;
     final Hologram personal;
+    int placedblock;
 
     public final Hologram[] killboard = new Hologram[10];
 

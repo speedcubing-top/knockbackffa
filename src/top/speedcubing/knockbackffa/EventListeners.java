@@ -1,30 +1,20 @@
 package top.speedcubing.knockbackffa;
 
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.*;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.*;
 import org.bukkit.util.Vector;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.server.libs.GlobalString;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class EventListeners implements Listener {
 
@@ -66,6 +56,8 @@ public class EventListeners implements Listener {
     @EventHandler
     public void BlockPlaceEvent(BlockPlaceEvent e) {
         if (e.getPlayer().getGameMode() == GameMode.SURVIVAL) {
+            Member member = Member.getMember(e.getPlayer());
+            member.placedblock++;
             Block block = e.getBlock();
             Material old = e.getBlockReplacedState().getType();
             if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
@@ -236,6 +228,9 @@ public class EventListeners implements Listener {
             player.openInventory(KnockBackFFA.KitEditor[member.user.lang]);
             InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.user.lang]);
         }
+        if (e.getClickedBlock().getType() == Material.CHEST && player.getGameMode() != GameMode.CREATIVE) {
+            e.setCancelled(true);
+        }
         if (player.getLocation().getY() > KnockBackFFA.spawnprotectY && player.getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);
             player.updateInventory();
@@ -248,7 +243,7 @@ public class EventListeners implements Listener {
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
         member.death(true);
-        member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_dailykill=" + member.dailyKill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak);
+        member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_dailykill=" + member.dailyKill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak + ",kbffa_blockplace=kbffa_blockplace+" + member.placedblock);
         Member.users.remove(member.user.id);
     }
 

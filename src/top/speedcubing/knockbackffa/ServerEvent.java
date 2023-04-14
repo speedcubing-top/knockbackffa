@@ -6,12 +6,9 @@ import top.speedcubing.lib.bukkit.event.PlayInEvent;
 import top.speedcubing.lib.eventbus.LibEventHandler;
 import top.speedcubing.server.config;
 import top.speedcubing.server.events.ConfigReloadEvent;
-import top.speedcubing.server.events.player.NickEvent;
-import top.speedcubing.server.events.player.SkinEvent;
-import top.speedcubing.server.events.player.ToggleFlyEvent;
+import top.speedcubing.server.events.player.*;
 import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.share.Chat;
-import top.speedcubing.server.speedcubingServer;
 
 public class ServerEvent {
 
