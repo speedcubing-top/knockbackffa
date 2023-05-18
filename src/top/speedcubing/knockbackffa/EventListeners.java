@@ -231,7 +231,7 @@ public class EventListeners implements Listener {
             player.openInventory(KnockBackFFA.KitEditor[member.user.lang]);
             InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.user.lang]);
         }
-        if (e.getClickedBlock().getType() == Material.CHEST && player.getGameMode() != GameMode.CREATIVE) {
+        if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.CHEST && player.getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);
         }
         if (player.getLocation().getY() > KnockBackFFA.spawnprotectY && player.getGameMode() != GameMode.CREATIVE) {
