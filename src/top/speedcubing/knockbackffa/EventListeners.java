@@ -91,7 +91,10 @@ public class EventListeners implements Listener {
             EntityDamageEvent.DamageCause cause = e.getCause();
             if (cause == EntityDamageEvent.DamageCause.FALL || cause == EntityDamageEvent.DamageCause.FIRE || cause == EntityDamageEvent.DamageCause.FIRE_TICK)
                 e.setCancelled(true);
-            else if ((cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.LAVA || cause == EntityDamageEvent.DamageCause.DROWNING) && ((Player) entity).getHealth() - e.getFinalDamage() < 0)
+            else if (cause == EntityDamageEvent.DamageCause.DROWNING) {
+                if (!Member.getMember(entity).isFighting)
+                    e.setCancelled(true);
+            } else if ((cause == EntityDamageEvent.DamageCause.SUFFOCATION || cause == EntityDamageEvent.DamageCause.LAVA) && ((Player) entity).getHealth() - e.getFinalDamage() < 0)
                 Member.getMember(entity).death(false);
         }
     }
