@@ -12,7 +12,7 @@ import org.bukkit.inventory.*;
 import org.bukkit.util.Vector;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
-import top.speedcubing.server.libs.GlobalString;
+import top.speedcubing.server.lang.GlobalString;
 
 import java.util.*;
 
@@ -21,6 +21,7 @@ public class EventListeners implements Listener {
     //BOW BOOST PLUGIN
     @EventHandler
     public void onShoot(EntityShootBowEvent e) {
+//        ((CraftArrow) e.getProjectile()).setKnockbackStrength(2);
         LivingEntity livingEntity = e.getEntity();
         Vector dir = livingEntity.getLocation().getDirection();
         Arrow a = (Arrow) e.getProjectile();
@@ -162,7 +163,7 @@ public class EventListeners implements Listener {
                         member.user.sound(Sound.CLICK);
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
-                            player.sendMessage(GlobalString.SavedSettings[member.user.lang]);
+                            member.user.sendLangMessage(GlobalString.SavedSettings);
                             List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
@@ -201,7 +202,7 @@ public class EventListeners implements Listener {
             Member member = Member.getMember(player);
             if (member.iseditingkit) {
                 member.iseditingkit = false;
-                player.sendMessage(GlobalString.UnSavedSettings[member.user.lang]);
+                member.user.sendLangMessage(GlobalString.UnSavedSettings);
                 Inventory inventory = player.getInventory();
                 inventory.clear();
                 inventory.setItem(4, KnockBackFFA.itemStacks[member.user.lang][11]);

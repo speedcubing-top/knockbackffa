@@ -1,24 +1,21 @@
 package top.speedcubing.knockbackffa;
 
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
-import net.minecraft.server.v1_8_R3.PlayerConnection;
+import net.minecraft.server.v1_8_R3.*;
+import org.bukkit.Material;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.EnderPearl;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
-import top.speedcubing.lib.bukkit.PlayerUtils;
-import top.speedcubing.lib.bukkit.SideBar;
+import top.speedcubing.lib.bukkit.*;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
 import top.speedcubing.server.database.Database;
-import top.speedcubing.server.libs.User;
+import top.speedcubing.server.player.User;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Member {
@@ -111,11 +108,11 @@ public class Member {
             displayType = !displayType;
             a();
             if (spawn) {
-                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? StringList.title2[user.lang] : StringList.title[user.lang]).spawn().setListener();
-                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? StringList.type2[user.lang] : StringList.type[user.lang]).spawn().setListener();
+                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? StringList.title2.get(user.lang) : StringList.title.get(user.lang)).spawn().setListener();
+                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? StringList.type2.get(user.lang) : StringList.type.get(user.lang)).spawn().setListener();
             } else {
-                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? StringList.title2[user.lang] : StringList.title[user.lang]).setListener();
-                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? StringList.type2[user.lang] : StringList.type[user.lang]).setListener();
+                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? StringList.title2.get(user.lang) : StringList.title.get(user.lang)).setListener();
+                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? StringList.type2.get(user.lang) : StringList.type.get(user.lang)).setListener();
             }
             updatePlayerPos(spawn);
             lastClick = l;
@@ -143,8 +140,8 @@ public class Member {
             Player damager = Damage.user.player;
             double heal = damager.getHealth() / 2;
             String color = heal > 8.5 ? "§a" : (heal > 6.5 ? "§e" : (heal > 4.5 ? "§6" : "§c"));
-            user.langMessageSender(StringList.died).replace("%t%", Damage.user.getFormatName(false)).replace("%h%", color + (int) Math.round(heal)).send();
-            Damage.user.langMessageSender(StringList.Kill).replace("%t%", user.getFormatName(false)).send();
+            user.sendLangMessage(StringList.died, Damage.user.getFormatName(false), (color + (int) Math.round(heal)));
+            Damage.user.sendLangMessage(StringList.died, Damage.user.getFormatName(false), (color + (int) Math.round(heal)));
             SideBar sideBar = SideBar.getSidebar(damager);
             Damage.user.sound(Sound.SUCCESSFUL_HIT);
             damager.setHealth(20);
@@ -193,7 +190,7 @@ public class Member {
     public void updatePlayerPos(boolean spawn) {
         personal.setName(
                 (displayType ? kill : dailyKill) == 0 ?
-                        StringList.noData[0] :
+                        StringList.noData.get(user.lang) :
                         KnockBackFFA.bold(
                                 StringList.leaderboard.replace("%i%", Integer.toString(
                                                 Database.connection.select("COUNT(*)").from("playersdata")

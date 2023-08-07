@@ -4,11 +4,11 @@ import net.minecraft.server.v1_8_R3.PacketPlayInChat;
 import org.bukkit.Bukkit;
 import top.speedcubing.lib.bukkit.event.PlayInEvent;
 import top.speedcubing.lib.eventbus.LibEventHandler;
-import top.speedcubing.server.config;
 import top.speedcubing.server.events.ConfigReloadEvent;
 import top.speedcubing.server.events.player.*;
-import top.speedcubing.server.libs.GlobalString;
+import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.share.Chat;
+import top.speedcubing.server.utils.config;
 
 public class ServerEvent {
 
@@ -20,6 +20,7 @@ public class ServerEvent {
         KnockBackFFA.yaw = config.config.getAsJsonObject("defaultkbffa").get("yaw").getAsFloat();
         KnockBackFFA.holoX = config.config.getAsJsonObject("defaultkbffa").get("holox").getAsDouble();
         KnockBackFFA.holoZ = config.config.getAsJsonObject("defaultkbffa").get("holoz").getAsDouble();
+        KnockBackFFA.spawnprotectY = config.config.getAsJsonObject("defaultkbffa").get("spawnproty").getAsInt();
     }
 
 
@@ -38,18 +39,18 @@ public class ServerEvent {
     @LibEventHandler
     public void ToggleFlyEvent(ToggleFlyEvent e) {
         e.isCancelled = true;
-        e.player.sendMessage(GlobalString.OnlyInHub[Member.getMember(e.player).user.lang]);
+        e.player.sendMessage(GlobalString.OnlyInHub.get(e.player));
     }
 
     @LibEventHandler
     public void NickEvent(NickEvent e) {
         e.isCancelled = true;
-        e.player.sendMessage(GlobalString.OnlyInHub[Member.getMember(e.player).user.lang]);
+        e.player.sendMessage(GlobalString.OnlyInHub.get(e.player));
     }
 
     @LibEventHandler
     public void SkinEvent(SkinEvent e) {
         e.isCancelled = true;
-        e.player.sendMessage(GlobalString.OnlyInHub[Member.getMember(e.player).user.lang]);
+        e.player.sendMessage(GlobalString.OnlyInHub.get(e.player));
     }
 }
