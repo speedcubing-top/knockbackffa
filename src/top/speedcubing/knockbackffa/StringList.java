@@ -47,10 +47,10 @@ public class StringList {
             "§8[§bKnockBackFFA§8] §cYou died!"
     );
     public static LangMessage died = new LangMessage(
-            "§8[§bKnockBackFFA§8] %1% §7were killed by %2%§c! §8[%3%" + obj + "§8]",
-            "§8[§bKnockBackFFA§8] %1% §7were killed by %2%§c! §8[%3%" + obj + "§8]",
-            "§8[§bKnockBackFFA§8] %1% §7were killed by %2%§c! §8[%3%" + obj + "§8]",
-            "§8[§bKnockBackFFA§8] %1% §7were killed by %2%§c! §8[%3%" + obj + "§8]"
+            "§8[§bKnockBackFFA§8] %1% §7was killed by %2%§7! §8[%3%" + obj + "§8]",
+            "§8[§bKnockBackFFA§8] %1% §7was killed by %2%§7! §8[%3%" + obj + "§8]",
+            "§8[§bKnockBackFFA§8] %1% §7was killed by %2%§7! §8[%3%" + obj + "§8]",
+            "§8[§bKnockBackFFA§8] %1% §7was killed by %2%§7! §8[%3%" + obj + "§8]"
     );
 
     public static String[][] sidebar = {

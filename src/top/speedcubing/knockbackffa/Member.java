@@ -140,8 +140,8 @@ public class Member {
             Player damager = Damage.user.player;
             double heal = damager.getHealth() / 2;
             String color = heal > 8.5 ? "§a" : (heal > 6.5 ? "§e" : (heal > 4.5 ? "§6" : "§c"));
-            user.sendLangMessage(StringList.died, Damage.user.getFormatName(false), (color + (int) Math.round(heal)));
-            Damage.user.sendLangMessage(StringList.died, Damage.user.getFormatName(false), (color + (int) Math.round(heal)));
+            user.sendLangMessage(StringList.died, user.getFormatName(false), Damage.user.getFormatName(false), color + (int) Math.round(heal));
+            Damage.user.sendLangMessage(StringList.died, user.getFormatName(false), Damage.user.getFormatName(false), color + (int) Math.round(heal));
             SideBar sideBar = SideBar.getSidebar(damager);
             Damage.user.sound(Sound.SUCCESSFUL_HIT);
             damager.setHealth(20);
