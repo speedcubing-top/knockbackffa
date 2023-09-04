@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import top.speedcubing.lib.bukkit.entity.*;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.*;
-import top.speedcubing.lib.eventbus.LibEventManager;
+import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.server.database.*;
 import top.speedcubing.server.utils.config;
 
@@ -82,7 +82,7 @@ public class KnockBackFFA extends JavaPlugin {
         World world = Bukkit.getWorld("world");
         world.setDifficulty(Difficulty.EASY);
         world.setTime(6000);
-        LibEventManager.registerListeners(new ServerEvent());
+        CubingEventManager.registerListeners(new ServerEvent());
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Set<PacketPlayOutBlockBreakAnimation> a = new HashSet<>();
             Set<Block> ba = new HashSet<>();
@@ -111,10 +111,10 @@ public class KnockBackFFA extends JavaPlugin {
         for (
                 int i = 0;
                 i < 4; i++) {
-            itemStacks[i][0] = new ItemBuilder(Material.LEATHER_HELMET).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL,2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
-            itemStacks[i][1] = new ItemBuilder(Material.LEATHER_CHESTPLATE).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL,2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
-            itemStacks[i][2] = new ItemBuilder(Material.LEATHER_LEGGINGS).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL,2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
-            itemStacks[i][3] = new ItemBuilder(Material.LEATHER_BOOTS).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL,2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
+            itemStacks[i][0] = new ItemBuilder(Material.LEATHER_HELMET).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
+            itemStacks[i][1] = new ItemBuilder(Material.LEATHER_CHESTPLATE).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
+            itemStacks[i][2] = new ItemBuilder(Material.LEATHER_LEGGINGS).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
+            itemStacks[i][3] = new ItemBuilder(Material.LEATHER_BOOTS).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
             itemStacks[i][4] = new ItemBuilder(Material.WOOD_SWORD).unBreak().ench(Enchantment.DAMAGE_ALL, 1).build();
             itemStacks[i][5] = new ItemBuilder(Material.STICK).ench(new Enchantment[]{Enchantment.KNOCKBACK}, new int[]{1}).build();
             itemStacks[i][6] = new ItemBuilder(Material.ENDER_PEARL).build();
