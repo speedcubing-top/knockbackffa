@@ -82,6 +82,7 @@ public class KnockBackFFA extends JavaPlugin {
         World world = Bukkit.getWorld("world");
         world.setDifficulty(Difficulty.EASY);
         world.setTime(6000);
+        world.setAutoSave(false);
         CubingEventManager.registerListeners(new ServerEvent());
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Set<PacketPlayOutBlockBreakAnimation> a = new HashSet<>();
