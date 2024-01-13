@@ -7,5 +7,3 @@ depend:
 commands:
   map:
     usage: /map
-  killeffect:
-    usage: /killeffect
