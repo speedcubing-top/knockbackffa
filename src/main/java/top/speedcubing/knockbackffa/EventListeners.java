@@ -9,14 +9,26 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.*;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.server.lang.GlobalString;
+import top.speedcubing.killeffects.effects.KillEffect;
+import top.speedcubing.killeffects.manager.KillEffectManager;
+import top.speedcubing.killeffects.gui.GuiKillEffectSelector;
+import top.speedcubing.killeffects.manager.KillEffectManager;
+import top.speedcubing.killeffects.KillEffects;
+
+
 
 import java.util.*;
 
+
+
 public class EventListeners implements Listener {
+    private KillEffectManager killEffectManager;
+
 
     //BOW BOOST PLUGIN
     @EventHandler
@@ -126,6 +138,8 @@ public class EventListeners implements Listener {
                     if (victim != damager)
                         victimMember.Damage = Damager;
                     if (victim.getHealth() - e.getFinalDamage() <= 0) {
+                        PlayerDeathEvent playerDeathEvent = new PlayerDeathEvent(victim, new ArrayList<ItemStack>(), 0, null);
+                        Bukkit.getServer().getPluginManager().callEvent(playerDeathEvent);
                         victimMember.death(false);
                         e.setCancelled(true);
                         victim.damage(0);
@@ -173,6 +187,7 @@ public class EventListeners implements Listener {
                             }
                             inv.clear();
                             inv.setItem(4, KnockBackFFA.itemStacks[member.user.lang][11]);
+                            inv.setItem(6, KnockBackFFA.itemStacks[member.user.lang][12]);
                             member.iseditingkit = false;
                             player.closeInventory();
                         } else {
@@ -196,7 +211,7 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void InventoryCloseEvent(InventoryCloseEvent e) {
-        if (e.getInventory().getHolder().equals(KnockBackFFA.KitEditorHolder)) {
+        if (e.getInventory().getName().contains("KnockBack FFA")) {
             Player player = (Player) e.getPlayer();
             player.setItemOnCursor(new ItemStack(Material.AIR));
             Member member = Member.getMember(player);
@@ -206,6 +221,7 @@ public class EventListeners implements Listener {
                 Inventory inventory = player.getInventory();
                 inventory.clear();
                 inventory.setItem(4, KnockBackFFA.itemStacks[member.user.lang][11]);
+                inventory.setItem(6, KnockBackFFA.itemStacks[member.user.lang][12]);
             }
         }
     }
@@ -231,6 +247,14 @@ public class EventListeners implements Listener {
             member.iseditingkit = true;
             player.openInventory(KnockBackFFA.KitEditor[member.user.lang]);
             InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.user.lang]);
+        } else if (player.getItemInHand().getType().equals(Material.EMERALD)) {
+            List<KillEffect> killEffects;
+            KillEffects plugin = KillEffects.getInstance();
+            KillEffectManager killEffectManager = new KillEffectManager(plugin); // You may need to adjust this line
+            GuiKillEffectSelector guiKillEffectSelector = new GuiKillEffectSelector(killEffectManager);
+            guiKillEffectSelector.open(player);
+            e.setCancelled(true);
+
         }
         if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.CHEST && player.getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);

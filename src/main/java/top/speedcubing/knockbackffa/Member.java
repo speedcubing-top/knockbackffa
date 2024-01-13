@@ -71,6 +71,7 @@ public class Member {
         inventory.setBoots(new ItemStack(Material.AIR));
         inventory.clear();
         inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
+        inventory.setItem(6, KnockBackFFA.itemStacks[user.lang][12]);
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
         String[] sidebar = StringList.sidebar[user.lang];
         SideBar sideBar = new SideBar(player, sidebar[0])
@@ -171,6 +172,7 @@ public class Member {
             inventory.setLeggings(new ItemStack(Material.AIR));
             inventory.setBoots(new ItemStack(Material.AIR));
             inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
+            inventory.setItem(6, KnockBackFFA.itemStacks[user.lang][12]);
             if (killed)
                 sideBar.setLineByScore(StringList.sidebar[user.lang][10] + death, 3);
             sideBar.setLineByScore(StringList.sidebar[user.lang][4] + 0, 9);

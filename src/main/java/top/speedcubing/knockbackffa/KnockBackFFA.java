@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -17,26 +18,29 @@ import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.server.database.*;
 import top.speedcubing.server.utils.config;
 
+
 import java.util.*;
 
 public class KnockBackFFA extends JavaPlugin {
+    private static KnockBackFFA instance;
+
 
     public static String bold(String original) {
-        char[] b = original.toCharArray();
         StringBuilder builder = new StringBuilder();
-        boolean c = false;
-        for (int i = 0; i < original.length(); i++) {
-            builder.append(original.charAt(i));
-            if (c) {
+        boolean bold = false;
+        for (char c : original.toCharArray()) {
+            builder.append(c);
+            if (bold) {
                 builder.append("§l");
-                c = false;
+                bold = false;
             }
-            if (b[i] == '§' && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[i + 1]) > -1) {
-                c = true;
+            if (c == '§' && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(original.charAt(original.indexOf(c) + 1)) > -1) {
+                bold = true;
             }
         }
         return builder.toString();
     }
+
 
     public static double centerX = 0;
     public static double centerZ = 0;
@@ -46,6 +50,8 @@ public class KnockBackFFA extends JavaPlugin {
     public static double holoZ = 0;
     public static int spawnprotectY = 146;
 
+    public static int spawnY = 150;
+
     static final ClickEvent clickEvent = (p, e) -> Member.getMember(p).setDisplayType(false);
     public static final String[] board = new String[10];
     public static final String[] dailyBoard = new String[10];
@@ -54,7 +60,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static final Hologram[] personal = new Hologram[2];
 
     public static final ItemStack[] Invalid = new ItemStack[4];
-    public static final ItemStack[][] itemStacks = new ItemStack[4][12];
+    public static final ItemStack[][] itemStacks = new ItemStack[4][13];
     public static final Inventory[] KitEditor = new Inventory[4];
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
@@ -124,6 +130,7 @@ public class KnockBackFFA extends JavaPlugin {
             itemStacks[i][9] = new ItemBuilder(Material.ARROW).amount(16).build();
             itemStacks[i][10] = new ItemBuilder(Material.BOW).unBreak().ench(new Enchantment[]{Enchantment.ARROW_KNOCKBACK}, new int[]{1}).build();
             itemStacks[i][11] = new ItemBuilder(Material.CHEST).name(inv[i]).build();
+            itemStacks[i][12] = new ItemBuilder(Material.EMERALD).name("§aCosmetics").build();
             KitEditor[i] = Bukkit.createInventory(KitEditorHolder, 9, title[i]);
             InventoryUtils.fillItem(KitEditor[i], 0, 9, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name("§a").build());
             KitEditor[i].setItem(3, new ItemBuilder(Material.INK_SACK).durability(10).name(save[i]).build());
@@ -235,7 +242,9 @@ public class KnockBackFFA extends JavaPlugin {
                         getTime().
 
                         getTime() - System.currentTimeMillis(), 86400000);
+
     }
+
 
     public void onDisable() {
         KnockBackFFA.Diff.keySet().forEach(a -> Bukkit.getWorld("world").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));

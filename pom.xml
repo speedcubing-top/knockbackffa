@@ -39,6 +39,12 @@
             <artifactId>NameDb</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>top.speedcubing</groupId>
+            <artifactId>KillEffects</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
