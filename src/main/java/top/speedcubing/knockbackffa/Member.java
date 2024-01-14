@@ -6,6 +6,7 @@ import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -139,6 +140,9 @@ public class Member {
         boolean killed = System.currentTimeMillis() - this.KillTime < 100000 && Damage != null;
         if (killed) {
             Player damager = Damage.user.player;
+            //call death event for kill effect
+            PlayerDeathEvent playerDeathEvent = new PlayerDeathEvent(user.player, new ArrayList<ItemStack>(), 0, null);
+            Bukkit.getServer().getPluginManager().callEvent(playerDeathEvent);
             double heal = damager.getHealth() / 2;
             String color = heal > 8.5 ? "§a" : (heal > 6.5 ? "§e" : (heal > 4.5 ? "§6" : "§c"));
             user.sendLangMessage(StringList.died, user.getFormatName(false), Damage.user.getFormatName(false), color + (int) Math.round(heal));

@@ -143,8 +143,8 @@ public class EventListeners implements Listener {
                     if (victim != damager)
                         victimMember.Damage = Damager;
                     if (victim.getHealth() - e.getFinalDamage() <= 0) {
-                        PlayerDeathEvent playerDeathEvent = new PlayerDeathEvent(victim, new ArrayList<ItemStack>(), 0, null);
-                        Bukkit.getServer().getPluginManager().callEvent(playerDeathEvent);
+//                        PlayerDeathEvent playerDeathEvent = new PlayerDeathEvent(victim, new ArrayList<ItemStack>(), 0, null);
+//                        Bukkit.getServer().getPluginManager().callEvent(playerDeathEvent);
                         victimMember.death(false);
                         e.setCancelled(true);
                         victim.damage(0);
