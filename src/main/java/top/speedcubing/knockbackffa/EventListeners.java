@@ -9,6 +9,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.*;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 import top.speedcubing.lib.bukkit.PlayerUtils;
@@ -92,6 +93,10 @@ public class EventListeners implements Listener {
             if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
+
+                //Remove kill effect selector from player inventory
+               player.getInventory().remove(Material.EMERALD);
+
             } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5))
                 user.death(false);
         }
@@ -246,6 +251,10 @@ public class EventListeners implements Listener {
             inventory.setItem(cfg[6] - 48, itemStacks[10]);
             member.iseditingkit = true;
             player.openInventory(KnockBackFFA.KitEditor[member.user.lang]);
+
+            //Remove kill effect selector when player is editing kit
+            player.getInventory().remove(Material.EMERALD);
+
             InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.user.lang]);
         } else if (player.getItemInHand().getType().equals(Material.EMERALD)) {
             List<KillEffect> killEffects;
