@@ -17,16 +17,18 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.speedcubing.knockbackffa.commands.TrollUtilsCommand;
-import top.speedcubing.knockbackffa.killeffect.commands.CommandSWKillEffect;
-import top.speedcubing.knockbackffa.killeffect.gui.GuiKillEffectSelector;
-import top.speedcubing.knockbackffa.killeffect.listeners.KillListener;
-import top.speedcubing.knockbackffa.killeffect.manager.KillEffectManager;
-import top.speedcubing.knockbackffa.killeffect.utils.ConfigUtil;
-import top.speedcubing.knockbackffa.projectileeffect.commands.ProjectileCommand;
-import top.speedcubing.knockbackffa.projectileeffect.effects.ProjectileEffectHeart;
-import top.speedcubing.knockbackffa.projectileeffect.gui.GuiProjectileEffectSelector;
-import top.speedcubing.knockbackffa.projectileeffect.listeners.ProjectileListener;
-import top.speedcubing.knockbackffa.projectileeffect.manager.ProjectileEffectManager;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.commands.CommandSWKillEffect;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.gui.GuiKillEffectSelector;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.listeners.KillListener;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
+import top.speedcubing.knockbackffa.cosmetics.main.commands.CosmeticCommand;
+import top.speedcubing.knockbackffa.cosmetics.main.gui.GuiCosmeticsSelector;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.commands.ProjectileCommand;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectHeart;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.gui.GuiProjectileEffectSelector;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.listeners.ProjectileListener;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.knockbackffa.trollutilListeners.OceanBow;
 import top.speedcubing.lib.bukkit.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.entity.Hologram;
@@ -47,6 +49,7 @@ public class KnockBackFFA extends JavaPlugin {
     private FileConfiguration dataYml;
     private GuiKillEffectSelector guiKillEffectSelector;
     private GuiProjectileEffectSelector guiProjectileEffectSelector;
+    private GuiCosmeticsSelector guiCosmeticsSelector;
     private String nmsVersion;
     private ProjectileEffectManager projectileEffectManager;
     private FileConfiguration projectileEffectDataYml;
@@ -107,16 +110,18 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EventListeners(), this);
         Bukkit.getPluginManager().registerEvents(new OceanBow(), this);
         Bukkit.getPluginManager().registerEvents(new KillListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new ProjectileListener(this),this);
-        Bukkit.getPluginManager().registerEvents(new ProjectileEffectHeart(this),this);
-        Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(killEffectManager), this);
-        Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(projectileEffectManager),this);
+        Bukkit.getPluginManager().registerEvents(new ProjectileListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ProjectileEffectHeart(this), this);
+        Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(this, killEffectManager), this);
+        Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager), this);
+        Bukkit.getPluginManager().registerEvents(guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager), this);
     }
 
     private void regitserCommands() {
         getCommand("trollutils").setExecutor(new TrollUtilsCommand());
         getCommand("killeffect").setExecutor(new CommandSWKillEffect(this));
         getCommand("projectileeffect").setExecutor(new ProjectileCommand(this));
+        getCommand("cosmetic").setExecutor(new CosmeticCommand(this));
     }
 
     public void onEnable() {
@@ -184,7 +189,7 @@ public class KnockBackFFA extends JavaPlugin {
             itemStacks[i][9] = new ItemBuilder(Material.ARROW).amount(16).build();
             itemStacks[i][10] = new ItemBuilder(Material.BOW).unBreak().ench(new Enchantment[]{Enchantment.ARROW_KNOCKBACK}, new int[]{1}).build();
             itemStacks[i][11] = new ItemBuilder(Material.CHEST).name(inv[i]).build();
-            itemStacks[i][12] = new ItemBuilder(Material.EMERALD).name("§aKill Effect Cosmetics").build();
+            itemStacks[i][12] = new ItemBuilder(Material.EMERALD).name("§aCosmetics").build();
             KitEditor[i] = Bukkit.createInventory(KitEditorHolder, 9, title[i]);
             InventoryUtils.fillItem(KitEditor[i], 0, 9, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name("§a").build());
             KitEditor[i].setItem(3, new ItemBuilder(Material.INK_SACK).durability(10).name(save[i]).build());
@@ -341,8 +346,9 @@ public class KnockBackFFA extends JavaPlugin {
         }
         log(" Saved §adata.yml");
     }
+
     public void loadProjectileEffectDataYml() {
-        saveResource("projectileeffectdata.yml",false);
+        saveResource("projectileeffectdata.yml", false);
         File dataYmlFile = new File(getDataFolder() + "/projectileeffectdata.yml");
         if (!dataYmlFile.exists()) {
             try {
@@ -369,6 +375,7 @@ public class KnockBackFFA extends JavaPlugin {
         }
         log(" Saved §aprojetcileeffectdata.yml");
     }
+
     /**
      * Here is kill effect code
      */
@@ -391,13 +398,19 @@ public class KnockBackFFA extends JavaPlugin {
     public String getNmsVersion() {
         return nmsVersion;
     }
+
     public FileConfiguration getProjectileEffectDataYml() {
         return projectileEffectDataYml;
     }
+
     public ProjectileEffectManager getProjectileEffectManager() {
         return projectileEffectManager;
     }
+
     public GuiProjectileEffectSelector getGuiProjectileEffectSelector() {
         return guiProjectileEffectSelector;
+    }
+    public GuiCosmeticsSelector getGuiCosmeticsSelector() {
+        return guiCosmeticsSelector;
     }
 }

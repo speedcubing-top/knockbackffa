@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.*;
 import org.bukkit.util.Vector;
-import top.speedcubing.knockbackffa.killeffect.manager.KillEffectManager;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.server.lang.GlobalString;
@@ -252,11 +252,10 @@ public class EventListeners implements Listener {
 
             //Remove kill effect selector when player is editing kit
             player.getInventory().remove(Material.EMERALD);
-            player.getInventory().remove(Material.BLAZE_POWDER);
 
             InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.user.lang]);
         } else if (player.getItemInHand().getType().equals(Material.EMERALD)) {
-            plugin.getGuiKillEffectSelector().open(player);
+            plugin.getGuiCosmeticsSelector().open(player);
             e.setCancelled(true);
         }
         if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.CHEST && player.getGameMode() != GameMode.CREATIVE) {
