@@ -7,3 +7,8 @@ depend:
 commands:
   map:
     usage: /map
+  trollutils:
+    usage: /trollutils
+  killeffect:
+    permission: ke.ke
+    aliases: [ ke, killeffects ]

@@ -1,0 +1,27 @@
+package top.speedcubing.knockbackffa.commands;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import top.speedcubing.knockbackffa.Item.TrollUtilsItemList;
+import top.speedcubing.server.player.User;
+
+public class TrollUtilsCommand implements CommandExecutor {
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+        if (sender instanceof Player) {
+            User user = User.getUser(sender);
+            if (user.hasPermission("cmd.trollutils") || user.hasPermission("cmd.*")) {
+                if (args.length == 0) {
+                    user.player.sendMessage("Usage: /trollutils <item>");
+                } else if (args.length == 1) {
+                    if (args[0].equalsIgnoreCase("oceanbow")) {
+                        user.player.getInventory().addItem(TrollUtilsItemList.oceanBow());
+                    }
+                }
+            }
+        }
+        return true;
+    }
+}

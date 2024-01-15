@@ -12,14 +12,15 @@ import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
+import top.speedcubing.knockbackffa.killeffect.effects.KillEffect;
+import top.speedcubing.knockbackffa.killeffect.gui.GuiKillEffectSelector;
+import top.speedcubing.knockbackffa.killeffect.manager.KillEffectManager;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.server.lang.GlobalString;
-import top.speedcubing.killeffects.effects.KillEffect;
-import top.speedcubing.killeffects.manager.KillEffectManager;
-import top.speedcubing.killeffects.gui.GuiKillEffectSelector;
-import top.speedcubing.killeffects.manager.KillEffectManager;
-import top.speedcubing.killeffects.KillEffects;
+
+
+
 
 
 
@@ -257,13 +258,9 @@ public class EventListeners implements Listener {
 
             InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.user.lang]);
         } else if (player.getItemInHand().getType().equals(Material.EMERALD)) {
-            List<KillEffect> killEffects;
-            KillEffects plugin = KillEffects.getInstance();
-            KillEffectManager killEffectManager = new KillEffectManager(plugin); // You may need to adjust this line
-            GuiKillEffectSelector guiKillEffectSelector = new GuiKillEffectSelector(killEffectManager);
-            guiKillEffectSelector.open(player);
+            KnockBackFFA plugin = KnockBackFFA.getInstance();
+            plugin.getGuiKillEffectSelector().open(player);
             e.setCancelled(true);
-
         }
         if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.CHEST && player.getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);
@@ -310,6 +307,13 @@ public class EventListeners implements Listener {
         if (projectile instanceof EnderPearl) {
             EnderPearl pearl = (EnderPearl) projectile;
             Member.getMember((Player) pearl.getShooter()).pearls.add(pearl);
+        }
+    }
+    @EventHandler
+    public void EntityExplodeEvent(EntityExplodeEvent e) {
+        Entity entity = e.getEntity();
+        if (entity.getType() == EntityType.CREEPER || entity.getType() == EntityType.PRIMED_TNT) {
+            e.setCancelled(true);
         }
     }
 }

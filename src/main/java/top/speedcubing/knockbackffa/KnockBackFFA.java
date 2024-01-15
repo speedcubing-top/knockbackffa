@@ -6,11 +6,22 @@ import org.bukkit.World;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.Event;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.*;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import top.speedcubing.knockbackffa.commands.TrollUtilsCommand;
+import top.speedcubing.knockbackffa.killeffect.commands.CommandSWKillEffect;
+import top.speedcubing.knockbackffa.killeffect.gui.GuiKillEffectSelector;
+import top.speedcubing.knockbackffa.killeffect.listeners.KillListener;
+import top.speedcubing.knockbackffa.killeffect.manager.KillEffectManager;
+import top.speedcubing.knockbackffa.killeffect.utils.ConfigUtil;
+import top.speedcubing.knockbackffa.trollutilListeners.OceanBow;
 import top.speedcubing.lib.bukkit.entity.*;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.*;
@@ -19,11 +30,16 @@ import top.speedcubing.server.database.*;
 import top.speedcubing.server.utils.config;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class KnockBackFFA extends JavaPlugin {
     private static KnockBackFFA instance;
-
+    private KillEffectManager killEffectManager;
+    private FileConfiguration dataYml;
+    private GuiKillEffectSelector guiKillEffectSelector;
+    private String nmsVersion;
 
     public static String bold(String original) {
         StringBuilder builder = new StringBuilder();
@@ -77,14 +93,36 @@ public class KnockBackFFA extends JavaPlugin {
         personal[1].setLocation(KnockBackFFA.holoX, personal[1].armorStand.locY, KnockBackFFA.holoZ, 0, 0);
     }
 
+    private void registerListener() {
+        Bukkit.getPluginManager().registerEvents(new EventListeners(), this);
+        Bukkit.getPluginManager().registerEvents(new OceanBow(), this);
+        Bukkit.getPluginManager().registerEvents(new KillListener(this), this);
+        Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(killEffectManager), this);
+    }
+
+    private void regitserCommands() {
+        getCommand("trollutils").setExecutor(new TrollUtilsCommand());
+        getCommand("killeffect").setExecutor(new CommandSWKillEffect(this));
+    }
+
     public void onEnable() {
+        instance = this;
+        loadVersion();
+        saveDefaultConfig();
+        ConfigUtil.init(this);
+        loadDataYml();
+        killEffectManager = new KillEffectManager(this);
+
         MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
             KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]), Double.parseDouble(strings[4]), Double.parseDouble(strings[5]));
             commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
             return true;
         });
-        Bukkit.getPluginManager().registerEvents(new EventListeners(), this);
+
+        registerListener();
+        regitserCommands();
+
         World world = Bukkit.getWorld("world");
         world.setDifficulty(Difficulty.EASY);
         world.setTime(6000);
@@ -242,11 +280,68 @@ public class KnockBackFFA extends JavaPlugin {
                         getTime().
 
                         getTime() - System.currentTimeMillis(), 86400000);
-
     }
 
 
     public void onDisable() {
         KnockBackFFA.Diff.keySet().forEach(a -> Bukkit.getWorld("world").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
+        killEffectManager.saveKillEffects();
+    }
+
+    public static KnockBackFFA getInstance() {
+        return instance;
+    }
+
+    public void loadVersion() {
+        nmsVersion = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+    }
+
+    public void loadDataYml() {
+        saveResource("data.yml", false);
+        File dataYmlFile = new File(getDataFolder() + "/data.yml");
+        if (!dataYmlFile.exists()) {
+            try {
+                dataYmlFile.createNewFile();
+            } catch (IOException e) {
+                log("There was an error loading the §cdata.yml");
+                e.printStackTrace();
+                return;
+            }
+        }
+        dataYml = YamlConfiguration.loadConfiguration(dataYmlFile);
+        log("§adata.yml Loaded");
+    }
+
+    public void saveDataYml() {
+        File dataYmlFile = new File(getDataFolder() + "/data.yml");
+        if (dataYmlFile.exists()) {
+            try {
+                dataYml.save(dataYmlFile);
+            } catch (IOException e) {
+                log("An error occurred while saving §cdata.yml");
+                e.printStackTrace();
+            }
+        }
+        log(" Saved §adata.yml");
+    }
+
+    public FileConfiguration getDataYml() {
+        return dataYml;
+    }
+
+    public static void log(String text) {
+        Bukkit.getConsoleSender().sendMessage(text);
+    }
+
+    public KillEffectManager getKillEffectManager() {
+        return killEffectManager;
+    }
+
+    public GuiKillEffectSelector getGuiKillEffectSelector() {
+        return guiKillEffectSelector;
+    }
+
+    public String getNmsVersion() {
+        return nmsVersion;
     }
 }

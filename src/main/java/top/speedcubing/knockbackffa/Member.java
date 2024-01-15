@@ -10,6 +10,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
+import top.speedcubing.knockbackffa.api.event.FFAPlayerDeathEvent;
 import top.speedcubing.lib.bukkit.*;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
@@ -141,8 +142,9 @@ public class Member {
         if (killed) {
             Player damager = Damage.user.player;
             //call death event for kill effect
-            PlayerDeathEvent playerDeathEvent = new PlayerDeathEvent(user.player, new ArrayList<ItemStack>(), 0, null);
-            Bukkit.getServer().getPluginManager().callEvent(playerDeathEvent);
+            FFAPlayerDeathEvent ffaPlayerDeathEvent = new FFAPlayerDeathEvent(user.player, user.player.getLocation());
+            Bukkit.getServer().getPluginManager().callEvent(ffaPlayerDeathEvent);
+
             double heal = damager.getHealth() / 2;
             String color = heal > 8.5 ? "§a" : (heal > 6.5 ? "§e" : (heal > 4.5 ? "§6" : "§c"));
             user.sendLangMessage(StringList.died, user.getFormatName(false), Damage.user.getFormatName(false), color + (int) Math.round(heal));
