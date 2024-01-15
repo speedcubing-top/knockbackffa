@@ -22,8 +22,11 @@ import top.speedcubing.knockbackffa.killeffect.gui.GuiKillEffectSelector;
 import top.speedcubing.knockbackffa.killeffect.listeners.KillListener;
 import top.speedcubing.knockbackffa.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.killeffect.utils.ConfigUtil;
-import top.speedcubing.knockbackffa.projectile.gui.GuiProjectileEffectSelector;
-import top.speedcubing.knockbackffa.projectile.manager.ProjectileEffectManager;
+import top.speedcubing.knockbackffa.projectileeffect.commands.ProjectileCommand;
+import top.speedcubing.knockbackffa.projectileeffect.effects.ProjectileEffectHeart;
+import top.speedcubing.knockbackffa.projectileeffect.gui.GuiProjectileEffectSelector;
+import top.speedcubing.knockbackffa.projectileeffect.listeners.ProjectileListener;
+import top.speedcubing.knockbackffa.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.knockbackffa.trollutilListeners.OceanBow;
 import top.speedcubing.lib.bukkit.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.entity.Hologram;
@@ -104,6 +107,8 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EventListeners(), this);
         Bukkit.getPluginManager().registerEvents(new OceanBow(), this);
         Bukkit.getPluginManager().registerEvents(new KillListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ProjectileListener(this),this);
+        Bukkit.getPluginManager().registerEvents(new ProjectileEffectHeart(this),this);
         Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(killEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(projectileEffectManager),this);
     }
@@ -111,6 +116,7 @@ public class KnockBackFFA extends JavaPlugin {
     private void regitserCommands() {
         getCommand("trollutils").setExecutor(new TrollUtilsCommand());
         getCommand("killeffect").setExecutor(new CommandSWKillEffect(this));
+        getCommand("projectileeffect").setExecutor(new ProjectileCommand(this));
     }
 
     public void onEnable() {
@@ -178,7 +184,7 @@ public class KnockBackFFA extends JavaPlugin {
             itemStacks[i][9] = new ItemBuilder(Material.ARROW).amount(16).build();
             itemStacks[i][10] = new ItemBuilder(Material.BOW).unBreak().ench(new Enchantment[]{Enchantment.ARROW_KNOCKBACK}, new int[]{1}).build();
             itemStacks[i][11] = new ItemBuilder(Material.CHEST).name(inv[i]).build();
-            itemStacks[i][12] = new ItemBuilder(Material.EMERALD).name("§aCosmetics").build();
+            itemStacks[i][12] = new ItemBuilder(Material.EMERALD).name("§aKill Effect Cosmetics").build();
             KitEditor[i] = Bukkit.createInventory(KitEditorHolder, 9, title[i]);
             InventoryUtils.fillItem(KitEditor[i], 0, 9, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name("§a").build());
             KitEditor[i].setItem(3, new ItemBuilder(Material.INK_SACK).durability(10).name(save[i]).build());
@@ -296,6 +302,7 @@ public class KnockBackFFA extends JavaPlugin {
     public void onDisable() {
         KnockBackFFA.Diff.keySet().forEach(a -> Bukkit.getWorld("world").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
         killEffectManager.saveKillEffects();
+        projectileEffectManager.saveProjectileEffects();
     }
 
     public static KnockBackFFA getInstance() {
@@ -346,8 +353,8 @@ public class KnockBackFFA extends JavaPlugin {
                 return;
             }
         }
-        dataYml = YamlConfiguration.loadConfiguration(dataYmlFile);
-        log("projectileeffectdata.yml Loaded");
+        projectileEffectDataYml = YamlConfiguration.loadConfiguration(dataYmlFile);
+        log("§aprojectileeffectdata.yml Loaded");
     }
 
     public void saveProjectileEffectDataYml() {
@@ -360,7 +367,7 @@ public class KnockBackFFA extends JavaPlugin {
                 e.printStackTrace();
             }
         }
-        log("Saved projetcileeffectdata.yml");
+        log(" Saved §aprojetcileeffectdata.yml");
     }
     /**
      * Here is kill effect code
@@ -389,5 +396,8 @@ public class KnockBackFFA extends JavaPlugin {
     }
     public ProjectileEffectManager getProjectileEffectManager() {
         return projectileEffectManager;
+    }
+    public GuiProjectileEffectSelector getGuiProjectileEffectSelector() {
+        return guiProjectileEffectSelector;
     }
 }

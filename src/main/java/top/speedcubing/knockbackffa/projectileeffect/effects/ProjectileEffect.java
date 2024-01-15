@@ -1,4 +1,4 @@
-package top.speedcubing.knockbackffa.projectile.effects;
+package top.speedcubing.knockbackffa.projectileeffect.effects;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Projectile;

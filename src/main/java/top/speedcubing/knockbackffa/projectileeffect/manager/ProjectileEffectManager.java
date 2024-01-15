@@ -1,13 +1,11 @@
-package top.speedcubing.knockbackffa.projectile.manager;
+package top.speedcubing.knockbackffa.projectileeffect.manager;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import top.speedcubing.knockbackffa.KnockBackFFA;
-import top.speedcubing.knockbackffa.killeffect.effects.KillEffect;
-import top.speedcubing.knockbackffa.projectile.effects.ProjectileEffect;
-import top.speedcubing.knockbackffa.projectile.effects.ProjectileEffectHeart;
+import top.speedcubing.knockbackffa.projectileeffect.effects.ProjectileEffect;
+import top.speedcubing.knockbackffa.projectileeffect.effects.ProjectileEffectHeart;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,10 +17,12 @@ public class ProjectileEffectManager {
 
     public ProjectileEffectManager(KnockBackFFA plugin) {
         projectileEffects = new ArrayList<>();
-        registerProjectileEffect(new ProjectileEffectHeart());
+        registerProjectileEffect(new ProjectileEffectHeart(plugin));
         this.plugin = plugin;
+        loadProjectileEffects();
     }
     public void loadProjectileEffects() {
+        projectileEffectMap = new HashMap<>();
         FileConfiguration dataYml = plugin.getProjectileEffectDataYml();
         for (String uuid : dataYml.getKeys(false)) {
             String effectId = dataYml.getString(uuid + ".selected-effect");
@@ -51,7 +51,7 @@ public class ProjectileEffectManager {
         }
         return null;
     }
-    public void setKillEffect(Player p, String effectId) {
+    public void setProjectileEffect(Player p, String effectId) {
         String uuid = p.getUniqueId().toString();
         if (projectileEffectMap.containsKey(uuid)) {
             projectileEffectMap.remove(uuid);

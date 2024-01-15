@@ -1,22 +1,26 @@
-package top.speedcubing.knockbackffa.projectile.effects;
+package top.speedcubing.knockbackffa.projectileeffect.effects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.knockbackffa.KnockBackFFA;
 
-public class ProjectileEffectHeart extends ProjectileEffect {
+public class ProjectileEffectHeart extends ProjectileEffect implements Listener {
+    private KnockBackFFA plugin;
 
-    public ProjectileEffectHeart() {
+    public ProjectileEffectHeart(KnockBackFFA plugin) {
         super("Heart Particle", "HEART_PARTICLE", Material.GOLDEN_APPLE);
+        this.plugin = plugin;
     }
+    private BukkitRunnable particleTask;
 
     @Override
     public void play(Projectile projectile) {
-        new BukkitRunnable() {
+        particleTask = new BukkitRunnable() {
             int ticks = 0;
 
             @Override
@@ -30,11 +34,17 @@ public class ProjectileEffectHeart extends ProjectileEffect {
 
                 Location loc = projectile.getLocation();
                 playHeartParticles(loc);
+                if (projectile.isDead()) {
+                    cancel();
+                }
             }
-        }.runTaskTimer(KnockBackFFA.getInstance(), 0L, 2L);
+        };
+
+        particleTask.runTaskTimer(KnockBackFFA.getInstance(), 0L, 2L);
     }
 
     private void playHeartParticles(Location location) {
-        Bukkit.getWorld(location.getWorld().getName()).playEffect(location, Effect.HEART,1);
+        Bukkit.getWorld(location.getWorld().getName()).playEffect(location, Effect.HEART,2);
     }
+
 }

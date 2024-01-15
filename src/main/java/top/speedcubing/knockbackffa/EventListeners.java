@@ -9,11 +9,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.*;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-import top.speedcubing.knockbackffa.killeffect.effects.KillEffect;
-import top.speedcubing.knockbackffa.killeffect.gui.GuiKillEffectSelector;
 import top.speedcubing.knockbackffa.killeffect.manager.KillEffectManager;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
@@ -30,6 +26,7 @@ import java.util.*;
 
 public class EventListeners implements Listener {
     private KillEffectManager killEffectManager;
+    KnockBackFFA plugin = KnockBackFFA.getInstance();
 
 
     //BOW BOOST PLUGIN
@@ -255,10 +252,10 @@ public class EventListeners implements Listener {
 
             //Remove kill effect selector when player is editing kit
             player.getInventory().remove(Material.EMERALD);
+            player.getInventory().remove(Material.BLAZE_POWDER);
 
             InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.user.lang]);
         } else if (player.getItemInHand().getType().equals(Material.EMERALD)) {
-            KnockBackFFA plugin = KnockBackFFA.getInstance();
             plugin.getGuiKillEffectSelector().open(player);
             e.setCancelled(true);
         }
@@ -312,7 +309,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void EntityExplodeEvent(EntityExplodeEvent e) {
         Entity entity = e.getEntity();
-        if (entity.getType() == EntityType.CREEPER || entity.getType() == EntityType.PRIMED_TNT) {
+        if (entity.getType() == EntityType.CREEPER || entity.getType() == EntityType.PRIMED_TNT || entity.getType() == EntityType.MINECART_TNT || entity.getType() == EntityType.FIREBALL) {
             e.setCancelled(true);
         }
     }

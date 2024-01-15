@@ -140,7 +140,7 @@ public class GuiKillEffectSelector implements Listener {
                         }
                     }
                     if (event.getSlot() == 12) {
-                        if (p.hasPermission("tkilleffect.blood_explosion")) {
+                        if (p.hasPermission("killeffect.blood_explosion")) {
                             if (!killEffectManager.hasSelected(p, "BLOOD_EXPLOSION")) {
                                 killEffectManager.setKillEffect(p, "BLOOD_EXPLOSION");
                                 open(p);
