@@ -10,11 +10,7 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import top.speedcubing.knockbackffa.KnockBackFFA;
-import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
-import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectBloodExplosion;
-import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectFinalSmash;
-import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectHeadRocket;
-import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectHeartExplosion;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.*;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
 
 public class KillEffectManager {
@@ -29,6 +25,7 @@ public class KillEffectManager {
 		registerKillEffect(new KillEffectHeartExplosion());
 		registerKillEffect(new KillEffectHeadRocket());
 		registerKillEffect(new KillEffectFinalSmash());
+		registerKillEffect(new KillEffectLightning());
 		this.plugin = plugin;
 		loadKillEffects();
 	}

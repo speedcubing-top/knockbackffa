@@ -108,6 +108,25 @@ public class GuiKillEffectSelector implements Listener {
                     (!killEffectManager.hasSelected(p, "FINAL_SMASH") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(15, LOCKED_FINAL_SMASH);
         }
+        if (p.hasPermission("killeffect.lightning")) {
+            ItemStack LIGHTNING = new CustomItem(killEffectManager.getKillEffectById("LIGHTNING").getIcon(), 1,
+                    "§aLightning Kill Effact",
+                    "§7Select the Lightning",
+                    "§7Kill Effect.",
+                    "§7This change is cosmetic",
+                    "",
+                    (!killEffectManager.hasSelected(p, "LIGHTNING") ? "§eClick to select!" : "§aSELECTED!"));
+            inventory.setItem(20, LIGHTNING);
+        } else {
+            ItemStack LOCKED_LIGHTNING = new CustomItem(killEffectManager.getKillEffectById("LIGHTNING").getIcon(), 1,
+                    "§aLightning Kill Effact",
+                    "§7Select the Lightning",
+                    "§7Kill Effect.",
+                    "§7This change is cosmetic",
+                    "",
+                    (!killEffectManager.hasSelected(p, "LIGHTNING") ? "§cLocked!" : "§aSELECTED!"));
+            inventory.setItem(20, LOCKED_LIGHTNING);
+        }
 
         ItemStack close = new CustomItem(Material.BARRIER, 1, "§cClose");
         ItemStack back = new CustomItem(Material.ARROW, 1, "§aGo Back",
@@ -210,9 +229,24 @@ public class GuiKillEffectSelector implements Listener {
                             p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
                         }
                     }
+                    if (e.getSlot() == 20) {
+                        if (p.hasPermission("killeffect.lightning")) {
+                            if (!killEffectManager.hasSelected(p,"LIGHTNING")) {
+                                killEffectManager.setKillEffect(p,"LIGHTNING");
+                                open(p);
+                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+                                p.sendMessage("§6You selected §aLightning Kill Effect§6!");
+                            } else {
+                                p.sendMessage("§cYou have already selected this item!");
+                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            }
+                        } else {
+                            p.sendMessage("§cYou haven't unlocked this yet!");
+                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            }
+                        }
+                    }
                 }
             }
         }
     }
-
-}
