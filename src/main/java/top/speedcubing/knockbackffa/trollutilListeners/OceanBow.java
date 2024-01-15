@@ -21,17 +21,20 @@ public class OceanBow implements Listener {
         if (item == null || event.getAction() == Action.PHYSICAL) {
             return;
         }
+        if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
 
-        if (item != null && item.getType() == Material.BOW && item.hasItemMeta() && item.getItemMeta().getDisplayName().contains("OceanBow")) {
+            if (item.getType().equals(Material.BOW) && item.hasItemMeta() && item.getItemMeta().getDisplayName().contains("OceanBow")) {
 
-            if (player.hasMetadata("oceanBowCooldown")) {
-                return;
+                if (player.hasMetadata("oceanBowCooldown")) {
+                    return;
+                }
+
+                shootArrows(player);
+
+
+                player.setMetadata("oceanBowCooldown", new FixedMetadataValue(KnockBackFFA.getInstance(), true));
+                Bukkit.getScheduler().runTaskLater(KnockBackFFA.getInstance(), () -> player.removeMetadata("oceanBowCooldown", KnockBackFFA.getInstance()), 6);
             }
-
-            shootArrows(player);
-
-
-            player.setMetadata("oceanBowCooldown", new FixedMetadataValue(KnockBackFFA.getInstance(), true));Bukkit.getScheduler().runTaskLater(KnockBackFFA.getInstance(), () -> player.removeMetadata("oceanBowCooldown", KnockBackFFA.getInstance()), 6);
         }
     }
 

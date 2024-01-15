@@ -1,34 +1,38 @@
 package top.speedcubing.knockbackffa;
 
-import net.minecraft.server.v1_8_R3.*;
+import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.MinecraftServer;
+import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
+import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.event.Event;
-import org.bukkit.event.Listener;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.*;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import top.speedcubing.knockbackffa.commands.TrollUtilsCommand;
 import top.speedcubing.knockbackffa.killeffect.commands.CommandSWKillEffect;
 import top.speedcubing.knockbackffa.killeffect.gui.GuiKillEffectSelector;
 import top.speedcubing.knockbackffa.killeffect.listeners.KillListener;
 import top.speedcubing.knockbackffa.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.killeffect.utils.ConfigUtil;
+import top.speedcubing.knockbackffa.projectile.gui.GuiProjectileEffectSelector;
+import top.speedcubing.knockbackffa.projectile.manager.ProjectileEffectManager;
 import top.speedcubing.knockbackffa.trollutilListeners.OceanBow;
-import top.speedcubing.lib.bukkit.entity.*;
+import top.speedcubing.lib.bukkit.entity.ClickEvent;
+import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
-import top.speedcubing.lib.bukkit.inventory.*;
+import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.CubingEventManager;
-import top.speedcubing.server.database.*;
+import top.speedcubing.server.database.Database;
+import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.utils.config;
-
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +43,10 @@ public class KnockBackFFA extends JavaPlugin {
     private KillEffectManager killEffectManager;
     private FileConfiguration dataYml;
     private GuiKillEffectSelector guiKillEffectSelector;
+    private GuiProjectileEffectSelector guiProjectileEffectSelector;
     private String nmsVersion;
+    private ProjectileEffectManager projectileEffectManager;
+    private FileConfiguration projectileEffectDataYml;
 
     public static String bold(String original) {
         StringBuilder builder = new StringBuilder();
@@ -98,6 +105,7 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OceanBow(), this);
         Bukkit.getPluginManager().registerEvents(new KillListener(this), this);
         Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(killEffectManager), this);
+        Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(projectileEffectManager),this);
     }
 
     private void regitserCommands() {
@@ -111,7 +119,9 @@ public class KnockBackFFA extends JavaPlugin {
         saveDefaultConfig();
         ConfigUtil.init(this);
         loadDataYml();
+        loadProjectileEffectDataYml();
         killEffectManager = new KillEffectManager(this);
+        projectileEffectManager = new ProjectileEffectManager(this);
 
         MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
@@ -324,7 +334,37 @@ public class KnockBackFFA extends JavaPlugin {
         }
         log(" Saved §adata.yml");
     }
+    public void loadProjectileEffectDataYml() {
+        saveResource("projectileeffectdata.yml",false);
+        File dataYmlFile = new File(getDataFolder() + "/projectileeffectdata.yml");
+        if (!dataYmlFile.exists()) {
+            try {
+                dataYmlFile.createNewFile();
+            } catch (IOException e) {
+                log("There was an error loading the projectileeffectdata.yml");
+                e.printStackTrace();
+                return;
+            }
+        }
+        dataYml = YamlConfiguration.loadConfiguration(dataYmlFile);
+        log("projectileeffectdata.yml Loaded");
+    }
 
+    public void saveProjectileEffectDataYml() {
+        File dataYmlFile = new File(getDataFolder() + "/projectileeffectdata.yml");
+        if (dataYmlFile.exists()) {
+            try {
+                projectileEffectDataYml.save(dataYmlFile);
+            } catch (IOException e) {
+                log("An error occurred while saving projectileeffectdata.yml");
+                e.printStackTrace();
+            }
+        }
+        log("Saved projetcileeffectdata.yml");
+    }
+    /**
+     * Here is kill effect code
+     */
     public FileConfiguration getDataYml() {
         return dataYml;
     }
@@ -343,5 +383,11 @@ public class KnockBackFFA extends JavaPlugin {
 
     public String getNmsVersion() {
         return nmsVersion;
+    }
+    public FileConfiguration getProjectileEffectDataYml() {
+        return projectileEffectDataYml;
+    }
+    public ProjectileEffectManager getProjectileEffectManager() {
+        return projectileEffectManager;
     }
 }

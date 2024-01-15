@@ -12,3 +12,5 @@ commands:
   killeffect:
     permission: ke.ke
     aliases: [ ke, killeffects ]
+  projectileeffect:
+    aliases: [ pe ]
