@@ -48,7 +48,25 @@ public class GuiProjectileEffectSelector implements Listener {
                     "",
                     (!projectileEffectManager.hasSelected(p, "HEART_PARTICLE") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(12, LOCKED_HEART);
-
+        }
+        if (p.hasPermission("projectiileeffect.note")) {
+            ItemStack NOTE = new CustomItem(projectileEffectManager.getProjectileEffectById("NOTE_PARTICLE").getIcon(),1,
+                    "§aNote Projectile Effect",
+                    "§7Select the Note Paritcle",
+                    "§7Projectile Effect. This change is",
+                    "§7cosmetic.",
+                    "",
+                    (!projectileEffectManager.hasSelected(p,"NOTE_PARTICLE") ? "§eClick to select!" : "§aSELECTED!"));
+            inventory.setItem(13, NOTE);
+        } else {
+            ItemStack LOCKED_NOTE = new CustomItem(projectileEffectManager.getProjectileEffectById("NOTE_PARTICLE").getIcon(),1,
+                    "§aNote Projectile Effect",
+                    "§7Select the Note Paritcle",
+                    "§7Projectile Effect. This change is",
+                    "§7cosmetic.",
+                    "",
+                    (!projectileEffectManager.hasSelected(p,"NOTE_PARTICLE") ? "§cLocked!" : "§aSELECTED!"));
+            inventory.setItem(13, LOCKED_NOTE);
         }
         ItemStack close = new CustomItem(Material.BARRIER, 1, "§cClose");
         ItemStack back = new CustomItem(Material.ARROW, 1, "§aGo Back",
@@ -93,6 +111,22 @@ public class GuiProjectileEffectSelector implements Listener {
                                 open(p);
                                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
                                 p.sendMessage("§6You selected §aHeart Projectile Effect§6!");
+                            } else {
+                                p.sendMessage("§cYou have already selected this item!");
+                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            }
+                        } else {
+                            p.sendMessage("§cYou haven't unlocked this yet!");
+                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                        }
+                    }
+                    if (e.getSlot() == 13) {
+                        if (p.hasPermission("projectileeffect.note_particle")) {
+                            if (!projectileEffectManager.hasSelected(p, "NOTE_PARTICLE")) {
+                                projectileEffectManager.setProjectileEffect(p, "NOTE_PARTICLE");
+                                open(p);
+                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+                                p.sendMessage("§6You selected §aNote Projectile Effect§6!");
                             } else {
                                 p.sendMessage("§cYou have already selected this item!");
                                 p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);

@@ -9,12 +9,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.knockbackffa.KnockBackFFA;
 
-public class ProjectileEffectHeart extends ProjectileEffect implements Listener {
-    private KnockBackFFA plugin;
+public class ProjectileEffectHeart extends ProjectileEffect {
 
-    public ProjectileEffectHeart(KnockBackFFA plugin) {
+    public ProjectileEffectHeart() {
         super("Heart Particle", "HEART_PARTICLE", Material.GOLDEN_APPLE);
-        this.plugin = plugin;
     }
     private BukkitRunnable particleTask;
 

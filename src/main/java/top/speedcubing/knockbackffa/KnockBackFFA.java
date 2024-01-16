@@ -25,7 +25,6 @@ import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
 import top.speedcubing.knockbackffa.cosmetics.main.commands.CosmeticCommand;
 import top.speedcubing.knockbackffa.cosmetics.main.gui.GuiCosmeticsSelector;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.commands.ProjectileCommand;
-import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectHeart;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.gui.GuiProjectileEffectSelector;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.listeners.ProjectileListener;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
@@ -111,7 +110,6 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OceanBow(), this);
         Bukkit.getPluginManager().registerEvents(new KillListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ProjectileListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new ProjectileEffectHeart(this), this);
         Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(this, killEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager), this);
