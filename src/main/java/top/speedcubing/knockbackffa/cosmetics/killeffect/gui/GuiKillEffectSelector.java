@@ -1,9 +1,5 @@
 package top.speedcubing.knockbackffa.cosmetics.killeffect.gui;
 
-import top.speedcubing.knockbackffa.KnockBackFFA;
-import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
-import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -14,6 +10,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
 
 public class GuiKillEffectSelector implements Listener {
 
@@ -110,7 +109,7 @@ public class GuiKillEffectSelector implements Listener {
         }
         if (p.hasPermission("killeffect.lightning")) {
             ItemStack LIGHTNING = new CustomItem(killEffectManager.getKillEffectById("LIGHTNING").getIcon(), 1,
-                    "§aLightning Kill Effact",
+                    "§aLightning Kill Effect",
                     "§7Select the Lightning",
                     "§7Kill Effect.",
                     "§7This change is cosmetic",
@@ -119,7 +118,7 @@ public class GuiKillEffectSelector implements Listener {
             inventory.setItem(20, LIGHTNING);
         } else {
             ItemStack LOCKED_LIGHTNING = new CustomItem(killEffectManager.getKillEffectById("LIGHTNING").getIcon(), 1,
-                    "§aLightning Kill Effact",
+                    "§aLightning Kill Effect",
                     "§7Select the Lightning",
                     "§7Kill Effect.",
                     "§7This change is cosmetic",
@@ -231,8 +230,8 @@ public class GuiKillEffectSelector implements Listener {
                     }
                     if (e.getSlot() == 20) {
                         if (p.hasPermission("killeffect.lightning")) {
-                            if (!killEffectManager.hasSelected(p,"LIGHTNING")) {
-                                killEffectManager.setKillEffect(p,"LIGHTNING");
+                            if (!killEffectManager.hasSelected(p, "LIGHTNING")) {
+                                killEffectManager.setKillEffect(p, "LIGHTNING");
                                 open(p);
                                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
                                 p.sendMessage("§6You selected §aLightning Kill Effect§6!");
@@ -243,10 +242,10 @@ public class GuiKillEffectSelector implements Listener {
                         } else {
                             p.sendMessage("§cYou haven't unlocked this yet!");
                             p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                            }
                         }
                     }
                 }
             }
         }
     }
+}

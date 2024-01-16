@@ -16,6 +16,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import top.speedcubing.knockbackffa.commands.GamemodeCommand;
 import top.speedcubing.knockbackffa.commands.TrollUtilsCommand;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.commands.CommandSWKillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.gui.GuiKillEffectSelector;
@@ -28,6 +29,7 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.commands.Projecti
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.gui.GuiProjectileEffectSelector;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.listeners.ProjectileListener;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
+import top.speedcubing.knockbackffa.trollutilListeners.Fireball;
 import top.speedcubing.knockbackffa.trollutilListeners.OceanBow;
 import top.speedcubing.lib.bukkit.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.entity.Hologram;
@@ -110,6 +112,7 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OceanBow(), this);
         Bukkit.getPluginManager().registerEvents(new KillListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ProjectileListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new Fireball(),this);
         Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(this, killEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager), this);
@@ -120,6 +123,7 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("killeffect").setExecutor(new CommandSWKillEffect(this));
         getCommand("projectileeffect").setExecutor(new ProjectileCommand(this));
         getCommand("cosmetic").setExecutor(new CosmeticCommand(this));
+        getCommand("gm").setExecutor(new GamemodeCommand());
     }
 
     public void onEnable() {

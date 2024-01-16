@@ -4,6 +4,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectEgg;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectHeart;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectNote;
 
@@ -20,6 +21,7 @@ public class ProjectileEffectManager {
         projectileEffects = new ArrayList<>();
         registerProjectileEffect(new ProjectileEffectHeart());
         registerProjectileEffect(new ProjectileEffectNote());
+        registerProjectileEffect(new ProjectileEffectEgg());
         this.plugin = plugin;
         loadProjectileEffects();
     }

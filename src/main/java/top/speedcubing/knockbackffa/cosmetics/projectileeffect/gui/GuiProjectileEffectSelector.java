@@ -52,7 +52,7 @@ public class GuiProjectileEffectSelector implements Listener {
         if (p.hasPermission("projectiileeffect.note")) {
             ItemStack NOTE = new CustomItem(projectileEffectManager.getProjectileEffectById("NOTE_PARTICLE").getIcon(),1,
                     "§aNote Projectile Effect",
-                    "§7Select the Note Paritcle",
+                    "§7Select the Note Particle",
                     "§7Projectile Effect. This change is",
                     "§7cosmetic.",
                     "",
@@ -61,12 +61,31 @@ public class GuiProjectileEffectSelector implements Listener {
         } else {
             ItemStack LOCKED_NOTE = new CustomItem(projectileEffectManager.getProjectileEffectById("NOTE_PARTICLE").getIcon(),1,
                     "§aNote Projectile Effect",
-                    "§7Select the Note Paritcle",
+                    "§7Select the Note Particle",
                     "§7Projectile Effect. This change is",
                     "§7cosmetic.",
                     "",
                     (!projectileEffectManager.hasSelected(p,"NOTE_PARTICLE") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(13, LOCKED_NOTE);
+        }
+        if (p.hasPermission("projectileeffect.egg")) {
+            ItemStack EGG = new CustomItem(projectileEffectManager.getProjectileEffectById("EGG_PARTICLE").getIcon(), 1,
+                    "§aEgg Projectile Effect",
+                    "§7Select the Egg Particle",
+                    "§7Projectile Effect. This change is",
+                    "§7cosmetic.",
+                    "",
+                    (!projectileEffectManager.hasSelected(p, "EGG_PARTICLE") ? "§eClcik to select!" : "§aSELECTED!"));
+            inventory.setItem(14, EGG);
+        } else {
+            ItemStack LOCKED_EGG = new CustomItem(projectileEffectManager.getProjectileEffectById("EGG_PARTICLE").getIcon(), 1,
+                    "§aEgg Projectile Effect",
+                    "§7Select the Egg Particle",
+                    "§7Projectile Effect. This change is",
+                    "§7cosmetic.",
+                    "",
+                    (!projectileEffectManager.hasSelected(p, "EGG_PARTICLE") ? "§cLocked!" : "§aSELECTED!"));
+            inventory.setItem(14, LOCKED_EGG);
         }
         ItemStack close = new CustomItem(Material.BARRIER, 1, "§cClose");
         ItemStack back = new CustomItem(Material.ARROW, 1, "§aGo Back",
@@ -105,7 +124,7 @@ public class GuiProjectileEffectSelector implements Listener {
                         }
                     }
                     if (e.getSlot() == 12) {
-                        if (p.hasPermission("projectileeffect.heart_particle")) {
+                        if (p.hasPermission("projectileeffect.heart")) {
                             if (!projectileEffectManager.hasSelected(p, "HEART_PARTICLE")) {
                                 projectileEffectManager.setProjectileEffect(p, "HEART_PARTICLE");
                                 open(p);
@@ -121,12 +140,28 @@ public class GuiProjectileEffectSelector implements Listener {
                         }
                     }
                     if (e.getSlot() == 13) {
-                        if (p.hasPermission("projectileeffect.note_particle")) {
+                        if (p.hasPermission("projectileeffect.note")) {
                             if (!projectileEffectManager.hasSelected(p, "NOTE_PARTICLE")) {
                                 projectileEffectManager.setProjectileEffect(p, "NOTE_PARTICLE");
                                 open(p);
                                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
                                 p.sendMessage("§6You selected §aNote Projectile Effect§6!");
+                            } else {
+                                p.sendMessage("§cYou have already selected this item!");
+                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            }
+                        } else {
+                            p.sendMessage("§cYou haven't unlocked this yet!");
+                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                        }
+                    }
+                    if (e.getSlot() == 14) {
+                        if (p.hasPermission("projectileeffect.egg")) {
+                            if (!projectileEffectManager.hasSelected(p, "EGG_PARTICLE")) {
+                                projectileEffectManager.setProjectileEffect(p, "EGG_PARTICLE");
+                                open(p);
+                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+                                p.sendMessage("§6You selected §aEgg Projectile Effect§6!");
                             } else {
                                 p.sendMessage("§cYou have already selected this item!");
                                 p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);

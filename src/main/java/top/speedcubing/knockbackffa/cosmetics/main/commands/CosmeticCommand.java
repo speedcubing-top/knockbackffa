@@ -16,7 +16,6 @@ public class CosmeticCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             plugin.getGuiCosmeticsSelector().open(player);
-
         }
         return true;
     }
