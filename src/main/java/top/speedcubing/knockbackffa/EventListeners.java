@@ -312,6 +312,14 @@ public class EventListeners implements Listener {
             e.setCancelled(true);
         }
     }
+    @EventHandler
+    public void onEntityDamage(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof TNTPrimed) {
+            if (event.getDamager().hasMetadata("effectTNT")) {
+                event.setCancelled(true);
+            }
+        }
+    }
 
 }
 

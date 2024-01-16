@@ -26,6 +26,7 @@ public class KillEffectManager {
 		registerKillEffect(new KillEffectHeadRocket());
 		registerKillEffect(new KillEffectFinalSmash());
 		registerKillEffect(new KillEffectLightning());
+		registerKillEffect(new KillEffectTNT());
 		this.plugin = plugin;
 		loadKillEffects();
 	}

@@ -32,7 +32,7 @@ public class ProjectileEffectHeart extends ProjectileEffect {
 
                 Location loc = projectile.getLocation();
                 playHeartParticles(loc);
-                if (projectile.isDead()) {
+                if (projectile.isDead() || projectile.isOnGround()) {
                     cancel();
                 }
             }

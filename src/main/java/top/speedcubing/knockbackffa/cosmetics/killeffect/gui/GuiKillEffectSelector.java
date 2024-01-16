@@ -126,6 +126,25 @@ public class GuiKillEffectSelector implements Listener {
                     (!killEffectManager.hasSelected(p, "LIGHTNING") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(20, LOCKED_LIGHTNING);
         }
+        if (p.hasPermission("killeffect.tnt")) {
+            ItemStack TNT = new CustomItem(killEffectManager.getKillEffectById("TNT").getIcon(), 1,
+                    "§aLightning Kill Effect",
+                    "§7Select the TNT",
+                    "§7Kill Effect.",
+                    "§7This change is cosmetic",
+                    "",
+                    (!killEffectManager.hasSelected(p, "TNT") ? "§eClick to select!" : "§aSELECTED!"));
+            inventory.setItem(21, TNT);
+        } else {
+            ItemStack LOCKED_TNT = new CustomItem(killEffectManager.getKillEffectById("TNT").getIcon(), 1,
+                    "§aLightning Kill Effect",
+                    "§7Select the TNT",
+                    "§7Kill Effect.",
+                    "§7This change is cosmetic",
+                    "",
+                    (!killEffectManager.hasSelected(p, "TNT") ? "§cLocked!" : "§aSELECTED!"));
+            inventory.setItem(21, LOCKED_TNT);
+        }
 
         ItemStack close = new CustomItem(Material.BARRIER, 1, "§cClose");
         ItemStack back = new CustomItem(Material.ARROW, 1, "§aGo Back",
@@ -235,6 +254,22 @@ public class GuiKillEffectSelector implements Listener {
                                 open(p);
                                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
                                 p.sendMessage("§6You selected §aLightning Kill Effect§6!");
+                            } else {
+                                p.sendMessage("§cYou have already selected this item!");
+                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            }
+                        } else {
+                            p.sendMessage("§cYou haven't unlocked this yet!");
+                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                        }
+                    }
+                    if (e.getSlot() == 21) {
+                        if (p.hasPermission("killeffect.tnt")) {
+                            if (!killEffectManager.hasSelected(p, "TNT")) {
+                                killEffectManager.setKillEffect(p, "TNT");
+                                open(p);
+                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+                                p.sendMessage("§6You selected §aTNT Kill Effect§6!");
                             } else {
                                 p.sendMessage("§cYou have already selected this item!");
                                 p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);

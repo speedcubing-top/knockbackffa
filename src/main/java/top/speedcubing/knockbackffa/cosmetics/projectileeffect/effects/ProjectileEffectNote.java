@@ -35,6 +35,9 @@ public class ProjectileEffectNote extends ProjectileEffect {
 
                 Location loc = projectile.getLocation();
                 playNoteParticles(loc);
+                if (projectile.isDead() || projectile.isOnGround()) {
+                    cancel();
+                }
             }
         };
 

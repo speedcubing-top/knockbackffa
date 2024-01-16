@@ -32,7 +32,7 @@ public class ProjectileEffectEgg extends ProjectileEffect {
                 Location loc = projectile.getLocation();
                 World world = projectile.getWorld();
                 playEggParticles(world, loc);
-                if (projectile.isDead()) {
+                if (projectile.isDead() || projectile.isOnGround()) {
                     cancel();
                 }
             }
