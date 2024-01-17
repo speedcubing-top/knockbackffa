@@ -19,6 +19,9 @@ public class KillEffectManager {
 	private HashMap<String, KillEffect> killEffectMap;
 	private KnockBackFFA plugin;
 
+	/**
+	 * If you make particle for "Champ", you need modify GuiCosmeticsSelector
+	 */
 	public KillEffectManager(KnockBackFFA plugin) {
 		killEffects = new ArrayList<>();
 		registerKillEffect(new KillEffectBloodExplosion());
@@ -27,6 +30,7 @@ public class KillEffectManager {
 		registerKillEffect(new KillEffectFinalSmash());
 		registerKillEffect(new KillEffectLightning());
 		registerKillEffect(new KillEffectTNT());
+		registerKillEffect(new KillEffectChamp());
 		this.plugin = plugin;
 		loadKillEffects();
 	}

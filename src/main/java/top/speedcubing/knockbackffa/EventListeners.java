@@ -2,6 +2,7 @@ package top.speedcubing.knockbackffa;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArrow;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.block.*;
@@ -9,36 +10,63 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.*;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.server.lang.GlobalString;
-
-
-
-
+import top.speedcubing.server.player.User;
 
 
 import java.util.*;
 
 
-
 public class EventListeners implements Listener {
     private KillEffectManager killEffectManager;
+    private ProjectileEffectManager projectileEffectManager;
     KnockBackFFA plugin = KnockBackFFA.getInstance();
+
+    public EventListeners(KillEffectManager killEffectManager, ProjectileEffectManager projectileEffectManager) {
+        this.killEffectManager = killEffectManager;
+        this.projectileEffectManager = projectileEffectManager;
+    }
 
 
     //BOW BOOST PLUGIN
+//    @EventHandler
+//    public void onShoot(EntityShootBowEvent e) {
+//        ((CraftArrow) e.getProjectile()).setKnockbackStrength(2);
+//        LivingEntity livingEntity = e.getEntity();
+//        Vector dir = livingEntity.getLocation().getDirection();
+//        Arrow a = (Arrow) e.getProjectile();
+//        double speed = a.getVelocity().length();
+//        Vector vel = dir.multiply(speed);
+//        a.setVelocity(vel);
+//    }
+
     @EventHandler
     public void onShoot(EntityShootBowEvent e) {
-//        ((CraftArrow) e.getProjectile()).setKnockbackStrength(2);
-        LivingEntity livingEntity = e.getEntity();
-        Vector dir = livingEntity.getLocation().getDirection();
-        Arrow a = (Arrow) e.getProjectile();
-        double speed = a.getVelocity().length();
-        Vector vel = dir.multiply(speed);
-        a.setVelocity(vel);
+        Arrow arrow = (Arrow) e.getProjectile();
+        LivingEntity shooter = e.getEntity();
+
+        ((CraftArrow) arrow).setKnockbackStrength(2);
+
+        Vector direction = shooter.getLocation().getDirection();
+        double speed = arrow.getVelocity().length();
+        Vector velocity = direction.multiply(speed);
+        arrow.setVelocity(velocity);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!arrow.isDead()) {
+                    ((CraftArrow) arrow).setKnockbackStrength(1);
+                }
+            }
+        }.runTaskLater(KnockBackFFA.getInstance(), 8);
     }
 
     @EventHandler
@@ -93,7 +121,7 @@ public class EventListeners implements Listener {
                 user.item(false);
 
                 //Remove kill effect selector from player inventory
-               player.getInventory().remove(Material.EMERALD);
+                player.getInventory().remove(Material.EMERALD);
 
             } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5))
                 user.death(false);
@@ -280,6 +308,21 @@ public class EventListeners implements Listener {
     @EventHandler
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         new Member(e.getPlayer());
+        Player p = e.getPlayer();
+        if (!isChampOrStaff(p)) {
+            KillEffect killEffect = killEffectManager.getKillEffect(p);
+            ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(p);
+            if (killEffect != null) {
+                if (killEffect.getId().equals("CHAMP")) {
+                    killEffectManager.setKillEffect(p, "NONE");
+                }
+            }
+            if (projectileEffect != null) {
+                if (projectileEffect.getId().equals("CHAMP")) {
+                    projectileEffectManager.setProjectileEffect(p, "NONE");
+                }
+            }
+        }
     }
 
     @EventHandler
@@ -305,6 +348,7 @@ public class EventListeners implements Listener {
             Member.getMember((Player) pearl.getShooter()).pearls.add(pearl);
         }
     }
+
     @EventHandler
     public void EntityExplodeEvent(EntityExplodeEvent e) {
         Entity entity = e.getEntity();
@@ -312,6 +356,7 @@ public class EventListeners implements Listener {
             e.setCancelled(true);
         }
     }
+
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof TNTPrimed) {
@@ -319,6 +364,11 @@ public class EventListeners implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+    private boolean isChampOrStaff(Player p) {
+        User user = User.getUser(p);
+        return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
     }
 
 }

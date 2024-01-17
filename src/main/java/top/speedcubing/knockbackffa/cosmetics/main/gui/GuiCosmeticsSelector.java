@@ -17,6 +17,10 @@ import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManag
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
+import top.speedcubing.server.database.Rank;
+import top.speedcubing.server.player.User;
+
+import java.util.Objects;
 
 public class GuiCosmeticsSelector implements Listener {
     private KnockBackFFA plugin;
@@ -24,20 +28,32 @@ public class GuiCosmeticsSelector implements Listener {
     private ProjectileEffectManager projectileEffectManager;
     private String killEffectName;
     private String projectileEffectName;
+
     public GuiCosmeticsSelector(KnockBackFFA plugin, KillEffectManager killEffectManager, ProjectileEffectManager projectileEffectManager) {
         this.plugin = plugin;
         this.killEffectManager = killEffectManager;
         this.projectileEffectManager = projectileEffectManager;
     }
+
     public void open(Player p) {
-        Inventory inventory = Bukkit.createInventory(null,54,"Cosmetics");
+        Inventory inventory = Bukkit.createInventory(null, 54, "Cosmetics");
         KillEffect killEffect = killEffectManager.getKillEffect(p);
         if (killEffect != null) {
             killEffectName = killEffect.getName();
         } else {
             killEffectName = "NONE";
         }
-        ItemStack KILL_SELECTOR = new CustomItem(Material.IRON_SWORD,1,"§aKill Effects",
+        if (!isChampOrStaff(p)) {
+            if (killEffect != null) {
+                if (killEffect.getId().equals("CHAMP")) {
+                    killEffectManager.setKillEffect(p, "NONE");
+                    killEffectName = "NONE";
+                }
+            }
+        }
+
+
+        ItemStack KILL_SELECTOR = new CustomItem(Material.IRON_SWORD, 1, "§aKill Effects",
                 "§7Click this option",
                 "§7change to Kill Effects Selector.",
                 "",
@@ -48,7 +64,7 @@ public class GuiCosmeticsSelector implements Listener {
         ItemMeta meta = KILL_SELECTOR.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         KILL_SELECTOR.setItemMeta(meta);
-        inventory.setItem(21,KILL_SELECTOR);
+        inventory.setItem(21, KILL_SELECTOR);
 
         ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(p);
         if (projectileEffect != null) {
@@ -56,7 +72,15 @@ public class GuiCosmeticsSelector implements Listener {
         } else {
             projectileEffectName = "NONE";
         }
-        ItemStack PROJECTILE_SELECTOR = new CustomItem(Material.ARROW,1,"§aProjectile Effects",
+        if (!isChampOrStaff(p)) {
+            if (projectileEffect != null) {
+                if (projectileEffect.getId().equals("CHAMP")) {
+                    projectileEffectManager.setProjectileEffect(p, "NONE");
+                    projectileEffectName = "NONE";
+                }
+            }
+        }
+        ItemStack PROJECTILE_SELECTOR = new CustomItem(Material.ARROW, 1, "§aProjectile Effects",
                 "§7Click this option",
                 "§7change to Projectile Effects",
                 "§7Selector.",
@@ -65,12 +89,13 @@ public class GuiCosmeticsSelector implements Listener {
                 "§a" + projectileEffectName,
                 "",
                 "§eClick to view!");
-        inventory.setItem(23,PROJECTILE_SELECTOR);
+        inventory.setItem(23, PROJECTILE_SELECTOR);
 
         ItemStack close = new CustomItem(Material.BARRIER, 1, "§cClose");
-        inventory.setItem(49,close);
+        inventory.setItem(49, close);
         p.openInventory(inventory);
     }
+
     @EventHandler
     public void onClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
@@ -95,4 +120,10 @@ public class GuiCosmeticsSelector implements Listener {
             }
         }
     }
+
+    private boolean isChampOrStaff(Player p) {
+        User user = User.getUser(p);
+        return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
+    }
+
 }

@@ -24,7 +24,7 @@ public class Fireball implements Listener {
                 if (!p.hasMetadata("fireballCooldown")) {
                     org.bukkit.entity.Fireball fireball = p.launchProjectile(org.bukkit.entity.Fireball.class);
 
-                    Vector direction = p.getLocation().getDirection().normalize().multiply(1);
+                    Vector direction = p.getLocation().getDirection().normalize().multiply(0.8);
                     fireball.setVelocity(direction);
                     item.setAmount(item.getAmount() - 1);
                     p.setItemInHand(item);

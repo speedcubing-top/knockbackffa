@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
+import top.speedcubing.server.player.User;
 
 public class GuiKillEffectSelector implements Listener {
 
@@ -25,13 +26,14 @@ public class GuiKillEffectSelector implements Listener {
     }
 
     public void open(Player p) {
+        User user = User.getUser(p);
         Inventory inventory = Bukkit.createInventory(null, 54, "Kill Effects");
         ItemStack NONE = new CustomItem(Material.BARRIER, 1, "§aNONE",
                 "§7Selecting this option",
                 "§7disables your Kill Effect.",
                 "",
                 (killEffectManager.hasSelectedOne(p) ? "§eClick to select!" : "§aSELECTED!"));
-        if (p.hasPermission("killeffect.blood_explosion")) {
+        if (p.hasPermission("killeffect.blood_explosion") || user.hasPermission("killeffect.blood_explosion")) {
             ItemStack BLOOD_EXPLOSION = new CustomItem(killEffectManager.getKillEffectById("BLOOD_EXPLOSION").getIcon(), 1,
                     "§aBlood Explosion Kill Effect",
                     "§7Select the Blood Explosion",
@@ -50,7 +52,7 @@ public class GuiKillEffectSelector implements Listener {
                     (!killEffectManager.hasSelected(p, "BLOOD_EXPLOSION") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(12, LOCKED_BLOOD_EXPLOSION);
         }
-        if (p.hasPermission("killeffect.heart_explosion")) {
+        if (p.hasPermission("killeffect.heart_explosion") || user.hasPermission("killeffect.heart_explosion")) {
             ItemStack HEART_EXPLOSION = new CustomItem(killEffectManager.getKillEffectById("HEART_EXPLOSION").getIcon(), 1,
                     "§aHeart Explosion Kill Effect",
                     "§7Select the Heart Explosion",
@@ -69,7 +71,7 @@ public class GuiKillEffectSelector implements Listener {
                     (!killEffectManager.hasSelected(p, "HEART_EXPLOSION") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(13, LOCKED_HEART_EXPLOSION);
         }
-        if (p.hasPermission("killeffect.head_rocket")) {
+        if (p.hasPermission("killeffect.head_rocket") || user.hasPermission("killeffect.head_rocket")) {
             ItemStack HEAD_ROCKET = new CustomItem(killEffectManager.getKillEffectById("HEAD_ROCKET").getIcon(), 1,
                     "§aHead Rocket Kill Effect",
                     "§7Select the Head Rocket",
@@ -88,7 +90,7 @@ public class GuiKillEffectSelector implements Listener {
                     (!killEffectManager.hasSelected(p, "HEAD_ROCKET") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(14, LOCKED_HEAD_ROCKET);
         }
-        if (p.hasPermission("killeffect.final_smash")) {
+        if (p.hasPermission("killeffect.final_smash") || user.hasPermission("killeffect.final_smash")) {
             ItemStack FINAL_SMASH = new CustomItem(killEffectManager.getKillEffectById("FINAL_SMASH").getIcon(), 1,
                     "§aFinal Smash Kill Effect",
                     "§7Select the Final Smash",
@@ -107,7 +109,7 @@ public class GuiKillEffectSelector implements Listener {
                     (!killEffectManager.hasSelected(p, "FINAL_SMASH") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(15, LOCKED_FINAL_SMASH);
         }
-        if (p.hasPermission("killeffect.lightning")) {
+        if (p.hasPermission("killeffect.lightning") || user.hasPermission("killeffect.lightning")) {
             ItemStack LIGHTNING = new CustomItem(killEffectManager.getKillEffectById("LIGHTNING").getIcon(), 1,
                     "§aLightning Kill Effect",
                     "§7Select the Lightning",
@@ -126,7 +128,7 @@ public class GuiKillEffectSelector implements Listener {
                     (!killEffectManager.hasSelected(p, "LIGHTNING") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(20, LOCKED_LIGHTNING);
         }
-        if (p.hasPermission("killeffect.tnt")) {
+        if (p.hasPermission("killeffect.tnt") || user.hasPermission("killeffect.tnt")) {
             ItemStack TNT = new CustomItem(killEffectManager.getKillEffectById("TNT").getIcon(), 1,
                     "§aLightning Kill Effect",
                     "§7Select the TNT",
@@ -145,6 +147,25 @@ public class GuiKillEffectSelector implements Listener {
                     (!killEffectManager.hasSelected(p, "TNT") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(21, LOCKED_TNT);
         }
+        if (p.hasPermission("killeffect.champ") || user.hasPermission("killeffect.champ")) {
+            ItemStack CHAMP = new CustomItem(killEffectManager.getKillEffectById("CHAMP").getIcon(),1,
+                    "§aChamp Kill Effect",
+                    "§7Select the Champ,",
+                    "§7Kill Effect.",
+                    "§7This change is cosmetic",
+                    "",
+                    (!killEffectManager.hasSelected(p,"CHAMP") ? "§eClick to select!" : "§aSELECTED!"));
+            inventory.setItem(22, CHAMP);
+        } else {
+            ItemStack LOCKED_CHAMP = new CustomItem(killEffectManager.getKillEffectById("CHAMP").getIcon(),1,
+                    "§aChamp Kill Effect",
+                    "§7Select the Champ,",
+                    "§7Kill Effect.",
+                    "§7This change is cosmetic",
+                    "",
+                    (!killEffectManager.hasSelected(p,"CHAMP") ? "§cLocked!" : "§aSELECTED!"));
+            inventory.setItem(22, LOCKED_CHAMP);
+        }
 
         ItemStack close = new CustomItem(Material.BARRIER, 1, "§cClose");
         ItemStack back = new CustomItem(Material.ARROW, 1, "§aGo Back",
@@ -158,6 +179,7 @@ public class GuiKillEffectSelector implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
+        User user = User.getUser(p);
         if (p.getOpenInventory().getTopInventory() != null) {
             if (p.getOpenInventory().getTopInventory().getName().equalsIgnoreCase("Kill Effects")) {
                 e.setCancelled(true);
@@ -184,7 +206,7 @@ public class GuiKillEffectSelector implements Listener {
                         }
                     }
                     if (e.getSlot() == 12) {
-                        if (p.hasPermission("killeffect.blood_explosion")) {
+                        if (p.hasPermission("killeffect.blood_explosion") || user.hasPermission("killeffect.blood_explosion")) {
                             if (!killEffectManager.hasSelected(p, "BLOOD_EXPLOSION")) {
                                 killEffectManager.setKillEffect(p, "BLOOD_EXPLOSION");
                                 open(p);
@@ -200,7 +222,7 @@ public class GuiKillEffectSelector implements Listener {
                         }
                     }
                     if (e.getSlot() == 13) {
-                        if (p.hasPermission("killeffect.heart_explosion")) {
+                        if (p.hasPermission("killeffect.heart_explosion") || user.hasPermission("killeffect.heart_explosion")) {
                             if (!killEffectManager.hasSelected(p, "HEART_EXPLOSION")) {
                                 killEffectManager.setKillEffect(p, "HEART_EXPLOSION");
                                 open(p);
@@ -216,7 +238,7 @@ public class GuiKillEffectSelector implements Listener {
                         }
                     }
                     if (e.getSlot() == 14) {
-                        if (p.hasPermission("killeffect.head_rocket")) {
+                        if (p.hasPermission("killeffect.head_rocket") || user.hasPermission("killeffect.head_rocket")) {
                             if (!killEffectManager.hasSelected(p, "HEAD_ROCKET")) {
                                 killEffectManager.setKillEffect(p, "HEAD_ROCKET");
                                 open(p);
@@ -232,7 +254,7 @@ public class GuiKillEffectSelector implements Listener {
                         }
                     }
                     if (e.getSlot() == 15) {
-                        if (p.hasPermission("killeffect.final_smash")) {
+                        if (p.hasPermission("killeffect.final_smash") || user.hasPermission("killeffect.final_smash")) {
                             if (!killEffectManager.hasSelected(p, "FINAL_SMASH")) {
                                 killEffectManager.setKillEffect(p, "FINAL_SMASH");
                                 open(p);
@@ -248,7 +270,7 @@ public class GuiKillEffectSelector implements Listener {
                         }
                     }
                     if (e.getSlot() == 20) {
-                        if (p.hasPermission("killeffect.lightning")) {
+                        if (p.hasPermission("killeffect.lightning") || user.hasPermission("killeffect.lightning")) {
                             if (!killEffectManager.hasSelected(p, "LIGHTNING")) {
                                 killEffectManager.setKillEffect(p, "LIGHTNING");
                                 open(p);
@@ -264,12 +286,28 @@ public class GuiKillEffectSelector implements Listener {
                         }
                     }
                     if (e.getSlot() == 21) {
-                        if (p.hasPermission("killeffect.tnt")) {
+                        if (p.hasPermission("killeffect.tnt") || user.hasPermission("killeffect.tnt")) {
                             if (!killEffectManager.hasSelected(p, "TNT")) {
                                 killEffectManager.setKillEffect(p, "TNT");
                                 open(p);
                                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
                                 p.sendMessage("§6You selected §aTNT Kill Effect§6!");
+                            } else {
+                                p.sendMessage("§cYou have already selected this item!");
+                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            }
+                        } else {
+                            p.sendMessage("§cYou haven't unlocked this yet!");
+                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                        }
+                    }
+                    if (e.getSlot() == 22) {
+                        if (p.hasPermission("killeffect.champ") || user.hasPermission("killeffect.champ")) {
+                            if (!killEffectManager.hasSelected(p, "CHAMP")) {
+                                killEffectManager.setKillEffect(p, "CHAMP");
+                                open(p);
+                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+                                p.sendMessage("§6You selected §aChamp Kill Effect§6!");
                             } else {
                                 p.sendMessage("§cYou have already selected this item!");
                                 p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);

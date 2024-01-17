@@ -108,7 +108,7 @@ public class KnockBackFFA extends JavaPlugin {
     }
 
     private void registerListener() {
-        Bukkit.getPluginManager().registerEvents(new EventListeners(), this);
+        Bukkit.getPluginManager().registerEvents(new EventListeners(killEffectManager,projectileEffectManager), this);
         Bukkit.getPluginManager().registerEvents(new OceanBow(), this);
         Bukkit.getPluginManager().registerEvents(new KillListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ProjectileListener(this), this);
