@@ -126,6 +126,23 @@ public class EventListeners implements Listener {
                 //Remove kill effect selector from player inventory
                 player.getInventory().remove(Material.EMERALD);
 
+                //When players choose the 'Champ' option,
+                // their kill and projectile effects are reset if they don't have the 'Champ' rank or a higher rank.
+                if (!isChampOrStaff(player)) {
+                    KillEffect killEffect = killEffectManager.getKillEffect(player);
+                    ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(player);
+                    if (killEffect != null) {
+                        if (killEffect.getId().equals("CHAMP")) {
+                            killEffectManager.setKillEffect(player, "NONE");
+                        }
+                    }
+                    if (projectileEffect != null) {
+                        if (projectileEffect.getId().equals("CHAMP")) {
+                            projectileEffectManager.setProjectileEffect(player, "NONE");
+                        }
+                    }
+                }
+
             } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5))
                 user.death(false);
         }
