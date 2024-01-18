@@ -24,8 +24,8 @@ public class KillListener implements Listener {
     public void onFFADeath(FFAPlayerDeathEvent e) {
         Player p = e.getPlayer();
         KillEffectManager killEffectManager = plugin.getKillEffectManager();
-        if (p.getKiller() != null) {
-            Player k = p.getKiller();
+        if (e.getKiller() != null) {
+            Player k = e.getKiller();
             KillEffect killEffect = killEffectManager.getKillEffect(k);
             if (killEffect != null) {
                 killEffect.play(p);

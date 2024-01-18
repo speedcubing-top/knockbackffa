@@ -39,7 +39,6 @@ public class EventListeners implements Listener {
     //BOW BOOST PLUGIN
 //    @EventHandler
 //    public void onShoot(EntityShootBowEvent e) {
-//        ((CraftArrow) e.getProjectile()).setKnockbackStrength(2);
 //        LivingEntity livingEntity = e.getEntity();
 //        Vector dir = livingEntity.getLocation().getDirection();
 //        Arrow a = (Arrow) e.getProjectile();
@@ -53,20 +52,24 @@ public class EventListeners implements Listener {
         Arrow arrow = (Arrow) e.getProjectile();
         LivingEntity shooter = e.getEntity();
 
-        ((CraftArrow) arrow).setKnockbackStrength(2);
+        if (((CraftArrow) arrow).getKnockbackStrength() == 1) {
+            ((CraftArrow) arrow).setKnockbackStrength(2);
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (!arrow.isDead()) {
+                        ((CraftArrow) arrow).setKnockbackStrength(1);
+                    }
+                }
+            }.runTaskLater(KnockBackFFA.getInstance(), 8);
+        }
 
         Vector direction = shooter.getLocation().getDirection();
         double speed = arrow.getVelocity().length();
         Vector velocity = direction.multiply(speed);
         arrow.setVelocity(velocity);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!arrow.isDead()) {
-                    ((CraftArrow) arrow).setKnockbackStrength(1);
-                }
-            }
-        }.runTaskLater(KnockBackFFA.getInstance(), 8);
+
     }
 
     @EventHandler

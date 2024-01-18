@@ -142,7 +142,7 @@ public class Member {
         if (killed) {
             Player damager = Damage.user.player;
             //call death event for kill effect
-            FFAPlayerDeathEvent ffaPlayerDeathEvent = new FFAPlayerDeathEvent(user.player, user.player.getLocation());
+            FFAPlayerDeathEvent ffaPlayerDeathEvent = new FFAPlayerDeathEvent(user.player,damager ,user.player.getLocation());
             Bukkit.getServer().getPluginManager().callEvent(ffaPlayerDeathEvent);
 
             double heal = damager.getHealth() / 2;
