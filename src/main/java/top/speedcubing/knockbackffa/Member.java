@@ -6,11 +6,10 @@ import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
-import top.speedcubing.knockbackffa.api.event.FFAPlayerDeathEvent;
+import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
 import top.speedcubing.lib.bukkit.*;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
@@ -38,7 +37,7 @@ public class Member {
     Set<EnderPearl> pearls = new HashSet<>();
     final PacketPlayOutScoreboardScore maxHealPacket;
     boolean isFighting;
-    String inventory;
+    public String inventory;
     int kill;
     boolean killedPlayer;
     int dailyKill;
@@ -47,9 +46,9 @@ public class Member {
     long lastClick;
     boolean displayType;
     final Hologram personal;
-    int placedblock;
+    int placedBlock;
 
-    public final Hologram[] killboard = new Hologram[10];
+    public final Hologram[] killBoard = new Hologram[10];
 
     public Member(Player player) {
         this.user = User.getUser(player);
@@ -96,8 +95,8 @@ public class Member {
             if (a.user.bGetHealth() > 19)
                 connection.sendPacket(a.maxHealPacket);
         });
-        for (int i = 0; i < killboard.length; i++) {
-            killboard[i] = new Hologram("", false, false).setLocation(KnockBackFFA.holoX, 152 - i * 0.3, KnockBackFFA.holoZ, 0, 0).world("world").setClickEvent(KnockBackFFA.clickEvent).setListener(player).spawn();
+        for (int i = 0; i < killBoard.length; i++) {
+            killBoard[i] = new Hologram("", false, false).setLocation(KnockBackFFA.holoX, 152 - i * 0.3, KnockBackFFA.holoZ, 0, 0).world("world").setClickEvent(KnockBackFFA.clickEvent).setListener(player).spawn();
         }
         personal = new Hologram("", false, false).world("world").setLocation(KnockBackFFA.holoX, 148.9, KnockBackFFA.holoZ, 0, 0).setClickEvent(KnockBackFFA.clickEvent).setListener(player);
         setDisplayType(true);
@@ -126,7 +125,7 @@ public class Member {
         String[] s = displayType ? KnockBackFFA.board : KnockBackFFA.dailyBoard;
         String[] s2 = displayType ? KnockBackFFA.boardName : KnockBackFFA.dailyBoardName;
         for (int i = 0; i < 10; i++) {
-            killboard[i].setName(user.id == Integer.parseInt(s2[i]) ? KnockBackFFA.bold(s[i]) : s[i]);
+            killBoard[i].setName(user.id == Integer.parseInt(s2[i]) ? KnockBackFFA.bold(s[i]) : s[i]);
         }
     }
 
@@ -235,6 +234,7 @@ public class Member {
             inventory.setItem(cfg[4] - 48, stack[8]);
             inventory.setItem(cfg[5] - 48, stack[9]);
             inventory.setItem(cfg[6] - 48, stack[10]);
+            inventory.setItem(cfg[7] - 48, stack[13]);
             inventory.setHelmet(stack[0]);
             inventory.setChestplate(stack[1]);
             inventory.setLeggings(stack[2]);

@@ -92,15 +92,30 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void BlocKBreakEvent(BlockBreakEvent e) {
-        if (e.getPlayer().getGameMode() == GameMode.SURVIVAL)
-            e.setCancelled(true);
+        Player p = e.getPlayer();
+        Block block = e.getBlock();
+        if (p.getGameMode() == GameMode.CREATIVE) {
+            if (KnockBackFFA.Diff.containsKey(block)) {
+                KnockBackFFA.Diff.remove(block);
+            }
+        }
+        if (p.getGameMode() == GameMode.SURVIVAL) {
+            if (KnockBackFFA.Diff.containsKey(block)) {
+                KnockBackFFA.Diff.remove(block);
+                e.setCancelled(true);
+                block.setType(Material.AIR);
+            } else {
+                e.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler
     public void BlockPlaceEvent(BlockPlaceEvent e) {
         if (e.getPlayer().getGameMode() == GameMode.SURVIVAL) {
             Member member = Member.getMember(e.getPlayer());
-            member.placedblock++;
+            member.placedBlock++;
+
             Block block = e.getBlock();
             Material old = e.getBlockReplacedState().getType();
             if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
@@ -189,8 +204,6 @@ public class EventListeners implements Listener {
                     if (victim != damager)
                         victimMember.Damage = Damager;
                     if (victim.getHealth() - e.getFinalDamage() <= 0) {
-//                        PlayerDeathEvent playerDeathEvent = new PlayerDeathEvent(victim, new ArrayList<ItemStack>(), 0, null);
-//                        Bukkit.getServer().getPluginManager().callEvent(playerDeathEvent);
                         victimMember.death(false);
                         e.setCancelled(true);
                         victim.damage(0);
@@ -229,7 +242,7 @@ public class EventListeners implements Listener {
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
                             member.user.sendLangMessage(GlobalString.SavedSettings);
-                            List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW);
+                            List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.IRON_PICKAXE); //web
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
                                     int index = t.indexOf(inv.getItem(i).getType());
@@ -295,10 +308,11 @@ public class EventListeners implements Listener {
             inventory.setItem(cfg[4] - 48, itemStacks[8]);
             inventory.setItem(cfg[5] - 48, itemStacks[9]);
             inventory.setItem(cfg[6] - 48, itemStacks[10]);
+            inventory.setItem(cfg[7] - 48, itemStacks[13]);
+
             member.iseditingkit = true;
             player.openInventory(KnockBackFFA.KitEditor[member.user.lang]);
 
-            //Remove kill effect selector when player is editing kit
             player.getInventory().remove(Material.EMERALD);
 
             InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.user.lang]);
@@ -307,6 +321,18 @@ public class EventListeners implements Listener {
             e.setCancelled(true);
         }
         if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.CHEST && player.getGameMode() != GameMode.CREATIVE) {
+            e.setCancelled(true);
+        }
+        if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON_BASE && player.getGameMode() != GameMode.CREATIVE) {
+            e.setCancelled(true);
+        }
+        if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON_STICKY_BASE && player.getGameMode() != GameMode.CREATIVE) {
+            e.setCancelled(true);
+        }
+        if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON_EXTENSION && player.getGameMode() != GameMode.CREATIVE) {
+            e.setCancelled(true);
+        }
+        if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON_MOVING_PIECE && player.getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);
         }
         if (player.getLocation().getY() > KnockBackFFA.spawnprotectY && player.getGameMode() != GameMode.CREATIVE) {
@@ -321,7 +347,7 @@ public class EventListeners implements Listener {
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
         member.death(true);
-        member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_dailykill=" + member.dailyKill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak + ",kbffa_blockplace=kbffa_blockplace+" + member.placedblock);
+        member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_dailykill=" + member.dailyKill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak + ",kbffa_blockplace=kbffa_blockplace+" + member.placedBlock);
         Member.users.remove(member.user.id);
     }
 

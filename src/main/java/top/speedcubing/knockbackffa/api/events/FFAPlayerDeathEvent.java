@@ -1,4 +1,4 @@
-package top.speedcubing.knockbackffa.api.event;
+package top.speedcubing.knockbackffa.api.events;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

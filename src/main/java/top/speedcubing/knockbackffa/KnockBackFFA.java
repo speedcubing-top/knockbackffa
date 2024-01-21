@@ -16,7 +16,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import top.speedcubing.knockbackffa.commands.DebugFFACommand;
 import top.speedcubing.knockbackffa.commands.GamemodeCommand;
+import top.speedcubing.knockbackffa.commands.ProfileCommand;
 import top.speedcubing.knockbackffa.commands.TrollUtilsCommand;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.commands.CommandSWKillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.gui.GuiKillEffectSelector;
@@ -31,6 +33,7 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.listeners.Project
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.knockbackffa.trollutilListeners.Fireball;
 import top.speedcubing.knockbackffa.trollutilListeners.OceanBow;
+import top.speedcubing.knockbackffa.trollutilListeners.VerticalStick;
 import top.speedcubing.lib.bukkit.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
@@ -90,7 +93,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static final Hologram[] personal = new Hologram[2];
 
     public static final ItemStack[] Invalid = new ItemStack[4];
-    public static final ItemStack[][] itemStacks = new ItemStack[4][13];
+    public static final ItemStack[][] itemStacks = new ItemStack[4][14];
     public static final Inventory[] KitEditor = new Inventory[4];
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
@@ -108,11 +111,12 @@ public class KnockBackFFA extends JavaPlugin {
     }
 
     private void registerListener() {
-        Bukkit.getPluginManager().registerEvents(new EventListeners(killEffectManager,projectileEffectManager), this);
+        Bukkit.getPluginManager().registerEvents(new EventListeners(killEffectManager, projectileEffectManager), this);
         Bukkit.getPluginManager().registerEvents(new OceanBow(), this);
         Bukkit.getPluginManager().registerEvents(new KillListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ProjectileListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new Fireball(),this);
+        Bukkit.getPluginManager().registerEvents(new Fireball(), this);
+        Bukkit.getPluginManager().registerEvents(new VerticalStick(), this);
         Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(this, killEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager), this);
@@ -124,6 +128,8 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("projectileeffect").setExecutor(new ProjectileCommand(this));
         getCommand("cosmetic").setExecutor(new CosmeticCommand(this));
         getCommand("gm").setExecutor(new GamemodeCommand());
+        getCommand("debugffa").setExecutor(new DebugFFACommand());
+        getCommand("profile").setExecutor(new ProfileCommand());
     }
 
     public void onEnable() {
@@ -192,6 +198,7 @@ public class KnockBackFFA extends JavaPlugin {
             itemStacks[i][10] = new ItemBuilder(Material.BOW).unBreak().ench(new Enchantment[]{Enchantment.ARROW_KNOCKBACK}, new int[]{1}).build();
             itemStacks[i][11] = new ItemBuilder(Material.CHEST).name(inv[i]).build();
             itemStacks[i][12] = new ItemBuilder(Material.EMERALD).name("§aCosmetics").build();
+            itemStacks[i][13] = new ItemBuilder(Material.IRON_PICKAXE).unBreak().ench(Enchantment.DIG_SPEED, 3).build();
             KitEditor[i] = Bukkit.createInventory(KitEditorHolder, 9, title[i]);
             InventoryUtils.fillItem(KitEditor[i], 0, 9, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name("§a").build());
             KitEditor[i].setItem(3, new ItemBuilder(Material.INK_SACK).durability(10).name(save[i]).build());
@@ -412,6 +419,7 @@ public class KnockBackFFA extends JavaPlugin {
     public GuiProjectileEffectSelector getGuiProjectileEffectSelector() {
         return guiProjectileEffectSelector;
     }
+
     public GuiCosmeticsSelector getGuiCosmeticsSelector() {
         return guiCosmeticsSelector;
     }

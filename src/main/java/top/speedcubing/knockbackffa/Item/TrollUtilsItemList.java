@@ -14,6 +14,13 @@ public class TrollUtilsItemList {
         bow.setItemMeta(meta);
         return bow;
     }
+    public static ItemStack verticalStick() {
+        ItemStack item = new ItemStack(Material.STICK);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(cl("&cVerticalStick"));
+        item.setItemMeta(meta);
+        return item;
+    }
     private static String cl(String str) {
         return ChatColor.translateAlternateColorCodes('&',str);
     }
