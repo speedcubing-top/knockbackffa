@@ -24,6 +24,7 @@ public class DebugFFACommand implements CommandExecutor {
                 player.sendMessage("Inventory List: " + member.inventory);
                 return true;
             }
+
         }
         return false;
     }

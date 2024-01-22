@@ -16,10 +16,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import top.speedcubing.knockbackffa.commands.DebugFFACommand;
-import top.speedcubing.knockbackffa.commands.GamemodeCommand;
-import top.speedcubing.knockbackffa.commands.ProfileCommand;
-import top.speedcubing.knockbackffa.commands.TrollUtilsCommand;
+import top.speedcubing.knockbackffa.commands.*;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.commands.CommandSWKillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.gui.GuiKillEffectSelector;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.listeners.KillListener;
@@ -34,6 +31,7 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.Projectil
 import top.speedcubing.knockbackffa.trollutilListeners.Fireball;
 import top.speedcubing.knockbackffa.trollutilListeners.OceanBow;
 import top.speedcubing.knockbackffa.trollutilListeners.VerticalStick;
+import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.bukkit.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
@@ -130,6 +128,7 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("gm").setExecutor(new GamemodeCommand());
         getCommand("debugffa").setExecutor(new DebugFFACommand());
         getCommand("profile").setExecutor(new ProfileCommand());
+        getCommand("sendmessage").setExecutor(new SendMessageCommand());
     }
 
     public void onEnable() {

@@ -22,3 +22,6 @@ commands:
     usage: /debugffa <mode>
   profile:
     usage: /profile <player>
+  sendmessage:
+    aliases: [ sm ]
+    usage: /sendmessage <player> <message>
