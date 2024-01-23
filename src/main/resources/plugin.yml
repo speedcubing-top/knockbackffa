@@ -16,8 +16,6 @@ commands:
     aliases: [ pe ]
   cosmetic:
     aliases: [ cm ]
-  gm:
-    usage: /gm <gamemode> [player]
   debugffa:
     usage: /debugffa <mode>
   profile:

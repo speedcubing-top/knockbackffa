@@ -125,7 +125,6 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("killeffect").setExecutor(new CommandSWKillEffect(this));
         getCommand("projectileeffect").setExecutor(new ProjectileCommand(this));
         getCommand("cosmetic").setExecutor(new CosmeticCommand(this));
-        getCommand("gm").setExecutor(new GamemodeCommand());
         getCommand("debugffa").setExecutor(new DebugFFACommand());
         getCommand("profile").setExecutor(new ProfileCommand());
         getCommand("sendmessage").setExecutor(new SendMessageCommand());
