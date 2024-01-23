@@ -29,7 +29,7 @@ public class ProfileCommand implements CommandExecutor {
                     String formattedKDR = df.format(kdr);
                     player.sendMessage("===== " + name + " =====\n" +
                             "Rank: " + rank +
-                            "Kills: " + kills + "\nDeaths: " + deaths + "\nKDR: " + formattedKDR
+                            "\nKills: " + kills + "\nDeaths: " + deaths + "\nKDR: " + formattedKDR
                             + "\nDaily Kills: " + dailyKills + "\nBest Kill Streak: " + killStreak
                             + "\nBlock Placed: " + blocks);
                     return true;
@@ -55,7 +55,7 @@ public class ProfileCommand implements CommandExecutor {
                     String formattedKDR = df.format(kdr);
                     player.sendMessage("===== " + name + " =====\n" +
                             "Rank: " + rank +
-                            "Kills: " + kills + "\nDeaths: " + deaths + "\nKDR: " + formattedKDR
+                            "\nKills: " + kills + "\nDeaths: " + deaths + "\nKDR: " + formattedKDR
                             + "\nDaily Kills: " + dailyKills + "\nBest Kill Streak: " + killStreak
                             + "\nBlock Placed: " + blocks);
                 } else {
