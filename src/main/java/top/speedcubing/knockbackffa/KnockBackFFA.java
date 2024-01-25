@@ -114,7 +114,7 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new KillListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ProjectileListener(this), this);
         Bukkit.getPluginManager().registerEvents(new Fireball(), this);
-        Bukkit.getPluginManager().registerEvents(new VerticalStick(), this);
+//        Bukkit.getPluginManager().registerEvents(new VerticalStick(), this);
         Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(this, killEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager), this);

@@ -13,12 +13,14 @@ public class VerticalStick implements Listener {
             Player damager = (Player) e.getDamager();
             Player player = (Player) e.getEntity();
             if (damager.getItemInHand() != null) {
-                if (damager.getItemInHand().getItemMeta().getDisplayName().contains("VerticalStick")) {
-                    Location loc = player.getLocation();
-                    double x = loc.getX();
-                    double y = loc.getY();
-                    double z = loc.getZ();
-                    player.teleport(new Location(player.getWorld(), x, y - 10, z));
+                if (damager.getItemInHand().hasItemMeta()) {
+                    if (damager.getItemInHand().getItemMeta().getDisplayName().contains("VerticalStick")) {
+                        Location loc = player.getLocation();
+                        double x = loc.getX();
+                        double y = loc.getY();
+                        double z = loc.getZ();
+                        player.teleport(new Location(player.getWorld(), x, y - 10, z));
+                    }
                 }
             }
         }
