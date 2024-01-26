@@ -23,3 +23,6 @@ commands:
   sendmessage:
     aliases: [ sm ]
     usage: /sendmessage <player> <message>
+  killmyself:
+    aliases: [ kms ]
+    usage: /killmyself

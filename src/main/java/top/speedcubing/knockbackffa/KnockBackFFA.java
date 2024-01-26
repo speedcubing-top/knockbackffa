@@ -128,6 +128,7 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("debugffa").setExecutor(new DebugFFACommand());
         getCommand("profile").setExecutor(new ProfileCommand());
         getCommand("sendmessage").setExecutor(new SendMessageCommand());
+        getCommand("killmyself").setExecutor(new KillMyselfCommand());
     }
 
     public void onEnable() {

@@ -36,7 +36,7 @@ public class Member {
     boolean iseditingkit;
     Set<EnderPearl> pearls = new HashSet<>();
     final PacketPlayOutScoreboardScore maxHealPacket;
-    boolean isFighting;
+    public boolean isFighting;
     public String inventory;
     int kill;
     boolean killedPlayer;

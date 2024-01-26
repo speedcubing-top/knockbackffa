@@ -92,7 +92,7 @@ public class GuiProjectileEffectSelector implements Listener {
         if (p.hasPermission("projectileeffect.champ") || user.hasPermission("projectileeffect.champ")) {
             ItemStack CHAMP = new CustomItem(projectileEffectManager.getProjectileEffectById("CHAMP").getIcon(),1,
                     "§aChamp Projectile Effect",
-                    "§7SSelect the Champ Particle",
+                    "§7Select the Champ Particle",
                     "§7projectile Effect. This change is",
                     "§7cosmetic.",
                     "",
@@ -101,7 +101,7 @@ public class GuiProjectileEffectSelector implements Listener {
         } else {
             ItemStack LOCKED_CHAMP = new CustomItem(projectileEffectManager.getProjectileEffectById("CHAMP").getIcon(),1,
                     "§aChamp Projectile Effect",
-                    "§7SSelect the Champ Particle",
+                    "§7Select the Champ Particle",
                     "§7projectile Effect. This change is",
                     "§7cosmetic.",
                     "",
