@@ -20,6 +20,8 @@ public class TrollUtilsCommand implements CommandExecutor {
                         user.bGetInventory().addItem(TrollUtilsItemList.oceanBow());
                     } else if (args[0].equalsIgnoreCase("verticalstick")) {
                         user.bGetInventory().addItem(TrollUtilsItemList.verticalStick());
+                    } else if (args[0].equalsIgnoreCase("fastpickaxe") || args[0].equalsIgnoreCase("fp")) {
+                        user.bGetInventory().addItem(TrollUtilsItemList.fastPickaxe());
                     }
                 }
             }

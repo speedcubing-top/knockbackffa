@@ -47,6 +47,7 @@ public class Member {
     boolean displayType;
     final Hologram personal;
     int placedBlock;
+    int breakBlock;
 
     public final Hologram[] killBoard = new Hologram[10];
 

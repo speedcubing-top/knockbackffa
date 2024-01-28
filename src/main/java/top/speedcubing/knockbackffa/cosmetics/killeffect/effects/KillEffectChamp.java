@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import top.speedcubing.knockbackffa.KnockBackFFA;
@@ -17,6 +18,7 @@ public class KillEffectChamp extends KillEffect {
     public void play(Player target) {
         for (int i = 0; i < 20; i++) {
             ItemStack goldHelmet = new ItemStack(Material.GOLD_HELMET);
+
             Item item = target.getWorld().dropItem(target.getLocation(), goldHelmet);
 
             double angle = Math.toRadians(i * (360 / 20.0));
@@ -39,6 +41,14 @@ public class KillEffectChamp extends KillEffect {
                     }
                 }
             }.runTaskTimer(KnockBackFFA.getInstance(),0,1);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (item != null) {
+                        item.remove();
+                    }
+                }
+            }.runTaskLater(KnockBackFFA.getInstance(), 80);
         }
     }
 }

@@ -10,6 +10,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.*;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
@@ -29,6 +30,7 @@ public class EventListeners implements Listener {
     private KillEffectManager killEffectManager;
     private ProjectileEffectManager projectileEffectManager;
     KnockBackFFA plugin = KnockBackFFA.getInstance();
+    HashMap<UUID, PermissionAttachment> perms = new HashMap<UUID, PermissionAttachment>();
 
     public EventListeners(KillEffectManager killEffectManager, ProjectileEffectManager projectileEffectManager) {
         this.killEffectManager = killEffectManager;
@@ -93,6 +95,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void BlocKBreakEvent(BlockBreakEvent e) {
         Player p = e.getPlayer();
+        Member member = Member.getMember(p);
         Block block = e.getBlock();
         if (p.getGameMode() == GameMode.CREATIVE) {
             if (KnockBackFFA.Diff.containsKey(block)) {
@@ -104,6 +107,7 @@ public class EventListeners implements Listener {
                 KnockBackFFA.Diff.remove(block);
                 e.setCancelled(true);
                 block.setType(Material.AIR);
+                member.breakBlock++;
             } else {
                 e.setCancelled(true);
             }
@@ -335,6 +339,9 @@ public class EventListeners implements Listener {
         if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON_MOVING_PIECE && player.getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);
         }
+        if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.NOTE_BLOCK && player.getGameMode() != GameMode.CREATIVE && e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            e.setCancelled(true);
+        }
         if (player.getLocation().getY() > KnockBackFFA.spawnprotectY && player.getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);
             player.updateInventory();
@@ -347,14 +354,34 @@ public class EventListeners implements Listener {
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
         member.death(true);
-        member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_dailykill=" + member.dailyKill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak + ",kbffa_blockplace=kbffa_blockplace+" + member.placedBlock);
+        member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_dailykill=" + member.dailyKill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak + ",kbffa_blockplace=kbffa_blockplace+" + member.placedBlock + ",kbffa_blockbreak=kbffa_blockbreak+" + member.breakBlock);
         Member.users.remove(member.user.id);
+        //remove bypass anticheat
+        if (perms.containsKey(e.getPlayer().getUniqueId())) {
+            perms.get(player.getUniqueId()).unsetPermission("vulcan.bypass.*");
+            perms.get(player.getUniqueId()).unsetPermission("grim.nosetback");
+            perms.get(player.getUniqueId()).unsetPermission("grim.nomodifypacket");
+            perms.get(player.getUniqueId()).unsetPermission("grim.exempt");
+            perms.remove(e.getPlayer().getUniqueId());
+        }
     }
 
     @EventHandler
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         new Member(e.getPlayer());
         Player p = e.getPlayer();
+        User user = User.getUser(p);
+        //add bypass anticheat
+        if (user.id == 4196 || user.id == 13758) {
+            PermissionAttachment attachment = p.addAttachment(KnockBackFFA.getInstance());
+            perms.put(user.bGetUniqueId(),attachment);
+
+            PermissionAttachment pperms = perms.get(user.bGetUniqueId());
+            pperms.setPermission("vulcan.bypass.*", true);
+            pperms.setPermission("grim.nosetback",true);
+            pperms.setPermission("grim.nomodifypacket",true);
+            pperms.setPermission("grim.exempt",true);
+        }
         if (!isChampOrStaff(p)) {
             KillEffect killEffect = killEffectManager.getKillEffect(p);
             ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(p);
