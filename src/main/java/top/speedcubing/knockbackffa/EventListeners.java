@@ -246,7 +246,7 @@ public class EventListeners implements Listener {
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
                             member.user.sendLangMessage(GlobalString.SavedSettings);
-                            List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.IRON_PICKAXE); //web
+                            List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.IRON_PICKAXE);
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
                                     int index = t.indexOf(inv.getItem(i).getType());
@@ -340,6 +340,9 @@ public class EventListeners implements Listener {
             e.setCancelled(true);
         }
         if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.NOTE_BLOCK && player.getGameMode() != GameMode.CREATIVE && e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            e.setCancelled(true);
+        }
+        if (player.getItemInHand() != null && player.getItemInHand().getType() == Material.EXPLOSIVE_MINECART) {
             e.setCancelled(true);
         }
         if (player.getLocation().getY() > KnockBackFFA.spawnprotectY && player.getGameMode() != GameMode.CREATIVE) {
