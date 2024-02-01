@@ -26,3 +26,9 @@ commands:
   killmyself:
     aliases: [ kms ]
     usage: /killmyself
+  taggame:
+    aliases: [ tg ]
+    usage: /taggame
+  taggamelist:
+    aliases: [ tgl]
+    usage: /taggamelist

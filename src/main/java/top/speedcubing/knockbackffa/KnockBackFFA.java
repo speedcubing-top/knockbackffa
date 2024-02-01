@@ -28,6 +28,9 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.commands.Projecti
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.gui.GuiProjectileEffectSelector;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.listeners.ProjectileListener;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
+import top.speedcubing.knockbackffa.games.tag.commands.TagGameCommand;
+import top.speedcubing.knockbackffa.games.tag.commands.TagGameListCommand;
+import top.speedcubing.knockbackffa.games.tag.listeners.TagGameListener;
 import top.speedcubing.knockbackffa.trollutilListeners.Fireball;
 import top.speedcubing.knockbackffa.trollutilListeners.OceanBow;
 import top.speedcubing.knockbackffa.trollutilListeners.VerticalStick;
@@ -114,10 +117,11 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new KillListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ProjectileListener(this), this);
         Bukkit.getPluginManager().registerEvents(new Fireball(), this);
-//        Bukkit.getPluginManager().registerEvents(new VerticalStick(), this);
+        Bukkit.getPluginManager().registerEvents(new VerticalStick(), this);
         Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(this, killEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager), this);
+        Bukkit.getPluginManager().registerEvents(new TagGameListener(),this);
     }
 
     private void regitserCommands() {
@@ -129,6 +133,8 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("profile").setExecutor(new ProfileCommand());
         getCommand("sendmessage").setExecutor(new SendMessageCommand());
         getCommand("killmyself").setExecutor(new KillMyselfCommand());
+        getCommand("taggame").setExecutor(new TagGameCommand());
+        getCommand("taggamelist").setExecutor(new TagGameListCommand());
     }
 
     public void onEnable() {
@@ -188,7 +194,7 @@ public class KnockBackFFA extends JavaPlugin {
             itemStacks[i][1] = new ItemBuilder(Material.LEATHER_CHESTPLATE).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
             itemStacks[i][2] = new ItemBuilder(Material.LEATHER_LEGGINGS).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
             itemStacks[i][3] = new ItemBuilder(Material.LEATHER_BOOTS).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
-            itemStacks[i][4] = new ItemBuilder(Material.WOOD_SWORD).unBreak().ench(Enchantment.DAMAGE_ALL, 1).build();
+            itemStacks[i][4] = new ItemBuilder(Material.GOLD_SWORD).unBreak().ench(Enchantment.DAMAGE_ALL, 1).build();
             itemStacks[i][5] = new ItemBuilder(Material.STICK).ench(new Enchantment[]{Enchantment.KNOCKBACK}, new int[]{1}).build();
             itemStacks[i][6] = new ItemBuilder(Material.ENDER_PEARL).build();
             itemStacks[i][7] = new ItemBuilder(Material.WEB).build();

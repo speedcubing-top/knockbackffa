@@ -45,7 +45,7 @@ public class OceanBow implements Listener {
         Vector playerDirection = player.getLocation().getDirection().normalize();
 
         for (int i = 0; i < 3; i++) {
-            double angle = Math.toRadians(-i * 5.0);
+            double angle = Math.toRadians(-i * 7.0);
 
             double x = playerDirection.getX();
             double z = playerDirection.getZ();
