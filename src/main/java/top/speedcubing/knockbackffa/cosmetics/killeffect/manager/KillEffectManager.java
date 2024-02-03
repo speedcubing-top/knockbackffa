@@ -5,11 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 
 
-
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.knockbackffa.api.events.KillEffectChangeEvent;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.*;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
 
@@ -100,6 +101,8 @@ public class KillEffectManager {
 		KillEffect effect = getKillEffectById(effectId);
 		if (effect != null) {
 			killEffectMap.put(uuid, effect);
+			KillEffectChangeEvent killEffectChangeEvent = new KillEffectChangeEvent(p,effectId);
+			Bukkit.getPluginManager().callEvent(killEffectChangeEvent);
 		}
 	}
 

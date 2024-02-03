@@ -16,7 +16,7 @@ public class TrollUtilsCommand implements CommandExecutor {
                 if (args.length == 0) {
                     user.player.sendMessage("Usage: /trollutils <item>");
                 } else if (args.length == 1) {
-                    if (args[0].equalsIgnoreCase("oceanbow") || args[0].equalsIgnoreCase("oc")) {
+                    if (args[0].equalsIgnoreCase("oceanbow") || args[0].equalsIgnoreCase("ob")) {
                         user.bGetInventory().addItem(TrollUtilsItemList.oceanBow());
                     } else if (args[0].equalsIgnoreCase("verticalstick") || args[0].equalsIgnoreCase("vs")) {
                         user.bGetInventory().addItem(TrollUtilsItemList.verticalStick());

@@ -146,7 +146,7 @@ public class EventListeners implements Listener {
                 player.getInventory().remove(Material.EMERALD);
 
                 //When players choose the 'Champ' option,
-                // their kill and projectile effects are reset if they don't have the 'Champ' rank or a higher rank.
+                //their kill and projectile effects are reset if they don't have the 'Champ' rank or a higher rank.
                 if (!isChampOrStaff(player)) {
                     KillEffect killEffect = killEffectManager.getKillEffect(player);
                     ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(player);
@@ -227,21 +227,29 @@ public class EventListeners implements Listener {
     @EventHandler
     public void InventoryClickEvent(InventoryClickEvent e) {
         int RawSlot = e.getRawSlot();
-        if (e.getAction() == InventoryAction.PICKUP_HALF || e.getAction() == InventoryAction.PLACE_ONE)
+        Player player = (Player) e.getWhoClicked();
+        Member member = Member.getMember(player);
+        if (e.getAction() == InventoryAction.PICKUP_HALF || e.getAction() == InventoryAction.PLACE_ONE) {
+            if (member.isFighting) {
+                return;
+            }
             e.setCancelled(true);
+        }
         if (RawSlot != -999) {
             Inventory inventory = e.getInventory();
             if (inventory.getName().equals("container.crafting")) {
-                if (e.getWhoClicked().getGameMode() == GameMode.SURVIVAL)
+                if (e.getWhoClicked().getGameMode() == GameMode.SURVIVAL) {
+                    if (member.isFighting) {
+                        return;
+                    }
                     e.setCancelled(true);
+                }
             } else if (inventory.getHolder() == KnockBackFFA.KitEditorHolder) {
                 if (RawSlot < 36)
                     e.setCancelled(true);
-                Player player = (Player) e.getWhoClicked();
                 switch (RawSlot) {
                     case 3:
                         ItemStack cursor = e.getCursor();
-                        Member member = Member.getMember(player);
                         member.user.sound(Sound.CLICK);
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
@@ -276,6 +284,13 @@ public class EventListeners implements Listener {
             }
         }
     }
+    @EventHandler
+    public void onCraftItem(CraftItemEvent e) {
+        Player player = (Player) e.getWhoClicked();
+        if (player.getGameMode() == GameMode.SURVIVAL) {
+            e.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void InventoryCloseEvent(InventoryCloseEvent e) {
@@ -300,6 +315,9 @@ public class EventListeners implements Listener {
         Player player = e.getPlayer();
         if (player.getItemInHand().getType().equals(Material.CHEST)) {
             Member member = Member.getMember(player);
+            if (member.isFighting) {
+                return;
+            }
             member.user.sound(Sound.CLICK);
             Inventory inventory = player.getInventory();
             inventory.setItem(4, new ItemStack(Material.AIR));

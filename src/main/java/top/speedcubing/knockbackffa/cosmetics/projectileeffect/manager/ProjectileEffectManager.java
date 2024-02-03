@@ -1,8 +1,10 @@
 package top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.knockbackffa.api.events.ProjectileEffectChangeEvent;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.*;
 
 import java.util.ArrayList;
@@ -65,6 +67,8 @@ public class ProjectileEffectManager {
         ProjectileEffect effect = getProjectileEffectById(effectId);
         if (effect != null) {
             projectileEffectMap.put(uuid, effect);
+            ProjectileEffectChangeEvent projectileEffectChangeEvent = new ProjectileEffectChangeEvent(p,effectId);
+            Bukkit.getPluginManager().callEvent(projectileEffectChangeEvent);
         }
     }
     public boolean hasSelected(Player p, String effectId) {

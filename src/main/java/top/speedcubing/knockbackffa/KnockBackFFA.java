@@ -31,10 +31,9 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.Projectil
 import top.speedcubing.knockbackffa.games.tag.commands.TagGameCommand;
 import top.speedcubing.knockbackffa.games.tag.commands.TagGameListCommand;
 import top.speedcubing.knockbackffa.games.tag.listeners.TagGameListener;
-import top.speedcubing.knockbackffa.trollutilListeners.Fireball;
-import top.speedcubing.knockbackffa.trollutilListeners.OceanBow;
-import top.speedcubing.knockbackffa.trollutilListeners.VerticalStick;
-import top.speedcubing.lib.bukkit.TabCompleteUtils;
+import top.speedcubing.knockbackffa.trollutillisteners.Fireball;
+import top.speedcubing.knockbackffa.trollutillisteners.OceanBow;
+import top.speedcubing.knockbackffa.trollutillisteners.VerticalStick;
 import top.speedcubing.lib.bukkit.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;

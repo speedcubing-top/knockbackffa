@@ -1,4 +1,4 @@
-package top.speedcubing.knockbackffa.trollutilListeners;
+package top.speedcubing.knockbackffa.trollutillisteners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
