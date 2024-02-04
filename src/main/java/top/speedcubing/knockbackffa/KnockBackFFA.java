@@ -95,7 +95,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static final ItemStack[] Invalid = new ItemStack[4];
     public static final ItemStack[][] itemStacks = new ItemStack[4][14];
     public static final Inventory[] KitEditor = new Inventory[4];
-    public static final InventoryHolder KitEditorHolder = () -> null;
+    public static final InventoryHolder     KitEditorHolder = () -> null;
     public static int id = 0;
     public static final Map<Block, Integer[]> Diff = new HashMap<>();
 

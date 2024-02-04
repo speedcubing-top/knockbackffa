@@ -194,26 +194,48 @@ public class EventListeners implements Listener {
         if (e.getEntity() instanceof Player && e.getCause() != EntityDamageEvent.DamageCause.FALL) {
             Entity damage = e.getDamager();
             Player damager = null;
-            if (damage instanceof EnderPearl)
+            if (damage instanceof EnderPearl) {
                 damager = (Player) ((EnderPearl) e.getDamager()).getShooter();
-            else if (damage instanceof Arrow)
+            } else if (damage instanceof Arrow) {
                 damager = (Player) ((Arrow) e.getDamager()).getShooter();
-            else if (damage instanceof Player)
+            } else if (damage instanceof Player) {
                 damager = (Player) damage;
+            }
             if (damager != null) {
                 Player victim = (Player) e.getEntity();
                 Member victimMember = Member.getMember(victim);
                 Member Damager = Member.getMember(damager);
                 if (victimMember.isFighting && Damager.isFighting) {
-                    if (victim != damager)
+                    if (victim != damager) {
                         victimMember.Damage = Damager;
+                    }
                     if (victim.getHealth() - e.getFinalDamage() <= 0) {
                         victimMember.death(false);
                         e.setCancelled(true);
                         victim.damage(0);
                     }
                     victimMember.KillTime = System.currentTimeMillis();
-                } else e.setCancelled(true);
+                } else {
+                    e.setCancelled(true);
+                }
+            }
+        }
+        if (e.getEntity() instanceof ItemFrame && e.getDamager() instanceof Player) {
+            Player player = (Player) e.getDamager();
+            if (player.getGameMode() == GameMode.SURVIVAL) {
+                e.setCancelled(true);
+            }
+        } else if (e.getEntity() instanceof ItemFrame && e.getDamager() instanceof Arrow || e.getDamager() instanceof TNTPrimed || e.getDamager() instanceof Fireball || e.getDamager() instanceof FishHook
+         || e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg) {
+            e.setCancelled(true);
+        }
+    }
+    @EventHandler
+    public void onPlayerInteractionEntity(PlayerInteractEntityEvent e) {
+        if (e.getRightClicked() instanceof ItemFrame) {
+            Player player = e.getPlayer();
+            if (player.getGameMode() == GameMode.SURVIVAL) {
+                e.setCancelled(true);
             }
         }
     }
@@ -239,7 +261,7 @@ public class EventListeners implements Listener {
             Inventory inventory = e.getInventory();
             if (inventory.getName().equals("container.crafting")) {
                 if (e.getWhoClicked().getGameMode() == GameMode.SURVIVAL) {
-                    if (member.isFighting) {
+                    if (member.isFighting && !isEquipmentSlot(RawSlot)) {
                         return;
                     }
                     e.setCancelled(true);
@@ -284,6 +306,7 @@ public class EventListeners implements Listener {
             }
         }
     }
+
     @EventHandler
     public void onCraftItem(CraftItemEvent e) {
         Player player = (Player) e.getWhoClicked();
@@ -463,6 +486,9 @@ public class EventListeners implements Listener {
     private boolean isChampOrStaff(Player p) {
         User user = User.getUser(p);
         return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
+    }
+    private boolean isEquipmentSlot(int rawSlot) {
+        return rawSlot >= 5 && rawSlot <= 8;
     }
 
 }
