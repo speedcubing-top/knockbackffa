@@ -22,6 +22,8 @@ public class TrollUtilsCommand implements CommandExecutor {
                         user.bGetInventory().addItem(TrollUtilsItemList.verticalStick());
                     } else if (args[0].equalsIgnoreCase("fastpickaxe") || args[0].equalsIgnoreCase("fp")) {
                         user.bGetInventory().addItem(TrollUtilsItemList.fastPickaxe());
+                    } else if (args[0].equalsIgnoreCase("verticalstickpromax") || args[0].equalsIgnoreCase("vspm")) {
+                        user.bGetInventory().addItem(TrollUtilsItemList.verticalStickProMax());
                     }
                 }
             }

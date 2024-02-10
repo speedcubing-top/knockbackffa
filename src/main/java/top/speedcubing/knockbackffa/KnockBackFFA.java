@@ -34,6 +34,7 @@ import top.speedcubing.knockbackffa.games.tag.listeners.TagGameListener;
 import top.speedcubing.knockbackffa.trollutillisteners.Fireball;
 import top.speedcubing.knockbackffa.trollutillisteners.OceanBow;
 import top.speedcubing.knockbackffa.trollutillisteners.VerticalStick;
+import top.speedcubing.knockbackffa.trollutillisteners.VerticalStickProMax;
 import top.speedcubing.lib.bukkit.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
@@ -121,6 +122,7 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager), this);
         Bukkit.getPluginManager().registerEvents(new TagGameListener(),this);
+        Bukkit.getPluginManager().registerEvents(new VerticalStickProMax(),this);
     }
 
     private void regitserCommands() {
@@ -134,6 +136,7 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("killmyself").setExecutor(new KillMyselfCommand());
         getCommand("taggame").setExecutor(new TagGameCommand());
         getCommand("taggamelist").setExecutor(new TagGameListCommand());
+        getCommand("invsee").setExecutor(new InvSeeCommand());
     }
 
     public void onEnable() {

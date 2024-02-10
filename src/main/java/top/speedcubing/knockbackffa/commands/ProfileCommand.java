@@ -23,7 +23,7 @@ public class ProfileCommand implements CommandExecutor {
                 String killStreak = data[5];
                 String name = data[6];
                 String blockBreaks = data[7];
-                if (kills != null && dailyKills != null && blockPlaces != null && deaths != null && killStreak != null && blockBreaks != null) {
+                if (rank != null && kills != null && dailyKills != null && blockPlaces != null && deaths != null && killStreak != null && blockBreaks != null) {
                     int killsInt = Integer.parseInt(kills);
                     int deathsInt = Integer.parseInt(deaths);
                     double kdr = (double) killsInt / deathsInt;
@@ -52,7 +52,7 @@ public class ProfileCommand implements CommandExecutor {
                 String killStreak = data[5];
                 String name = data[6];
                 String blockBreaks = data[7];
-                if (kills != null && dailyKills != null && blockPlaces != null && deaths != null && killStreak != null && blockBreaks != null) {
+                if (rank != null && kills != null && dailyKills != null && blockPlaces != null && deaths != null && killStreak != null && blockBreaks != null) {
                     int killsInt = Integer.parseInt(kills);
                     int deathsInt = Integer.parseInt(deaths);
                     double kdr = (double) killsInt / deathsInt;

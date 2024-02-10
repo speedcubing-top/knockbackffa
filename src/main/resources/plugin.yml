@@ -32,3 +32,5 @@ commands:
   taggamelist:
     aliases: [ tgl ]
     usage: /taggamelist
+  invsee:
+    usage: /invsee

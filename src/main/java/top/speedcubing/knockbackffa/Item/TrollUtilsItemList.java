@@ -29,6 +29,13 @@ public class TrollUtilsItemList {
         item.setItemMeta(meta);
         return item;
     }
+    public static ItemStack verticalStickProMax() {
+        ItemStack item = new ItemStack(Material.STICK);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName("§6VerticalStickProMax");
+        item.setItemMeta(meta);
+        return item;
+    }
     private static String cl(String str) {
         return ChatColor.translateAlternateColorCodes('&',str);
     }

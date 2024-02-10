@@ -1,5 +1,6 @@
 package top.speedcubing.knockbackffa.trollutillisteners;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -21,7 +22,7 @@ public class VerticalStick implements Listener {
             if (damager.getItemInHand().getType() == Material.STICK) {
                 if (damager.getItemInHand().hasItemMeta()) {
                     if (damager.getItemInHand().getItemMeta().getDisplayName() != null && damager.getItemInHand().getItemMeta().getDisplayName().equals("§cVerticalStick")) {
-                        if (!member.isFighting) {
+                        if (!member.isFighting || !Member.getMember(player).isFighting || player.getGameMode() == GameMode.CREATIVE) {
                             return;
                         }
                         Location loc = player.getLocation();
