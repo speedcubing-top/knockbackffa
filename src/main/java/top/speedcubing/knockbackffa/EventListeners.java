@@ -10,6 +10,8 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.*;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.map.MapView;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -17,12 +19,17 @@ import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
+import top.speedcubing.knockbackffa.managers.MapManager;
+import top.speedcubing.knockbackffa.managers.VoteManager;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
+import top.speedcubing.server.authenticator.utils.ImageRenderer;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
+import top.speedcubing.server.speedcubingServer;
 
 
+import java.io.IOException;
 import java.util.*;
 
 
@@ -48,6 +55,71 @@ public class EventListeners implements Listener {
 //        Vector vel = dir.multiply(speed);
 //        a.setVelocity(vel);
 //    }
+
+    //MAP VIEW AND VOTE
+    @EventHandler
+    public void onInvClick(InventoryClickEvent e) {
+        Player p = (Player) e.getWhoClicked();
+        if (e.getClickedInventory() == null || !e.getClickedInventory().getTitle().equals("Map Vote")) return;
+        e.setCancelled(true);
+        ItemStack clickedItem = e.getCurrentItem();
+        switch (e.getClick()) {
+            case LEFT:
+                if (clickedItem != null && clickedItem.getType() == Material.MAP) {
+                    if (!VoteManager.getVoteStatus()) {
+                        p.sendMessage("§cVoting is not in progress.");
+                        return;
+                    }
+                    if (VoteManager.isPlayerVoted(p)) {
+                        p.sendMessage("§cYou have already voted");
+                        return;
+                    }
+                    if (!VoteManager.isOptionsExist(ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName()))) {
+                        p.sendMessage("Occurred Error, options not exist");
+                        return;
+                    }
+                    VoteManager.vote(p,ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName()));
+                    p.sendMessage("§bYou voted for " + ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName()));
+                    p.closeInventory();
+                }
+                break;
+            case RIGHT:
+                if (clickedItem != null && clickedItem.getType() == Material.MAP) {
+                    if (VoteManager.isPlayerVoted(p)) {
+                        p.sendMessage("§cYou have already voted");
+                        return;
+                    }
+                    p.closeInventory();
+                    String itemName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
+                    String url = MapManager.getMapByName(itemName);
+                    if (url != null) {
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                MapView view = Bukkit.createMap(p.getWorld());
+                                view.getRenderers().forEach(view::removeRenderer);
+                                try {
+                                    ImageRenderer renderer = new ImageRenderer(url);
+                                    view.addRenderer(renderer);
+                                    ItemStack mapItem = new ItemStack(Material.MAP, 1, view.getId());
+                                    ItemMeta mapMeta = mapItem.getItemMeta();
+                                    mapMeta.setDisplayName(ChatColor.GOLD + itemName);
+                                    mapItem.setItemMeta(mapMeta);
+                                    p.getInventory().addItem(mapItem);
+                                } catch (IOException ee) {
+                                    ee.printStackTrace();
+                                    p.sendMessage(ChatColor.RED + "An error occurred! Is the URL correct?");
+                                }
+                            }
+                        }.runTaskAsynchronously(speedcubingServer.instance);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
 
     @EventHandler
     public void onShoot(EntityShootBowEvent e) {
@@ -226,10 +298,11 @@ public class EventListeners implements Listener {
                 e.setCancelled(true);
             }
         } else if (e.getEntity() instanceof ItemFrame && e.getDamager() instanceof Arrow || e.getDamager() instanceof TNTPrimed || e.getDamager() instanceof Fireball || e.getDamager() instanceof FishHook
-         || e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg) {
+                || e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg) {
             e.setCancelled(true);
         }
     }
+
     @EventHandler
     public void onPlayerInteractionEntity(PlayerInteractEntityEvent e) {
         if (e.getRightClicked() instanceof ItemFrame) {
@@ -487,6 +560,7 @@ public class EventListeners implements Listener {
         User user = User.getUser(p);
         return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
     }
+
     private boolean isEquipmentSlot(int rawSlot) {
         return rawSlot >= 5 && rawSlot <= 8;
     }

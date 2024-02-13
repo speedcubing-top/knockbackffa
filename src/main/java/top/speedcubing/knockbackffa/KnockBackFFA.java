@@ -16,6 +16,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import top.speedcubing.knockbackffa.commands.*;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.commands.CommandSWKillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.gui.GuiKillEffectSelector;
@@ -100,6 +101,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static int id = 0;
     public static final Map<Block, Integer[]> Diff = new HashMap<>();
 
+
     public static void switchMap(double centerX, double centerZ, double offsetY, float yaw, double holoX, double holoZ) {
         KnockBackFFA.centerX = centerX;
         KnockBackFFA.centerZ = centerZ;
@@ -137,6 +139,8 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("taggame").setExecutor(new TagGameCommand());
         getCommand("taggamelist").setExecutor(new TagGameListCommand());
         getCommand("invsee").setExecutor(new InvSeeCommand());
+        getCommand("mapview").setExecutor(new MapViewCommand());
+        getCommand("vote").setExecutor(new VoteCommand());
     }
 
     public void onEnable() {

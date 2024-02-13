@@ -34,3 +34,7 @@ commands:
     usage: /taggamelist
   invsee:
     usage: /invsee
+  mapview:
+    usage: /mapview
+  vote:
+    usage: /vote
