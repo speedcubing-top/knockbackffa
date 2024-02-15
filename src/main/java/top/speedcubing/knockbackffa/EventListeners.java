@@ -125,6 +125,9 @@ public class EventListeners implements Listener {
     public void onShoot(EntityShootBowEvent e) {
         Arrow arrow = (Arrow) e.getProjectile();
         LivingEntity shooter = e.getEntity();
+        if (!(shooter instanceof Player)) return;
+        Player player = (Player) shooter;
+        if (!User.getUser(player).isStaff) return;
 
         if (((CraftArrow) arrow).getKnockbackStrength() == 1) {
             ((CraftArrow) arrow).setKnockbackStrength(2);
