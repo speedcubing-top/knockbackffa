@@ -23,11 +23,11 @@ public class SendMessageCommand implements CommandExecutor {
                 }
                 String message = messageBuilder.toString().trim();
                 if (args[0].equalsIgnoreCase("@a")) {
-                    for (Player p : Bukkit.getOnlinePlayers()) {
+                    Bukkit.getOnlinePlayers().forEach(p -> {
                         p.sendMessage(cl(message));
                         player.sendMessage("Send Message!");
-                        return true;
-                    }
+                    });
+                    return true;
                 } else {
                     Player target = Bukkit.getPlayer(args[0]);
                     if (target != null) {
