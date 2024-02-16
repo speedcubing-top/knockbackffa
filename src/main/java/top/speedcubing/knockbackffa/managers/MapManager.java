@@ -86,7 +86,7 @@ public class MapManager {
             case "ZABER_THE_BUILDER":
                 return "map 20000 20000 100 180 19998.5 19998.5";
 //            case "FROZEN_EARTH":
-//                return "map 2000 1000 25 -99 2002.5 998.5";
+//                return "map 2000 1000 25 -99 2002.5 998.5"; map broken
             case "HOT_AIR_BALLOON":
                 return "map 2023 1225 50 -45 2026.5 1226.5";
             default:
@@ -99,7 +99,7 @@ public class MapManager {
         Inventory mapInv = Bukkit.createInventory(null, 36, "Map Vote");
         AtomicInteger count = new AtomicInteger(0);
 
-        MapManager.getAllMapNames().forEach(mapName -> {
+        getAllMapNames().forEach(mapName -> {
             MapView mapView = Bukkit.createMap(player.getWorld());
             ItemStack map = new ItemStack(Material.MAP, 1, mapView.getId());
             ItemMeta meta = map.getItemMeta();

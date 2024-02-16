@@ -23,6 +23,9 @@ import top.speedcubing.knockbackffa.managers.MapManager;
 import top.speedcubing.knockbackffa.managers.VoteManager;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
+import top.speedcubing.lib.minecraft.text.ClickEvent;
+import top.speedcubing.lib.minecraft.text.HoverEvent;
+import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.server.authenticator.utils.ImageRenderer;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
@@ -118,6 +121,16 @@ public class EventListeners implements Listener {
             default:
                 break;
         }
+    }
+    @EventHandler
+    public void onJoinWhenVoting(PlayerJoinEvent e) {
+        Player player = e.getPlayer();
+        if (!VoteManager.getVoteStatus()) return;
+        if (VoteManager.isPlayerVoted(player)) return;
+        TextBuilder textBuilder = new TextBuilder()
+                .str("§eMap Voting!")
+                .both("\n§dClick to vote!", ClickEvent.runCommand("/vote"), HoverEvent.showText("§dCLICK ME!"));
+        player.sendMessage(textBuilder.toBungee());
     }
 
 
