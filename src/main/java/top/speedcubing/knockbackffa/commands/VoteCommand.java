@@ -16,7 +16,8 @@ public class VoteCommand implements CommandExecutor {
         Player player = (Player) sender;
         if (args.length == 0 && VoteManager.getVoteStatus()) {
             MapManager.open(player);
-        } else if (!VoteManager.getVoteStatus()) {
+            return true;
+        } else if (args.length == 0 && !VoteManager.getVoteStatus()) {
             player.sendMessage("§cVoting is not in progress.");
             return true;
         }
