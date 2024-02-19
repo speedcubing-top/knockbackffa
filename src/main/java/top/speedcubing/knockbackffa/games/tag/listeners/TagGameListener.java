@@ -125,12 +125,12 @@ public class TagGameListener implements Listener {
 
     }
     public static void sendMessageToParty(List<UUID> party, String message) {
-        for (UUID uuid : party) {
+        party.forEach(uuid -> {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
                 player.sendMessage(message);
             }
-        }
+        });
     }
     public static Player getRandomPlayer(List<UUID> players) {
         if (players.isEmpty()) {

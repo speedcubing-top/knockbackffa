@@ -134,12 +134,19 @@ public class EventListeners implements Listener {
     }
 
 
+    //BOW BOOST
     @EventHandler
     public void onShoot(EntityShootBowEvent e) {
         Arrow arrow = (Arrow) e.getProjectile();
         LivingEntity shooter = e.getEntity();
         if (!(shooter instanceof Player)) return;
         Player player = (Player) shooter;
+
+        Vector direction = shooter.getLocation().getDirection();
+        double speed = arrow.getVelocity().length();
+        Vector velocity = direction.multiply(speed);
+        arrow.setVelocity(velocity);
+
         if (!User.getUser(player).isStaff) return;
 
         if (((CraftArrow) arrow).getKnockbackStrength() == 1) {
@@ -155,10 +162,7 @@ public class EventListeners implements Listener {
             }.runTaskLater(KnockBackFFA.getInstance(), 8);
         }
 
-        Vector direction = shooter.getLocation().getDirection();
-        double speed = arrow.getVelocity().length();
-        Vector velocity = direction.multiply(speed);
-        arrow.setVelocity(velocity);
+
 
     }
 

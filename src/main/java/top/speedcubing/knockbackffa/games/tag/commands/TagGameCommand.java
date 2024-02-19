@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.knockbackffa.games.tag.events.*;
+import top.speedcubing.knockbackffa.games.tag.listeners.TagGameListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 public class TagGameCommand implements CommandExecutor {
     public static List<UUID> partyList = new ArrayList<>();
+    public static boolean partyStatus = false;
     public static BukkitTask gameTask;
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -75,6 +77,38 @@ public class TagGameCommand implements CommandExecutor {
                         } else {
                             player.sendMessage("§6[Tag Game] §cParty is null, please use /taggame create to create party");
                         }
+                        break;
+                    case "leave":
+                        if (!isInParty(playerUuid)) {
+                            player.sendMessage("§6[Tag Game] §cYou are not in the party");
+                            return true;
+                        }
+                        kickPlayerFromParty(playerUuid);
+                        player.sendMessage("§6[Tag Game] §aYou successfully left the party!");
+                        break;
+                    case "join":
+                        if (isInParty(playerUuid)) {
+                            player.sendMessage("§6[Tag Game] §cYou are already in a party!");
+                            return true;
+                        }
+                        if (!partyStatus) {
+                            player.sendMessage("§6[Tag Game] §cParty is not open!");
+                            return true;
+                        }
+                        if (!partyList.isEmpty()) {
+                            joinPlayerToParty(playerUuid);
+                            player.sendMessage("§6[Tag Game] §aSuccessfully forced join party");
+                        } else {
+                            player.sendMessage("§6[Tag Game] §cParty is null, please use /taggame create to create party");
+                        }
+                        break;
+                    case "open":
+                        if (!isInParty(playerUuid)) {
+                            player.sendMessage("§6[Tag Game] §cYou are not in the party");
+                            return true;
+                        }
+                        partyStatus = !partyStatus;
+                        player.sendMessage("§6[Tag Game] §bParty is now " + (partyStatus ? "§aOpen" : "§cClose"));
                         break;
                     default:
                         usage(player);

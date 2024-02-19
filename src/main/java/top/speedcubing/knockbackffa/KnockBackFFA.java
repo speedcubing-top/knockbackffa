@@ -97,7 +97,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static final ItemStack[] Invalid = new ItemStack[4];
     public static final ItemStack[][] itemStacks = new ItemStack[4][14];
     public static final Inventory[] KitEditor = new Inventory[4];
-    public static final InventoryHolder     KitEditorHolder = () -> null;
+    public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
     public static final Map<Block, Integer[]> Diff = new HashMap<>();
 
@@ -123,8 +123,8 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(this, killEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager), this);
         Bukkit.getPluginManager().registerEvents(guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager), this);
-        Bukkit.getPluginManager().registerEvents(new TagGameListener(),this);
-        Bukkit.getPluginManager().registerEvents(new VerticalStickProMax(),this);
+        Bukkit.getPluginManager().registerEvents(new TagGameListener(), this);
+        Bukkit.getPluginManager().registerEvents(new VerticalStickProMax(), this);
     }
 
     private void regitserCommands() {
@@ -187,7 +187,6 @@ public class KnockBackFFA extends JavaPlugin {
             }
         }, 0, 10);
         config.event.call();
-
         String[] inv = {"§bInventar", "§bInventory", "§b物品欄", "§b物品栏"};
         String[] title = {"§cKnockBack FFA Inventar", "§cKnockBack FFA Inventory", "§cKnockBack FFA 物品欄", "§cKnockBack FFA 物品栏"};
         String[] save = {"§aÄnderungen speichern", "§aSave Changes", "§a儲存設定", "§a储存设置"};
