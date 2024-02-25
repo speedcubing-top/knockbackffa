@@ -483,6 +483,9 @@ public class EventListeners implements Listener {
             e.setCancelled(true);
             player.updateInventory();
         }
+        if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.ENDER_CHEST && player.getGameMode() != GameMode.CREATIVE) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
