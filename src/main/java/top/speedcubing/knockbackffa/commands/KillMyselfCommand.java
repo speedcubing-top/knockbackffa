@@ -5,7 +5,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.knockbackffa.Member;
-import top.speedcubing.server.player.User;
 
 public class KillMyselfCommand implements CommandExecutor {
     @Override

@@ -5,7 +5,6 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Projectile;
-import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.knockbackffa.KnockBackFFA;
 

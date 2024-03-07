@@ -1,23 +1,29 @@
 package top.speedcubing.knockbackffa;
 
-import net.minecraft.server.v1_8_R3.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
+import net.minecraft.server.v1_8_R3.PlayerConnection;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.*;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EnderPearl;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
-import top.speedcubing.lib.bukkit.*;
+import top.speedcubing.lib.bukkit.PlayerUtils;
+import top.speedcubing.lib.bukkit.SideBar;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.player.User;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Member {
     public static ConcurrentHashMap<Integer, Member> users = new ConcurrentHashMap<>();

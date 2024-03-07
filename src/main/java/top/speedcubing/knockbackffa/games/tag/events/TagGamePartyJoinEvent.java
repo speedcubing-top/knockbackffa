@@ -1,9 +1,8 @@
 package top.speedcubing.knockbackffa.games.tag.events;
 
+import java.util.UUID;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import java.util.UUID;
 
 public class TagGamePartyJoinEvent extends Event {
     private static HandlerList handlers = new HandlerList();

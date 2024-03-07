@@ -17,10 +17,7 @@ import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManag
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
-import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.player.User;
-
-import java.util.Objects;
 
 public class GuiCosmeticsSelector implements Listener {
     private KnockBackFFA plugin;
