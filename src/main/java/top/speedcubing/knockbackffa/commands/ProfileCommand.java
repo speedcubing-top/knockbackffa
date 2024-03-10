@@ -5,6 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.server.database.Database;
+import top.speedcubing.server.player.User;
 
 import java.text.DecimalFormat;
 
@@ -14,7 +15,7 @@ public class ProfileCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (args.length == 0) {
-                String[] data = Database.connection.select("priority,kbffa_kill,kbffa_dailykill,kbffa_blockplace,kbffa_death,kbffa_killstreak,name,kbffa_blockbreak").from("playersdata").where("name='" + player.getName() + "'").getStringArray();
+                String[] data = Database.connection.select("priority,kbffa_kill,kbffa_dailykill,kbffa_blockplace,kbffa_death,kbffa_killstreak,name,kbffa_blockbreak").from("playersdata").where("name='" + User.getUser(player).realName + "'").getStringArray();
                 String rank = data[0];
                 String kills = data[1];
                 String dailyKills = data[2];

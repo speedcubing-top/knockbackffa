@@ -1,8 +1,10 @@
 package top.speedcubing.knockbackffa;
 
+import net.minecraft.server.v1_8_R3.EntityHuman;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArrow;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.block.*;
@@ -490,6 +492,7 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void PlayerQuitEvent(PlayerQuitEvent e) {
+
         Player player = e.getPlayer();
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
@@ -569,7 +572,7 @@ public class EventListeners implements Listener {
             e.setCancelled(true);
         }
     }
-
+    //Canceled tnt kill effect damage
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof TNTPrimed) {

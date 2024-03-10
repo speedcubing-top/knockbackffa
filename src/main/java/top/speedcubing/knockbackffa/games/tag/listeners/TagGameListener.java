@@ -39,9 +39,7 @@ public class TagGameListener implements Listener {
             tagPlayer.add(newTag.getUniqueId());
             sendMessageToParty(TagGameCommand.partyList,"§6[Tag Game] §9Tag §6" + player.getName() + " §9was kicked from party, new tag is §6" + newTag.getName());
         }
-        if (lastTag.contains(uuid)) {
-            lastTag.remove(uuid);
-        }
+        lastTag.remove(uuid);
     }
     @EventHandler
     public void onPartyDisband(TagGamePartyDisbandEvent e) {
