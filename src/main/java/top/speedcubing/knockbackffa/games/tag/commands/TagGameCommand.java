@@ -1,5 +1,8 @@
 package top.speedcubing.knockbackffa.games.tag.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -8,12 +11,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import top.speedcubing.knockbackffa.KnockBackFFA;
-import top.speedcubing.knockbackffa.games.tag.events.*;
-import top.speedcubing.knockbackffa.games.tag.listeners.TagGameListener;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import top.speedcubing.knockbackffa.games.tag.events.TagGameEndEvent;
+import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyDisbandEvent;
+import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyJoinEvent;
+import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyKickEvent;
+import top.speedcubing.knockbackffa.games.tag.events.TagGameStartEvent;
 
 public class TagGameCommand implements CommandExecutor {
     public static List<UUID> partyList = new ArrayList<>();

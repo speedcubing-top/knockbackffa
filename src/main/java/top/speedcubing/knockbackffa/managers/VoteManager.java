@@ -1,16 +1,15 @@
 package top.speedcubing.knockbackffa.managers;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.knockbackffa.KnockBackFFA;
-import top.speedcubing.lib.minecraft.text.ClickEvent;
-import top.speedcubing.lib.minecraft.text.HoverEvent;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import top.speedcubing.lib.minecraft.text.TextClickEvent;
+import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 
 public class VoteManager {
     private static boolean voteStatus = false;
@@ -26,7 +25,7 @@ public class VoteManager {
         Bukkit.getOnlinePlayers().forEach(player -> {
             TextBuilder textBuilder = new TextBuilder()
                     .str("§eMap Vote in 60s")
-                    .both("\n§dClick to vote!", ClickEvent.runCommand("/vote"), HoverEvent.showText("§dCLICK ME!"));
+                    .both("\n§dClick to vote!", TextClickEvent.runCommand("/vote"), TextHoverEvent.showText("§dCLICK ME!"));
             player.sendMessage(textBuilder.toBungee());
         });
         new BukkitRunnable() {

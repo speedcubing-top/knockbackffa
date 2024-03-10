@@ -3,15 +3,20 @@ package top.speedcubing.knockbackffa.cosmetics.killeffect.manager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.knockbackffa.api.events.KillEffectChangeEvent;
-import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.*;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectBloodExplosion;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectChamp;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectFinalSmash;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectHeadRocket;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectHeartExplosion;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectLightning;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectTNT;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
 
 public class KillEffectManager {

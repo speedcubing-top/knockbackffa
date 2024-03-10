@@ -1,15 +1,13 @@
 package top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects;
 
+import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Note;
 import org.bukkit.entity.Projectile;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.knockbackffa.KnockBackFFA;
-
-import java.util.Random;
 
 public class ProjectileEffectNote extends ProjectileEffect {
     private final Random random = new Random();

@@ -1,15 +1,12 @@
 package top.speedcubing.knockbackffa.cosmetics.killeffect.commands;
 
-import top.speedcubing.knockbackffa.cosmetics.killeffect.gui.GuiKillEffectSelector;
-import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
-import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
 
 public class CommandSWKillEffect implements CommandExecutor {
 

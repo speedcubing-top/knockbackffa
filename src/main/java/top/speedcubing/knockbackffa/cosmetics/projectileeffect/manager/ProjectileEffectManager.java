@@ -1,15 +1,18 @@
 package top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.knockbackffa.api.events.ProjectileEffectChangeEvent;
-import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectChamp;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectEgg;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectHeart;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectNote;
 
 public class ProjectileEffectManager {
     private List<ProjectileEffect> projectileEffects;

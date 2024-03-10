@@ -2,7 +2,6 @@ package top.speedcubing.knockbackffa.cosmetics.killeffect.utils;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

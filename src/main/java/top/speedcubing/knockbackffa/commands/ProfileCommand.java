@@ -1,13 +1,12 @@
 package top.speedcubing.knockbackffa.commands;
 
+import java.text.DecimalFormat;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.player.User;
-
-import java.text.DecimalFormat;
 
 public class ProfileCommand implements CommandExecutor {
     @Override

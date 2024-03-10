@@ -1,5 +1,16 @@
 package top.speedcubing.knockbackffa;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.function.Consumer;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
@@ -16,8 +27,14 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
-import top.speedcubing.knockbackffa.commands.*;
+import top.speedcubing.knockbackffa.commands.DebugFFACommand;
+import top.speedcubing.knockbackffa.commands.InvSeeCommand;
+import top.speedcubing.knockbackffa.commands.KillMyselfCommand;
+import top.speedcubing.knockbackffa.commands.MapViewCommand;
+import top.speedcubing.knockbackffa.commands.ProfileCommand;
+import top.speedcubing.knockbackffa.commands.SendMessageCommand;
+import top.speedcubing.knockbackffa.commands.TrollUtilsCommand;
+import top.speedcubing.knockbackffa.commands.VoteCommand;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.commands.CommandSWKillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.gui.GuiKillEffectSelector;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.listeners.KillListener;
@@ -36,18 +53,14 @@ import top.speedcubing.knockbackffa.trollutillisteners.Fireball;
 import top.speedcubing.knockbackffa.trollutillisteners.OceanBow;
 import top.speedcubing.knockbackffa.trollutillisteners.VerticalStick;
 import top.speedcubing.knockbackffa.trollutillisteners.VerticalStickProMax;
-import top.speedcubing.lib.bukkit.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.CubingEventManager;
+import top.speedcubing.lib.events.entity.ClickEvent;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.utils.config;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
 
 public class KnockBackFFA extends JavaPlugin {
     private static KnockBackFFA instance;
@@ -87,7 +100,7 @@ public class KnockBackFFA extends JavaPlugin {
 
     public static int spawnY = 150;
 
-    static final ClickEvent clickEvent = (p, e) -> Member.getMember(p).setDisplayType(false);
+    static final Consumer<ClickEvent> clickEvent = (r) -> Member.getMember(r.getPlayer()).setDisplayType(false);
     public static final String[] board = new String[10];
     public static final String[] dailyBoard = new String[10];
     public static final String[] boardName = new String[10];

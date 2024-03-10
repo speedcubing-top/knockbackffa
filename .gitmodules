@@ -1,6 +1,0 @@
-[submodule "lib/KillEffects"]
-	path = lib/KillEffects
-	url = https://github.com/speedcubing-top/KillEffects.git
-[submodule "lib/NameDb"]
-	path = lib/NameDb
-	url = https://github.com/speedcubing-top/NameDb.git
