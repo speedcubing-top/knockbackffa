@@ -32,8 +32,7 @@ public class ServerEvent {
             String message = ((PacketPlayInChat) e.packet).a();
             if (message.charAt(0) != '/') {
                 e.isCancelled = true;
-                String[] formats = Member.getMember(e.player).user.getFormat();
-                Chat.globalChat(Bukkit.getOnlinePlayers(), e.player, GlobalString.MessageFormat, message, formats[0] + e.player.getName(), formats[2]);
+                Chat.globalChat(Bukkit.getOnlinePlayers(), e.player, GlobalString.MessageFormat, message, Member.getMember(e.player).user.getPrefixName(false), Member.getMember(e.player).user.getChatColor(false));
             }
         }
     }

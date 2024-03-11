@@ -17,12 +17,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.DisplaySlot;
+import top.speedcubing.common.database.Database;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.SideBar;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
-import top.speedcubing.server.database.Database;
 import top.speedcubing.server.player.User;
 
 public class Member {
@@ -148,13 +148,13 @@ public class Member {
         if (killed) {
             Player damager = Damage.user.player;
             //call death event for kill effect
-            FFAPlayerDeathEvent ffaPlayerDeathEvent = new FFAPlayerDeathEvent(user.player,damager ,user.player.getLocation());
+            FFAPlayerDeathEvent ffaPlayerDeathEvent = new FFAPlayerDeathEvent(user.player, damager, user.player.getLocation());
             Bukkit.getServer().getPluginManager().callEvent(ffaPlayerDeathEvent);
 
             double heal = damager.getHealth() / 2;
             String color = heal > 8.5 ? "§a" : (heal > 6.5 ? "§e" : (heal > 4.5 ? "§6" : "§c"));
-            user.sendLangMessage(StringList.died, user.getFormatName(false), Damage.user.getFormatName(false), color + (int) Math.round(heal));
-            Damage.user.sendLangMessage(StringList.died, user.getFormatName(false), Damage.user.getFormatName(false), color + (int) Math.round(heal));
+            user.sendLangMessage(StringList.died, user.getColorName(false), Damage.user.getColorName(false), color + (int) Math.round(heal));
+            Damage.user.sendLangMessage(StringList.died, user.getColorName(false), Damage.user.getColorName(false), color + (int) Math.round(heal));
             SideBar sideBar = SideBar.getSidebar(damager);
             Damage.user.sound(Sound.SUCCESSFUL_HIT);
             damager.setHealth(20);

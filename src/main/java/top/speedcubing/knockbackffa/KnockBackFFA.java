@@ -27,6 +27,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import top.speedcubing.common.database.Database;
+import top.speedcubing.common.rank.Rank;
 import top.speedcubing.knockbackffa.commands.DebugFFACommand;
 import top.speedcubing.knockbackffa.commands.InvSeeCommand;
 import top.speedcubing.knockbackffa.commands.KillMyselfCommand;
@@ -58,8 +60,6 @@ import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.events.entity.ClickEvent;
-import top.speedcubing.server.database.Database;
-import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.utils.config;
 
 public class KnockBackFFA extends JavaPlugin {
@@ -284,7 +284,7 @@ public class KnockBackFFA extends JavaPlugin {
                                     lastKill = a;
                                 }
                                 boardName[i] = arr[i * 4 + 3];
-                                board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr[i * 4], Integer.parseInt(arr[i * 4 + 3]))[0] + arr[i * 4 + 1]).replace("%k%", arr[i * 4 + 2]);
+                                board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr[i * 4], Integer.parseInt(arr[i * 4 + 3])).getPrefix() + arr[i * 4 + 1]).replace("%k%", arr[i * 4 + 2]);
                             }
                             lastKill = 0;
                             index = 0;
@@ -295,7 +295,7 @@ public class KnockBackFFA extends JavaPlugin {
                                     lastKill = a;
                                 }
                                 dailyBoardName[i] = arr2[i * 4 + 3];
-                                dailyBoard[i] = arr2[i * 4 + 2].equals("0") ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr2[i * 4], Integer.parseInt(arr2[i * 4 + 3]))[0] + arr2[i * 4 + 1]).replace("%k%", arr2[i * 4 + 2]);
+                                dailyBoard[i] = arr2[i * 4 + 2].equals("0") ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr2[i * 4], Integer.parseInt(arr2[i * 4 + 3])).getPrefix() + arr2[i * 4 + 1]).replace("%k%", arr2[i * 4 + 2]);
                             }
                             for (Member m : Member.users.values()) {
                                 m.a();
