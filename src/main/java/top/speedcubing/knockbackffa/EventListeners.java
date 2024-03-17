@@ -75,8 +75,8 @@ import top.speedcubing.server.speedcubingServer;
 
 
 public class EventListeners implements Listener {
-    private KillEffectManager killEffectManager;
-    private ProjectileEffectManager projectileEffectManager;
+    private final KillEffectManager killEffectManager;
+    private final ProjectileEffectManager projectileEffectManager;
     KnockBackFFA plugin = KnockBackFFA.getInstance();
     HashMap<UUID, PermissionAttachment> perms = new HashMap<UUID, PermissionAttachment>();
 
