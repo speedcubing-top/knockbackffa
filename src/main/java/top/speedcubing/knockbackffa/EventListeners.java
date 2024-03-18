@@ -268,6 +268,8 @@ public class EventListeners implements Listener {
         if (player.getGameMode() == GameMode.SURVIVAL) {
             Member user = Member.getMember(player);
             Location to = e.getTo();
+            Location corner1 = new Location(player.getWorld(),948,134,976);
+            Location corner2 = new Location(player.getWorld(), 931,129,956);
             if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
@@ -292,8 +294,15 @@ public class EventListeners implements Listener {
                     }
                 }
 
-            } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5))
+            } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5)) {
                 user.death(false);
+            }
+            //idk kys
+            if (!User.getUser(player).isStaff && !isYt(player)) {
+                if (isInRange(player,corner1,corner2)) {
+                    user.death(false);
+                }
+            }
         }
     }
 
@@ -623,9 +632,26 @@ public class EventListeners implements Listener {
         User user = User.getUser(p);
         return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
     }
+    private boolean isYt(Player p) {
+        User user = User.getUser(p);
+        return "yt".equals(user.displayRank) || "yt".equals(user.realRank) || "ytplus".equals(user.displayRank) || "ytplus".equals(user.realRank);
+    }
 
     private boolean isEquipmentSlot(int rawSlot) {
         return rawSlot >= 5 && rawSlot <= 8;
+    }
+    public boolean isInRange(Player player, Location corner1, Location corner2) {
+        Location playerLocation = player.getLocation();
+        double minX = Math.min(corner1.getX(), corner2.getX());
+        double minY = Math.min(corner1.getY(), corner2.getY());
+        double minZ = Math.min(corner1.getZ(), corner2.getZ());
+        double maxX = Math.max(corner1.getX(), corner2.getX());
+        double maxY = Math.max(corner1.getY(), corner2.getY());
+        double maxZ = Math.max(corner1.getZ(), corner2.getZ());
+
+        return playerLocation.getX() >= minX && playerLocation.getX() <= maxX &&
+                playerLocation.getY() >= minY && playerLocation.getY() <= maxY &&
+                playerLocation.getZ() >= minZ && playerLocation.getZ() <= maxZ;
     }
 
 }
