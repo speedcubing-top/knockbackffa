@@ -26,11 +26,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -416,7 +418,7 @@ public class EventListeners implements Listener {
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
                             member.user.sendLangMessage(GlobalString.SavedSettings);
-                            List<Material> t = Arrays.asList(Material.GOLD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.IRON_PICKAXE);
+                            List<Material> t = Arrays.asList(Material.GOLD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.STONE_PICKAXE);
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
                                     int index = t.indexOf(inv.getItem(i).getType());
@@ -613,9 +615,13 @@ public class EventListeners implements Listener {
     @EventHandler
     public void EntityExplodeEvent(EntityExplodeEvent e) {
         Entity entity = e.getEntity();
-        if (entity.getType() == EntityType.CREEPER || entity.getType() == EntityType.PRIMED_TNT || entity.getType() == EntityType.MINECART_TNT || entity.getType() == EntityType.FIREBALL) {
+        if (entity.getType() == EntityType.CREEPER || entity.getType() == EntityType.PRIMED_TNT || entity.getType() == EntityType.MINECART_TNT || entity.getType() == EntityType.FIREBALL || entity.getType() == EntityType.WITHER_SKULL || entity.getType() == EntityType.WITHER) {
             e.setCancelled(true);
         }
+    }
+    @EventHandler
+    public void witherBreak(EntityChangeBlockEvent e) {
+        if (e.getEntity() instanceof Wither) e.setCancelled(true);
     }
 
     //Canceled tnt kill effect damage

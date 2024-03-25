@@ -221,7 +221,7 @@ public class KnockBackFFA extends JavaPlugin {
             itemStacks[i][10] = new ItemBuilder(Material.BOW).unBreak().ench(new Enchantment[]{Enchantment.ARROW_KNOCKBACK}, new int[]{1}).build();
             itemStacks[i][11] = new ItemBuilder(Material.CHEST).name(inv[i]).build();
             itemStacks[i][12] = new ItemBuilder(Material.EMERALD).name("§aCosmetics").build();
-            itemStacks[i][13] = new ItemBuilder(Material.IRON_PICKAXE).unBreak().ench(Enchantment.DIG_SPEED, 3).build();
+            itemStacks[i][13] = new ItemBuilder(Material.STONE_PICKAXE).unBreak().ench(Enchantment.DIG_SPEED, 1).build();
             KitEditor[i] = Bukkit.createInventory(KitEditorHolder, 9, title[i]);
             InventoryUtils.fillItem(KitEditor[i], 0, 9, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name("§a").build());
             KitEditor[i].setItem(3, new ItemBuilder(Material.INK_SACK).durability(10).name(save[i]).build());
