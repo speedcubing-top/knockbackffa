@@ -24,8 +24,22 @@ public class DebugFFACommand implements CommandExecutor {
                 player.sendMessage("Inventory List: " + member.inventory);
                 return true;
             }
+            if (args.length == 2 && args[0].equalsIgnoreCase("ks")) {
+                if (!isInt(args[1])) return true;
+                int ks = Integer.parseInt(args[1]);
+                member.killstreak = ks;
+                return true;
+            }
 
         }
         return false;
+    }
+    private boolean isInt(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (Throwable e) {
+            return false;
+        }
     }
 }

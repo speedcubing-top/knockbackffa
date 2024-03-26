@@ -48,7 +48,7 @@ public class Member {
     boolean killedPlayer;
     int dailyKill;
     int death;
-    int killstreak;
+    public int killstreak;
     long lastClick;
     boolean displayType;
     final Hologram personal;

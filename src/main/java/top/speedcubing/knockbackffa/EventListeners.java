@@ -59,6 +59,7 @@ import org.bukkit.map.MapView;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
@@ -98,6 +99,16 @@ public class EventListeners implements Listener {
 //        Vector vel = dir.multiply(speed);
 //        a.setVelocity(vel);
 //    }
+
+    @EventHandler
+    public void onPlayerDeath(FFAPlayerDeathEvent e) {
+        Member killer = Member.getMember(e.getKiller());
+        int newKillstreak = killer.killstreak + 1;
+        if (newKillstreak < 10 || newKillstreak % 5 != 0) return;
+        Bukkit.getOnlinePlayers().forEach(a -> {
+            a.sendMessage("§8[§bKnockBackFFA§8] " + killer.user.getPrefixName(false) + " §ehas gotten a §c" + newKillstreak + " §ekillstreak");
+        });
+    }
 
     //MAP VIEW AND VOTE
     @EventHandler
@@ -230,9 +241,7 @@ public class EventListeners implements Listener {
         Member member = Member.getMember(p);
         Block block = e.getBlock();
         if (p.getGameMode() == GameMode.CREATIVE) {
-            if (KnockBackFFA.Diff.containsKey(block)) {
-                KnockBackFFA.Diff.remove(block);
-            }
+            KnockBackFFA.Diff.remove(block);
         }
         if (p.getGameMode() == GameMode.SURVIVAL) {
             if (KnockBackFFA.Diff.containsKey(block)) {
