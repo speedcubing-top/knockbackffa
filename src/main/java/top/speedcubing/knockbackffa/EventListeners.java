@@ -103,7 +103,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void onPlayerDeath(FFAPlayerDeathEvent e) {
         Member killer = Member.getMember(e.getKiller());
-        int newKillstreak = killer.killstreak + 1;
+        int newKillstreak = e.getKiller().getLevel() + 1;
         if (newKillstreak < 10 || newKillstreak % 5 != 0) return;
         Bukkit.getOnlinePlayers().forEach(a -> {
             a.sendMessage("§8[§bKnockBackFFA§8] " + killer.user.getPrefixName(false) + " §ehas gotten a §c" + newKillstreak + " §ekillstreak");

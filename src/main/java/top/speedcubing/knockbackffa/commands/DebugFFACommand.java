@@ -27,7 +27,7 @@ public class DebugFFACommand implements CommandExecutor {
             if (args.length == 2 && args[0].equalsIgnoreCase("ks")) {
                 if (!isInt(args[1])) return true;
                 int ks = Integer.parseInt(args[1]);
-                member.killstreak = ks;
+                player.setLevel(ks);
                 return true;
             }
 
