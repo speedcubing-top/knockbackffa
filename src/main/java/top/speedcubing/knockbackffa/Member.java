@@ -66,7 +66,7 @@ public class Member {
         death = Integer.parseInt(s[2]);
         killstreak = Integer.parseInt(s[3]);
         dailyKill = Integer.parseInt(s[4]);
-        player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
+        player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, KnockBackFFA.centerY, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
         player.setLevel(0);
         player.setHealth(20);
         player.setGameMode(GameMode.SURVIVAL);
@@ -195,7 +195,7 @@ public class Member {
                 user.bSetFireTicks(0);
             }, 1);
             PlayerUtils.removeArrows(user.player);
-            user.bTeleport(new Location(user.player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
+            user.bTeleport(new Location(user.player.getWorld(), KnockBackFFA.centerX + 0.5, KnockBackFFA.centerY, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
             if (pearls != null)
                 pearls.forEach(EnderPearl::remove);
         }

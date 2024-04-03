@@ -263,6 +263,7 @@ public class EventListeners implements Listener {
 
             Block block = e.getBlock();
             Material old = e.getBlockReplacedState().getType();
+            if (block.getY() >= 133 && KnockBackFFA.currentMapName.equalsIgnoreCase("INVASION")) e.setCancelled(true);
             if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
                 e.setCancelled(true);
             else {
