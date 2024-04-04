@@ -57,6 +57,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
@@ -102,6 +103,12 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void onPlayerDeath(FFAPlayerDeathEvent e) {
+        Player player = e.getPlayer();
+        if (player.hasPotionEffect(PotionEffectType.ABSORPTION)) player.removePotionEffect(PotionEffectType.ABSORPTION);
+        if (player.hasPotionEffect(PotionEffectType.REGENERATION)) player.removePotionEffect(PotionEffectType.REGENERATION);
+        if (player.hasPotionEffect(PotionEffectType.JUMP)) player.removePotionEffect(PotionEffectType.JUMP);
+        if (isRbwMap(KnockBackFFA.currentMapName)) e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
+
         Member killer = Member.getMember(e.getKiller());
         int newKillstreak = e.getKiller().getLevel() + 1;
         if (newKillstreak < 10 || newKillstreak % 5 != 0) return;
@@ -263,7 +270,7 @@ public class EventListeners implements Listener {
 
             Block block = e.getBlock();
             Material old = e.getBlockReplacedState().getType();
-            if (block.getY() >= 133 && KnockBackFFA.currentMapName.equalsIgnoreCase("INVASION")) e.setCancelled(true);
+            if (block.getY() >= 133 && isRbwMap(KnockBackFFA.currentMapName)) e.setCancelled(true);
             if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
                 e.setCancelled(true);
             else {
@@ -285,12 +292,8 @@ public class EventListeners implements Listener {
             if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
-
-                //Remove kill effect selector from player inventory
                 player.getInventory().remove(Material.EMERALD);
 
-                //When players choose the 'Champ' option,
-                //their kill and projectile effects are reset if they don't have the 'Champ' rank or a higher rank.
                 if (!isChampOrStaff(player)) {
                     KillEffect killEffect = killEffectManager.getKillEffect(player);
                     ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(player);
@@ -549,7 +552,6 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void PlayerQuitEvent(PlayerQuitEvent e) {
-
         Player player = e.getPlayer();
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
@@ -668,6 +670,9 @@ public class EventListeners implements Listener {
         return playerLocation.getX() >= minX && playerLocation.getX() <= maxX &&
                 playerLocation.getY() >= minY && playerLocation.getY() <= maxY &&
                 playerLocation.getZ() >= minZ && playerLocation.getZ() <= maxZ;
+    }
+    public boolean isRbwMap(String s) {
+        return s.equalsIgnoreCase("invasion");
     }
 
 }

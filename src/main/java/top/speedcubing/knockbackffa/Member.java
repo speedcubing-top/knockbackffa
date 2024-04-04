@@ -147,7 +147,7 @@ public class Member {
         boolean killed = System.currentTimeMillis() - this.KillTime < 100000 && Damage != null;
         if (killed) {
             Player damager = Damage.user.player;
-            //call death event for kill effect
+
             FFAPlayerDeathEvent ffaPlayerDeathEvent = new FFAPlayerDeathEvent(user.player, damager, user.player.getLocation());
             Bukkit.getServer().getPluginManager().callEvent(ffaPlayerDeathEvent);
 

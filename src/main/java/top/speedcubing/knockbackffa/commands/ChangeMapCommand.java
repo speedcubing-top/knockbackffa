@@ -30,8 +30,8 @@ public class ChangeMapCommand implements CommandExecutor, Listener {
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (!User.getUser(p).isStaff) p.closeInventory();
         if (e.getClickedInventory() == null || !e.getClickedInventory().getTitle().equals("Map Selector")) return;
+        if (!User.getUser(p).isStaff) p.closeInventory();
         e.setCancelled(true);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(),MapManager.getMapCommandByMapName(e.getCurrentItem().getItemMeta().getDisplayName()) + " " + e.getCurrentItem().getItemMeta().getDisplayName());
         p.closeInventory();
