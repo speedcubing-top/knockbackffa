@@ -106,14 +106,14 @@ public class EventListeners implements Listener {
         Player player = e.getPlayer();
         if (player.hasPotionEffect(PotionEffectType.ABSORPTION)) player.removePotionEffect(PotionEffectType.ABSORPTION);
         if (player.hasPotionEffect(PotionEffectType.REGENERATION)) player.removePotionEffect(PotionEffectType.REGENERATION);
-        if (player.hasPotionEffect(PotionEffectType.JUMP)) player.removePotionEffect(PotionEffectType.JUMP);
         if (isRbwMap(KnockBackFFA.currentMapName)) e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
 
         Member killer = Member.getMember(e.getKiller());
         int newKillstreak = e.getKiller().getLevel() + 1;
         if (newKillstreak < 10 || newKillstreak % 5 != 0) return;
+        String formatKillstreakColor = newKillstreak == 10 ? "§7" : newKillstreak == 15 ? "§f" : newKillstreak == 20 ? "§a" : newKillstreak == 25 ? "§2" : newKillstreak == 30 ? "§e" : newKillstreak == 35 ? "§6" : newKillstreak == 40 ? "§c" : newKillstreak == 45 ? "§4" : "§5";
         Bukkit.getOnlinePlayers().forEach(a -> {
-            a.sendMessage("§8[§bKnockBackFFA§8] " + killer.user.getPrefixName(false) + " §ehas gotten a §c" + newKillstreak + " §ekillstreak");
+            a.sendMessage("§8[§bKnockBackFFA§8] " + killer.user.getPrefixName(false) + " §ehas gotten a " + formatKillstreakColor + newKillstreak + " §ekillstreak");
         });
     }
 
