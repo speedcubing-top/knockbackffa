@@ -25,8 +25,8 @@ public class SendMessageCommand implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("@a")) {
                     Bukkit.getOnlinePlayers().forEach(p -> {
                         p.sendMessage(cl(message));
-                        player.sendMessage("Send Message!");
                     });
+                    player.sendMessage("Send Message!");
                     return true;
                 } else {
                     Player target = Bukkit.getPlayer(args[0]);
