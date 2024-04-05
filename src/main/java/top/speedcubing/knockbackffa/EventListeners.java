@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import net.minecraft.server.v1_8_R3.BlockGlass;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -12,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
@@ -103,9 +106,6 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void onPlayerDeath(FFAPlayerDeathEvent e) {
-        Player player = e.getPlayer();
-        if (player.hasPotionEffect(PotionEffectType.ABSORPTION)) player.removePotionEffect(PotionEffectType.ABSORPTION);
-        if (player.hasPotionEffect(PotionEffectType.REGENERATION)) player.removePotionEffect(PotionEffectType.REGENERATION);
         if (isRbwMap(KnockBackFFA.currentMapName)) e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
 
         Member killer = Member.getMember(e.getKiller());
@@ -247,9 +247,8 @@ public class EventListeners implements Listener {
         Player p = e.getPlayer();
         Member member = Member.getMember(p);
         Block block = e.getBlock();
-        if (p.getGameMode() == GameMode.CREATIVE) {
-            KnockBackFFA.Diff.remove(block);
-        }
+        if (p.getGameMode() == GameMode.CREATIVE) KnockBackFFA.Diff.remove(block);
+
         if (p.getGameMode() == GameMode.SURVIVAL) {
             if (KnockBackFFA.Diff.containsKey(block)) {
                 KnockBackFFA.Diff.remove(block);
@@ -260,6 +259,7 @@ public class EventListeners implements Listener {
                 e.setCancelled(true);
             }
         }
+
     }
 
     @EventHandler
@@ -674,6 +674,7 @@ public class EventListeners implements Listener {
     public boolean isRbwMap(String s) {
         return s.equalsIgnoreCase("invasion");
     }
+
 
 }
 

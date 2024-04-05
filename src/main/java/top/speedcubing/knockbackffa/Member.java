@@ -16,6 +16,7 @@ import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
@@ -145,6 +146,8 @@ public class Member {
     public void death(boolean quit) {
         isFighting = false;
         boolean killed = System.currentTimeMillis() - this.KillTime < 100000 && Damage != null;
+        if (user.player.hasPotionEffect(PotionEffectType.ABSORPTION)) user.player.removePotionEffect(PotionEffectType.ABSORPTION);
+        if (user.player.hasPotionEffect(PotionEffectType.REGENERATION)) user.player.removePotionEffect(PotionEffectType.REGENERATION);
         if (killed) {
             Player damager = Damage.user.player;
 
