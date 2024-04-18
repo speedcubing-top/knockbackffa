@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import net.minecraft.server.v1_8_R3.BlockGlass;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -12,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
@@ -26,11 +29,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -55,8 +60,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
@@ -75,8 +82,8 @@ import top.speedcubing.server.speedcubingServer;
 
 
 public class EventListeners implements Listener {
-    private KillEffectManager killEffectManager;
-    private ProjectileEffectManager projectileEffectManager;
+    private final KillEffectManager killEffectManager;
+    private final ProjectileEffectManager projectileEffectManager;
     KnockBackFFA plugin = KnockBackFFA.getInstance();
     HashMap<UUID, PermissionAttachment> perms = new HashMap<UUID, PermissionAttachment>();
 
@@ -96,6 +103,19 @@ public class EventListeners implements Listener {
 //        Vector vel = dir.multiply(speed);
 //        a.setVelocity(vel);
 //    }
+
+    @EventHandler
+    public void onPlayerDeath(FFAPlayerDeathEvent e) {
+        if (isRbwMap(KnockBackFFA.currentMapName)) e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
+
+        Member killer = Member.getMember(e.getKiller());
+        int newKillstreak = e.getKiller().getLevel() + 1;
+        if (newKillstreak < 10 || newKillstreak % 5 != 0) return;
+        String formatKillstreakColor = newKillstreak == 10 ? "§7" : newKillstreak == 15 ? "§f" : newKillstreak == 20 ? "§a" : newKillstreak == 25 ? "§2" : newKillstreak == 30 ? "§e" : newKillstreak == 35 ? "§6" : newKillstreak == 40 ? "§c" : newKillstreak == 45 ? "§4" : "§5";
+        Bukkit.getOnlinePlayers().forEach(a -> {
+            a.sendMessage("§8[§bKnockBackFFA§8] " + killer.user.getPrefixName(false) + " §ehas gotten a " + formatKillstreakColor + newKillstreak + " §ekillstreak");
+        });
+    }
 
     //MAP VIEW AND VOTE
     @EventHandler
@@ -227,11 +247,8 @@ public class EventListeners implements Listener {
         Player p = e.getPlayer();
         Member member = Member.getMember(p);
         Block block = e.getBlock();
-        if (p.getGameMode() == GameMode.CREATIVE) {
-            if (KnockBackFFA.Diff.containsKey(block)) {
-                KnockBackFFA.Diff.remove(block);
-            }
-        }
+        if (p.getGameMode() == GameMode.CREATIVE) KnockBackFFA.Diff.remove(block);
+
         if (p.getGameMode() == GameMode.SURVIVAL) {
             if (KnockBackFFA.Diff.containsKey(block)) {
                 KnockBackFFA.Diff.remove(block);
@@ -242,6 +259,7 @@ public class EventListeners implements Listener {
                 e.setCancelled(true);
             }
         }
+
     }
 
     @EventHandler
@@ -252,6 +270,7 @@ public class EventListeners implements Listener {
 
             Block block = e.getBlock();
             Material old = e.getBlockReplacedState().getType();
+            if (block.getY() >= 133 && isRbwMap(KnockBackFFA.currentMapName)) e.setCancelled(true);
             if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
                 e.setCancelled(true);
             else {
@@ -268,15 +287,13 @@ public class EventListeners implements Listener {
         if (player.getGameMode() == GameMode.SURVIVAL) {
             Member user = Member.getMember(player);
             Location to = e.getTo();
+            Location corner1 = new Location(player.getWorld(),948,134,976);
+            Location corner2 = new Location(player.getWorld(), 931,129,956);
             if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
-
-                //Remove kill effect selector from player inventory
                 player.getInventory().remove(Material.EMERALD);
 
-                //When players choose the 'Champ' option,
-                //their kill and projectile effects are reset if they don't have the 'Champ' rank or a higher rank.
                 if (!isChampOrStaff(player)) {
                     KillEffect killEffect = killEffectManager.getKillEffect(player);
                     ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(player);
@@ -292,8 +309,15 @@ public class EventListeners implements Listener {
                     }
                 }
 
-            } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5))
+            } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5)) {
                 user.death(false);
+            }
+            //idk kys
+            if (!User.getUser(player).isStaff && !isYt(player)) {
+                if (isInRange(player,corner1,corner2)) {
+                    user.death(false);
+                }
+            }
         }
     }
 
@@ -407,7 +431,7 @@ public class EventListeners implements Listener {
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
                             member.user.sendLangMessage(GlobalString.SavedSettings);
-                            List<Material> t = Arrays.asList(Material.GOLD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.IRON_PICKAXE);
+                            List<Material> t = Arrays.asList(Material.GOLD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.STONE_PICKAXE);
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
                                     int index = t.indexOf(inv.getItem(i).getType());
@@ -528,7 +552,6 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void PlayerQuitEvent(PlayerQuitEvent e) {
-
         Player player = e.getPlayer();
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
@@ -604,9 +627,13 @@ public class EventListeners implements Listener {
     @EventHandler
     public void EntityExplodeEvent(EntityExplodeEvent e) {
         Entity entity = e.getEntity();
-        if (entity.getType() == EntityType.CREEPER || entity.getType() == EntityType.PRIMED_TNT || entity.getType() == EntityType.MINECART_TNT || entity.getType() == EntityType.FIREBALL) {
+        if (entity.getType() == EntityType.CREEPER || entity.getType() == EntityType.PRIMED_TNT || entity.getType() == EntityType.MINECART_TNT || entity.getType() == EntityType.FIREBALL || entity.getType() == EntityType.WITHER_SKULL || entity.getType() == EntityType.WITHER) {
             e.setCancelled(true);
         }
+    }
+    @EventHandler
+    public void witherBreak(EntityChangeBlockEvent e) {
+        if (e.getEntity() instanceof Wither) e.setCancelled(true);
     }
 
     //Canceled tnt kill effect damage
@@ -623,10 +650,31 @@ public class EventListeners implements Listener {
         User user = User.getUser(p);
         return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
     }
+    private boolean isYt(Player p) {
+        User user = User.getUser(p);
+        return "yt".equals(user.displayRank) || "yt".equals(user.realRank) || "ytplus".equals(user.displayRank) || "ytplus".equals(user.realRank);
+    }
 
     private boolean isEquipmentSlot(int rawSlot) {
         return rawSlot >= 5 && rawSlot <= 8;
     }
+    public boolean isInRange(Player player, Location corner1, Location corner2) {
+        Location playerLocation = player.getLocation();
+        double minX = Math.min(corner1.getX(), corner2.getX());
+        double minY = Math.min(corner1.getY(), corner2.getY());
+        double minZ = Math.min(corner1.getZ(), corner2.getZ());
+        double maxX = Math.max(corner1.getX(), corner2.getX());
+        double maxY = Math.max(corner1.getY(), corner2.getY());
+        double maxZ = Math.max(corner1.getZ(), corner2.getZ());
+
+        return playerLocation.getX() >= minX && playerLocation.getX() <= maxX &&
+                playerLocation.getY() >= minY && playerLocation.getY() <= maxY &&
+                playerLocation.getZ() >= minZ && playerLocation.getZ() <= maxZ;
+    }
+    public boolean isRbwMap(String s) {
+        return s.equalsIgnoreCase("invasion");
+    }
+
 
 }
 

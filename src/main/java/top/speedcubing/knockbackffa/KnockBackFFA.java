@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,6 +30,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.Rank;
+import top.speedcubing.knockbackffa.commands.ChangeMapCommand;
 import top.speedcubing.knockbackffa.commands.DebugFFACommand;
 import top.speedcubing.knockbackffa.commands.InvSeeCommand;
 import top.speedcubing.knockbackffa.commands.KillMyselfCommand;
@@ -91,14 +93,16 @@ public class KnockBackFFA extends JavaPlugin {
 
 
     public static double centerX = 0;
+    public static double centerY = 150;
     public static double centerZ = 0;
     public static double offsetY = 100;
     public static float yaw = 0;
     public static double holoX = 0;
     public static double holoZ = 0;
-    public static int spawnprotectY = 146;
+    public static int spawnprotectY = KnockBackFFA.spawnY - 4;
 
     public static int spawnY = 150;
+    public static String currentMapName = "HOT_AIR_BALLOON";
 
     static final Consumer<ClickEvent> clickEvent = (r) -> Member.getMember(r.getPlayer()).setDisplayType(false);
     public static final String[] board = new String[10];
@@ -115,8 +119,9 @@ public class KnockBackFFA extends JavaPlugin {
     public static final Map<Block, Integer[]> Diff = new HashMap<>();
 
 
-    public static void switchMap(double centerX, double centerZ, double offsetY, float yaw, double holoX, double holoZ) {
+    public static void switchMap(double centerX, double centerZ, double offsetY, float yaw, double holoX, double holoZ, double centerY, String mapName) {
         KnockBackFFA.centerX = centerX;
+        KnockBackFFA.centerY = centerY == 0 ? 150 : centerY;
         KnockBackFFA.centerZ = centerZ;
         KnockBackFFA.yaw = yaw;
         KnockBackFFA.offsetY = offsetY;
@@ -124,6 +129,7 @@ public class KnockBackFFA extends JavaPlugin {
         KnockBackFFA.holoZ = holoZ;
         personal[0].setLocation(KnockBackFFA.holoX, personal[0].armorStand.locY, KnockBackFFA.holoZ, 0, 0);
         personal[1].setLocation(KnockBackFFA.holoX, personal[1].armorStand.locY, KnockBackFFA.holoZ, 0, 0);
+        KnockBackFFA.currentMapName = mapName;
     }
 
     private void registerListener() {
@@ -138,6 +144,7 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager), this);
         Bukkit.getPluginManager().registerEvents(new TagGameListener(), this);
         Bukkit.getPluginManager().registerEvents(new VerticalStickProMax(), this);
+        Bukkit.getPluginManager().registerEvents(new ChangeMapCommand(),this);
     }
 
     private void regitserCommands() {
@@ -154,6 +161,7 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("invsee").setExecutor(new InvSeeCommand());
         getCommand("mapview").setExecutor(new MapViewCommand());
         getCommand("vote").setExecutor(new VoteCommand());
+        getCommand("changemap").setExecutor(new ChangeMapCommand());
     }
 
     public void onEnable() {
@@ -168,7 +176,8 @@ public class KnockBackFFA extends JavaPlugin {
 
         MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
-            KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]), Double.parseDouble(strings[4]), Double.parseDouble(strings[5]));
+            if (strings[6] == null) strings[6] = "150";
+            KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]), Double.parseDouble(strings[4]), Double.parseDouble(strings[5]), Double.parseDouble(strings[6]), strings[7]);
             commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
             return true;
         });
@@ -221,7 +230,7 @@ public class KnockBackFFA extends JavaPlugin {
             itemStacks[i][10] = new ItemBuilder(Material.BOW).unBreak().ench(new Enchantment[]{Enchantment.ARROW_KNOCKBACK}, new int[]{1}).build();
             itemStacks[i][11] = new ItemBuilder(Material.CHEST).name(inv[i]).build();
             itemStacks[i][12] = new ItemBuilder(Material.EMERALD).name("§aCosmetics").build();
-            itemStacks[i][13] = new ItemBuilder(Material.IRON_PICKAXE).unBreak().ench(Enchantment.DIG_SPEED, 3).build();
+            itemStacks[i][13] = new ItemBuilder(Material.STONE_PICKAXE).unBreak().ench(Enchantment.DIG_SPEED, 1).build();
             KitEditor[i] = Bukkit.createInventory(KitEditorHolder, 9, title[i]);
             InventoryUtils.fillItem(KitEditor[i], 0, 9, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name("§a").build());
             KitEditor[i].setItem(3, new ItemBuilder(Material.INK_SACK).durability(10).name(save[i]).build());
@@ -235,7 +244,7 @@ public class KnockBackFFA extends JavaPlugin {
 
                 world("world").
 
-                setLocation(KnockBackFFA.holoX, 152.4, KnockBackFFA.holoZ, 0, 0).
+                setLocation(KnockBackFFA.holoX, KnockBackFFA.centerY + 2.4, KnockBackFFA.holoZ, 0, 0).
 
                 setClickEvent(clickEvent);
 
@@ -245,7 +254,7 @@ public class KnockBackFFA extends JavaPlugin {
 
                 world("world").
 
-                setLocation(KnockBackFFA.holoX, 148.2, KnockBackFFA.holoZ, 0, 0).
+                setLocation(KnockBackFFA.holoX, KnockBackFFA.centerY - 1.8, KnockBackFFA.holoZ, 0, 0).
 
                 setClickEvent(clickEvent);
         new

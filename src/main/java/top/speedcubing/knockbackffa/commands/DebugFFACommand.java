@@ -24,8 +24,30 @@ public class DebugFFACommand implements CommandExecutor {
                 player.sendMessage("Inventory List: " + member.inventory);
                 return true;
             }
+            if (args.length == 2 && args[0].equalsIgnoreCase("ks")) {
+                if (!Member.getMember(player).isFighting) return true;
+                if (!isInt(args[1])) return true;
+                int ks = Integer.parseInt(args[1]);
+                player.setLevel(ks);
+                return true;
+            }
+            if (args.length == 2 && args[0].equalsIgnoreCase("ksr")) {
+                if (!Member.getMember(player).isFighting) return true;
+                if (!isInt(args[1])) return true;
+                int ks = Integer.parseInt(args[1]);
+                Member.getMember(player).killstreak = ks;
+                return true;
+            }
 
         }
         return false;
+    }
+    private boolean isInt(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (Throwable e) {
+            return false;
+        }
     }
 }

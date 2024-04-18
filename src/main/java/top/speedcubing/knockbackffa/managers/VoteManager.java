@@ -32,9 +32,9 @@ public class VoteManager {
             @Override
             public void run() {
                 Bukkit.getOnlinePlayers().forEach(player -> {
-                    player.sendMessage("§6Voting ends §b" + calculateVoteGetMapCommand() + ": " + getVoteCountByMapName(calculateVoteGetMapCommand()));
+                    player.sendMessage("§6Voting ends §b" + calculateVoteGetMapName() + ": " + getVoteCountByMapName(calculateVoteGetMapName()));
                 });
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),MapManager.getMapCommandByMapName(calculateVoteGetMapCommand()));
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),MapManager.getMapCommandByMapName(calculateVoteGetMapName()) + " " + calculateVoteGetMapName());
                 endVote();
             }
         }.runTaskLater(KnockBackFFA.getInstance(), 20 * 60);
@@ -49,7 +49,7 @@ public class VoteManager {
         playerVote.clear();
         votesCast.clear();
     }
-    public static String calculateVoteGetMapCommand() {
+    public static String calculateVoteGetMapName() {
         String maxVotedOption = null;
         int maxVotes = Integer.MIN_VALUE;
         for (Map.Entry<String, Integer> entry : votesCast.entrySet()) {

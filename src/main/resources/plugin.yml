@@ -38,3 +38,6 @@ commands:
     usage: /mapview
   vote:
     usage: /vote
+  changemap:
+    usage: /changemap
+

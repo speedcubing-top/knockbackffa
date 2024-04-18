@@ -25,6 +25,8 @@ public class MapManager {
     private static final String ZABER_THE_BUILDER = "https://i.imgur.com/kCPJtjD.png";
     //private static final String FROZEN_EARTH = "https://i.imgur.com/MtlkSAa.png";
     private static final String HOT_AIR_BALLOON = "https://i.imgur.com/eQwAkqj.png";
+    private static final String INVASION = "";
+    private static final String BOX_CITY = "";
 
     public static String getMapByName(String mapName) {
         try {
@@ -67,27 +69,31 @@ public class MapManager {
     public static String getMapCommandByMapName(String mapName) {
         switch (mapName) {
             case "NETHER_LAND":
-                return "map 2000 0 50 135 2002.5 -2.5";
+                return "map 2000 0 50 135 2002.5 -2.5 150";
             case "FLOATING_CASTLE":
-                return "map 1000 -1000 50 0 1003.5 -996.5";
+                return "map 1000 -1000 50 0 1003.5 -996.5 150";
             case "SANDSTONE_ROADS_1":
-                return "map 1000 1000 50 -180 997.5 997.5";
+                return "map 1000 1000 50 -180 997.5 997.5 150";
             case "PP_LAND":
-                return "map 0 0 100 -90 3.5 -2.5";
+                return "map 0 0 100 -90 3.5 -2.5 150";
             case "GIFT_BOXES":
-                return "map -1000 -1000 100 0 -997.5 -997.5";
+                return "map -1000 -1000 100 0 -997.5 -997.5 150";
             case "SANDSTONE_ROAD_2":
-                return "map 10000 10000 100 180 126.5 38.5";
+                return "map 10000 10000 100 180 126.5 38.5 150";
             case "SEASONS":
-                return "map -1000 1000 100 -90 -996.5 1009.5";
+                return "map -1000 1000 100 -90 -996.5 1009.5 150";
             case "FOOTBALL_FIELD":
-                return "map 4000 4000 100 180 3997.5 3997.5";
+                return "map 4000 4000 100 180 3997.5 3997.5 150";
             case "ZABER_THE_BUILDER":
-                return "map 20000 20000 100 180 19998.5 19998.5";
+                return "map 20000 20000 100 180 19998.5 19998.5 150";
 //            case "FROZEN_EARTH":
 //                return "map 2000 1000 25 -99 2002.5 998.5"; map broken
             case "HOT_AIR_BALLOON":
-                return "map 2023 1225 50 -45 2026.5 1226.5";
+                return "map 2023 1225 50 -45 2026.5 1226.5 150";
+            case "INVASION":
+                return "map 4040 40 80 -90 4043.5 37.5 150";
+            case "BOX_CITY":
+                return "map 1204 1204 100 -180 1201.5 1201.5 150";
             default:
                 System.out.println("Occurred Error, could not found map command");
                 return null;

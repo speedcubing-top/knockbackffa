@@ -16,6 +16,7 @@ import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
@@ -48,7 +49,7 @@ public class Member {
     boolean killedPlayer;
     int dailyKill;
     int death;
-    int killstreak;
+    public int killstreak;
     long lastClick;
     boolean displayType;
     final Hologram personal;
@@ -66,7 +67,7 @@ public class Member {
         death = Integer.parseInt(s[2]);
         killstreak = Integer.parseInt(s[3]);
         dailyKill = Integer.parseInt(s[4]);
-        player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
+        player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, KnockBackFFA.centerY, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
         player.setLevel(0);
         player.setHealth(20);
         player.setGameMode(GameMode.SURVIVAL);
@@ -145,9 +146,11 @@ public class Member {
     public void death(boolean quit) {
         isFighting = false;
         boolean killed = System.currentTimeMillis() - this.KillTime < 100000 && Damage != null;
+        if (user.player.hasPotionEffect(PotionEffectType.ABSORPTION)) user.player.removePotionEffect(PotionEffectType.ABSORPTION);
+        if (user.player.hasPotionEffect(PotionEffectType.REGENERATION)) user.player.removePotionEffect(PotionEffectType.REGENERATION);
         if (killed) {
             Player damager = Damage.user.player;
-            //call death event for kill effect
+
             FFAPlayerDeathEvent ffaPlayerDeathEvent = new FFAPlayerDeathEvent(user.player, damager, user.player.getLocation());
             Bukkit.getServer().getPluginManager().callEvent(ffaPlayerDeathEvent);
 
@@ -195,7 +198,7 @@ public class Member {
                 user.bSetFireTicks(0);
             }, 1);
             PlayerUtils.removeArrows(user.player);
-            user.bTeleport(new Location(user.player.getWorld(), KnockBackFFA.centerX + 0.5, 150, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
+            user.bTeleport(new Location(user.player.getWorld(), KnockBackFFA.centerX + 0.5, KnockBackFFA.centerY, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
             if (pearls != null)
                 pearls.forEach(EnderPearl::remove);
         }
