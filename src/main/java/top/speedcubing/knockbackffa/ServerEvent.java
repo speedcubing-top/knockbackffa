@@ -40,18 +40,18 @@ public class ServerEvent {
     @CubingEventHandler
     public void ToggleFlyEvent(ToggleFlyEvent e) {
         e.isCancelled = true;
-        e.player.sendMessage(GlobalString.OnlyInHub.get(e.player));
+        Member.getMember(e.player).user.sendLangMessage(GlobalString.OnlyInHub);
     }
 
     @CubingEventHandler
     public void NickEvent(NickEvent e) {
         e.isCancelled = true;
-        e.player.sendMessage(GlobalString.OnlyInHub.get(e.player));
+        Member.getMember(e.player).user.sendLangMessage(GlobalString.OnlyInHub);
     }
 
     @CubingEventHandler
     public void SkinEvent(SkinEvent e) {
         e.isCancelled = true;
-        e.player.sendMessage(GlobalString.OnlyInHub.get(e.player));
+        Member.getMember(e.player).user.sendLangMessage(GlobalString.OnlyInHub);
     }
 }
