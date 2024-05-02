@@ -34,7 +34,7 @@ public class OceanBow implements Listener {
 
 
                         player.setMetadata("oceanBowCooldown", new FixedMetadataValue(KnockBackFFA.getInstance(), true));
-                        Bukkit.getScheduler().runTaskLater(KnockBackFFA.getInstance(), () -> player.removeMetadata("oceanBowCooldown", KnockBackFFA.getInstance()), 6);
+                        Bukkit.getScheduler().runTaskLater(KnockBackFFA.getInstance(), () -> player.removeMetadata("oceanBowCooldown", KnockBackFFA.getInstance()), 2);
                     }
                 }
             }
