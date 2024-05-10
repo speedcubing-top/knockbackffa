@@ -54,9 +54,9 @@ public class StringList {
     );
 
     public static String[][] sidebar = {
-            {"§3KnockBackFFA", "§6speeducibng.top", "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
-            {"§3KnockBackFFA", "§6speeducibng.top", "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
-            {"§3KnockBackFFA", "§6speeducibng.top", "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
-            {"§3KnockBackFFA", "§6speeducibng.top", "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"}
+            {"§3KnockBackFFA", "§6speedcubing.top", "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
+            {"§3KnockBackFFA", "§6speedcubing.top", "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
+            {"§3KnockBackFFA", "§6speedcubing.top", "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"},
+            {"§3KnockBackFFA", "§6speedcubing.top", "§3", "Current Killstreak", "§6", "§0", "Total Kills", "§e", "§1", "Total Deaths", "§c", "§2", "Killstreak Record", "§9"}
     };
 }
