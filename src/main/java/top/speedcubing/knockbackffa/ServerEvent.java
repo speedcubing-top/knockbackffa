@@ -3,7 +3,7 @@ package top.speedcubing.knockbackffa;
 import net.minecraft.server.v1_8_R3.PacketPlayInChat;
 import org.bukkit.Bukkit;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
-import top.speedcubing.lib.events.packet.PlayInEvent;
+import top.speedcubing.lib.bukkit.events.packet.PlayInEvent;
 import top.speedcubing.server.events.ConfigReloadEvent;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.events.player.SkinEvent;
@@ -28,30 +28,30 @@ public class ServerEvent {
 
     @CubingEventHandler
     public void PlayInEvent(PlayInEvent e) {
-        if (e.packet instanceof PacketPlayInChat) {
-            String message = ((PacketPlayInChat) e.packet).a();
+        if (e.getPacket() instanceof PacketPlayInChat) {
+            String message = ((PacketPlayInChat) e.getPacket()).a();
             if (message.charAt(0) != '/') {
-                e.isCancelled = true;
-                Chat.globalChat(Bukkit.getOnlinePlayers(), e.player, GlobalString.MessageFormat, message, Member.getMember(e.player).user.getPrefixName(false), Member.getMember(e.player).user.getChatColor(false));
+                e.setCancelled(true);
+                Chat.globalChat(Bukkit.getOnlinePlayers(), e.getPlayer(), GlobalString.MessageFormat, message, Member.getMember(e.getPlayer()).user.getPrefixName(false), Member.getMember(e.getPlayer()).user.getChatColor(false));
             }
         }
     }
 
     @CubingEventHandler
     public void ToggleFlyEvent(ToggleFlyEvent e) {
-        e.isCancelled = true;
-        Member.getMember(e.player).user.sendLangMessage(GlobalString.OnlyInHub);
+        e.setCancelled(true);
+        Member.getMember(e.getPlayer()).user.sendLangMessage(GlobalString.OnlyInHub);
     }
 
     @CubingEventHandler
     public void NickEvent(NickEvent e) {
-        e.isCancelled = true;
-        Member.getMember(e.player).user.sendLangMessage(GlobalString.OnlyInHub);
+        e.setCancelled(true);
+        Member.getMember(e.getPlayer()).user.sendLangMessage(GlobalString.OnlyInHub);
     }
 
     @CubingEventHandler
     public void SkinEvent(SkinEvent e) {
-        e.isCancelled = true;
-        Member.getMember(e.player).user.sendLangMessage(GlobalString.OnlyInHub);
+        e.setCancelled(true);
+        Member.getMember(e.getPlayer()).user.sendLangMessage(GlobalString.OnlyInHub);
     }
 }

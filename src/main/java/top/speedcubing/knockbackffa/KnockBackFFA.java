@@ -61,7 +61,7 @@ import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.CubingEventManager;
-import top.speedcubing.lib.events.entity.ClickEvent;
+import top.speedcubing.lib.bukkit.events.entity.ClickEvent;
 import top.speedcubing.server.utils.config;
 
 public class KnockBackFFA extends JavaPlugin {

@@ -75,7 +75,7 @@ import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
-import top.speedcubing.server.authenticator.utils.ImageRenderer;
+import top.speedcubing.server.authenticator.ImageRenderer;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
