@@ -2,6 +2,7 @@ package top.speedcubing.knockbackffa;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArrow;
@@ -61,6 +63,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
@@ -341,6 +344,58 @@ public class EventListeners implements Listener {
         Entity entity = e.getEntity();
         if (entity instanceof Arrow)
             entity.remove();
+    }
+    @EventHandler
+    public void fireballHit(ProjectileHitEvent e) {
+        if(!(e.getEntity() instanceof Fireball)) return;
+        Location location = e.getEntity().getLocation();
+
+        ProjectileSource projectileSource = e.getEntity().getShooter();
+        if(!(projectileSource instanceof Player)) return;
+        double fireballHorizontal = 1.25 * -1;
+        double fireballVertical = 0.88;
+        double fireballExplosionSize = 3;
+
+        Vector vector = location.toVector();
+
+        World world = location.getWorld();
+
+        assert world != null;
+        Collection<Entity> nearbyEntities = world
+                .getNearbyEntities(location, fireballExplosionSize, fireballExplosionSize, fireballExplosionSize);
+        for(Entity entity : nearbyEntities) {
+            if(!(entity instanceof Player)) continue;
+            Player player = (Player) entity;
+
+
+            Vector playerVector = player.getLocation().toVector();
+            Vector normalizedVector = vector.subtract(playerVector).normalize();
+            Vector horizontalVector = normalizedVector.multiply(fireballHorizontal);
+            double y = normalizedVector.getY();
+            double x = normalizedVector.getX();
+            double z = normalizedVector.getZ();
+            if(y < 0 ) y += 1.5;
+            if(y <= 0.5 && x == -0.0 && z == -0.0) { //not moving and not jumping
+                y = fireballVertical* 1.7;
+            } else if (y <= 0.5 && x != 0.0 && z != 0.0) {
+                y = fireballVertical* 1.3;
+                x = horizontalVector.getX() * 0.65;
+                z = horizontalVector.getZ() * 0.65;
+            } else if (y > 0.5 && x == -0.0 && z == -0.0) {
+                y = y * fireballVertical* 1.5;
+            } else if (y > 0.5 && x != -0.0 && z != -0.0) {
+                y = fireballVertical* 1.7;
+                x = horizontalVector.getX() * 0.8;
+                z = horizontalVector.getZ() * 0.8;
+            }
+            if (isFireballHigherThanPlayer(location, player.getLocation())) {
+                y *= 0;
+                x *= 2;
+                z *= 2;
+                //跟x y z憶起計算看能不能做出像後kb
+            }
+            player.setVelocity(horizontalVector.setX(x).setY(y).setZ(z));
+        }
     }
 
     @EventHandler
@@ -674,7 +729,9 @@ public class EventListeners implements Listener {
     public boolean isRbwMap(String s) {
         return s.equalsIgnoreCase("invasion");
     }
-
+    private boolean isFireballHigherThanPlayer(Location fireballLocation, Location playerLocation) {
+        return fireballLocation.getY() - 1 > playerLocation.getY();
+    }
 
 }
 
