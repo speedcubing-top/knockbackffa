@@ -132,8 +132,6 @@ public class KnockBackFFA extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        killEffectManager = new KillEffectManager(this);
-        projectileEffectManager = new ProjectileEffectManager(this);
 
         MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
         CubingEventManager.registerListeners(new ServerEvent());
@@ -146,6 +144,15 @@ public class KnockBackFFA extends JavaPlugin {
         ConfigUtil.init(this);
         loadDataYml();
         loadProjectileEffectDataYml();
+
+        killEffectManager = new KillEffectManager(this);
+        projectileEffectManager = new ProjectileEffectManager(this);
+        speedcubingServer.registerListeners(
+                new EventListeners(killEffectManager, projectileEffectManager),
+                guiKillEffectSelector = new GuiKillEffectSelector(this, killEffectManager),
+                guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager),
+                guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager)
+        );
 
         World world = Bukkit.getWorld("world");
         world.setDifficulty(Difficulty.EASY);
@@ -260,15 +267,11 @@ public class KnockBackFFA extends JavaPlugin {
 
     private void registerListener() {
         speedcubingServer.registerListeners(
-                new EventListeners(killEffectManager, projectileEffectManager),
                 new OceanBow(),
                 new KillListener(this),
                 new ProjectileListener(this),
                 new Fireball(),
                 new VerticalStick(),
-                guiKillEffectSelector = new GuiKillEffectSelector(this, killEffectManager),
-                guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager),
-                guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager),
                 new TagGameListener(),
                 new VerticalStickProMax(),
                 new ChangeMapCommand());
