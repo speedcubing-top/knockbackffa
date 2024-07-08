@@ -64,13 +64,13 @@ import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.server.speedcubingServer;
 
 public class KnockBackFFA extends JavaPlugin {
-    private final KillEffectManager killEffectManager = new KillEffectManager(this);
+    private KillEffectManager killEffectManager;
     private FileConfiguration dataYml;
     private GuiKillEffectSelector guiKillEffectSelector;
     private GuiProjectileEffectSelector guiProjectileEffectSelector;
     private GuiCosmeticsSelector guiCosmeticsSelector;
     private String nmsVersion;
-    private final ProjectileEffectManager projectileEffectManager = new ProjectileEffectManager(this);
+    private ProjectileEffectManager projectileEffectManager;
     private FileConfiguration projectileEffectDataYml;
 
     public static String bold(String original) {
@@ -132,6 +132,9 @@ public class KnockBackFFA extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        killEffectManager = new KillEffectManager(this);
+        projectileEffectManager = new ProjectileEffectManager(this);
+
         MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
         CubingEventManager.registerListeners(new ServerEvent());
         new ConfigReloadEvent().call();
