@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.server.speedcubingServer;
 
 public class KillEffectChamp extends KillEffect {
     public KillEffectChamp() {
@@ -39,7 +40,7 @@ public class KillEffectChamp extends KillEffect {
                         cancel();
                     }
                 }
-            }.runTaskTimer(KnockBackFFA.getInstance(),0,1);
+            }.runTaskTimer(speedcubingServer.getInstance(),0,1);
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -47,7 +48,7 @@ public class KillEffectChamp extends KillEffect {
                         item.remove();
                     }
                 }
-            }.runTaskLater(KnockBackFFA.getInstance(), 80);
+            }.runTaskLater(speedcubingServer.getInstance(), 80);
         }
     }
 }

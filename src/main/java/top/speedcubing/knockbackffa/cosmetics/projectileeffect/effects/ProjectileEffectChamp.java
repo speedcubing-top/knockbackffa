@@ -8,6 +8,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.server.speedcubingServer;
 
 public class ProjectileEffectChamp extends ProjectileEffect {
     public ProjectileEffectChamp() {
@@ -39,7 +40,7 @@ public class ProjectileEffectChamp extends ProjectileEffect {
             }
         };
 
-        particleTask.runTaskTimer(KnockBackFFA.getInstance(), 0L, 2L);
+        particleTask.runTaskTimer(speedcubingServer.getInstance(), 0L, 2L);
     }
 
     private void playChampParticles(World world, Location location) {
@@ -55,7 +56,7 @@ public class ProjectileEffectChamp extends ProjectileEffect {
                 drop.remove();
                 drop2.remove();
             }
-        }.runTaskLater(KnockBackFFA.getInstance(), 14);
+        }.runTaskLater(speedcubingServer.getInstance(), 14);
     }
 
 }

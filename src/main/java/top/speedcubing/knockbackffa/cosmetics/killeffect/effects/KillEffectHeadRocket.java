@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ParticleEffect;
+import top.speedcubing.server.speedcubingServer;
 
 public class KillEffectHeadRocket extends KillEffect {
 
@@ -88,6 +89,6 @@ public class KillEffectHeadRocket extends KillEffect {
 			}
 
 		};
-		runnable.runTaskTimer(KnockBackFFA.getInstance(), 1, 1);
+		runnable.runTaskTimer(speedcubingServer.getInstance(), 1, 1);
 	}
 }

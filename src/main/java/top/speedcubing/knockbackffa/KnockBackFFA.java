@@ -18,7 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,7 +28,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.speedcubing.common.database.Database;
-import top.speedcubing.common.rank.Rank;
+import top.speedcubing.common.events.ConfigReloadEvent;
 import top.speedcubing.knockbackffa.commands.ChangeMapCommand;
 import top.speedcubing.knockbackffa.commands.DebugFFACommand;
 import top.speedcubing.knockbackffa.commands.InvSeeCommand;
@@ -58,21 +57,20 @@ import top.speedcubing.knockbackffa.trollutillisteners.OceanBow;
 import top.speedcubing.knockbackffa.trollutillisteners.VerticalStick;
 import top.speedcubing.knockbackffa.trollutillisteners.VerticalStickProMax;
 import top.speedcubing.lib.bukkit.entity.Hologram;
+import top.speedcubing.lib.bukkit.events.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.CubingEventManager;
-import top.speedcubing.lib.bukkit.events.entity.ClickEvent;
-import top.speedcubing.server.utils.config;
+import top.speedcubing.server.speedcubingServer;
 
 public class KnockBackFFA extends JavaPlugin {
-    private static KnockBackFFA instance;
-    private KillEffectManager killEffectManager;
+    private final KillEffectManager killEffectManager = new KillEffectManager(this);
     private FileConfiguration dataYml;
     private GuiKillEffectSelector guiKillEffectSelector;
     private GuiProjectileEffectSelector guiProjectileEffectSelector;
     private GuiCosmeticsSelector guiCosmeticsSelector;
     private String nmsVersion;
-    private ProjectileEffectManager projectileEffectManager;
+    private final ProjectileEffectManager projectileEffectManager = new ProjectileEffectManager(this);
     private FileConfiguration projectileEffectDataYml;
 
     public static String bold(String original) {
@@ -132,64 +130,25 @@ public class KnockBackFFA extends JavaPlugin {
         KnockBackFFA.currentMapName = mapName;
     }
 
-    private void registerListener() {
-        Bukkit.getPluginManager().registerEvents(new EventListeners(killEffectManager, projectileEffectManager), this);
-        Bukkit.getPluginManager().registerEvents(new OceanBow(), this);
-        Bukkit.getPluginManager().registerEvents(new KillListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new ProjectileListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new Fireball(), this);
-        Bukkit.getPluginManager().registerEvents(new VerticalStick(), this);
-        Bukkit.getPluginManager().registerEvents(guiKillEffectSelector = new GuiKillEffectSelector(this, killEffectManager), this);
-        Bukkit.getPluginManager().registerEvents(guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager), this);
-        Bukkit.getPluginManager().registerEvents(guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager), this);
-        Bukkit.getPluginManager().registerEvents(new TagGameListener(), this);
-        Bukkit.getPluginManager().registerEvents(new VerticalStickProMax(), this);
-        Bukkit.getPluginManager().registerEvents(new ChangeMapCommand(),this);
-    }
-
-    private void regitserCommands() {
-        getCommand("trollutils").setExecutor(new TrollUtilsCommand());
-        getCommand("killeffect").setExecutor(new CommandSWKillEffect(this));
-        getCommand("projectileeffect").setExecutor(new ProjectileCommand(this));
-        getCommand("cosmetic").setExecutor(new CosmeticCommand(this));
-        getCommand("debugffa").setExecutor(new DebugFFACommand());
-        getCommand("profile").setExecutor(new ProfileCommand());
-        getCommand("sendmessage").setExecutor(new SendMessageCommand());
-        getCommand("killmyself").setExecutor(new KillMyselfCommand());
-        getCommand("taggame").setExecutor(new TagGameCommand());
-        getCommand("taggamelist").setExecutor(new TagGameListCommand());
-        getCommand("invsee").setExecutor(new InvSeeCommand());
-        getCommand("mapview").setExecutor(new MapViewCommand());
-        getCommand("vote").setExecutor(new VoteCommand());
-        getCommand("changemap").setExecutor(new ChangeMapCommand());
-    }
-
+    @Override
     public void onEnable() {
-        instance = this;
+        MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
+        CubingEventManager.registerListeners(new ServerEvent());
+        new ConfigReloadEvent().call();
+        regitserCommands();
+        registerListener();
+
         loadVersion();
         saveDefaultConfig();
         ConfigUtil.init(this);
         loadDataYml();
         loadProjectileEffectDataYml();
-        killEffectManager = new KillEffectManager(this);
-        projectileEffectManager = new ProjectileEffectManager(this);
-
-        MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
-        Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
-            if (strings[6] == null) strings[6] = "150";
-            KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]), Double.parseDouble(strings[4]), Double.parseDouble(strings[5]), Double.parseDouble(strings[6]), strings[7]);
-            commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
-            return true;
-        });
-
-        registerListener();
-        regitserCommands();
 
         World world = Bukkit.getWorld("world");
         world.setDifficulty(Difficulty.EASY);
         world.setTime(6000);
         world.setAutoSave(false);
-        CubingEventManager.registerListeners(new ServerEvent());
+
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Set<PacketPlayOutBlockBreakAnimation> a = new HashSet<>();
             Set<Block> ba = new HashSet<>();
@@ -208,7 +167,7 @@ public class KnockBackFFA extends JavaPlugin {
                 x[1] += 1;
             }
         }, 0, 10);
-        config.event.call();
+
         String[] inv = {"§bInventar", "§bInventory", "§b物品欄", "§b物品栏"};
         String[] title = {"§cKnockBack FFA Inventar", "§cKnockBack FFA Inventory", "§cKnockBack FFA 物品欄", "§cKnockBack FFA 物品栏"};
         String[] save = {"§aÄnderungen speichern", "§aSave Changes", "§a儲存設定", "§a储存设置"};
@@ -238,121 +197,78 @@ public class KnockBackFFA extends JavaPlugin {
             Invalid[i] = new ItemBuilder(Material.STAINED_GLASS_PANE).durability(8).name(display[i]).build();
         }
 
-        personal[0] = new
-
-                Hologram("", false, false).
-
+        personal[0] = new Hologram("", false, false).
                 world("world").
-
                 setLocation(KnockBackFFA.holoX, KnockBackFFA.centerY + 2.4, KnockBackFFA.holoZ, 0, 0).
-
                 setClickEvent(clickEvent);
 
-        personal[1] = new
-
-                Hologram("", false, false).
-
+        personal[1] = new Hologram("", false, false).
                 world("world").
-
                 setLocation(KnockBackFFA.holoX, KnockBackFFA.centerY - 1.8, KnockBackFFA.holoZ, 0, 0).
-
                 setClickEvent(clickEvent);
-        new
 
-                Hologram("§6§lClick to toggle!", true, true).
-
+        new Hologram("§6§lClick to toggle!", true, true).
                 setLocation(holoX, 148.5, holoZ, 0, 0).
-
                 world("world").
-
                 setClickEvent(clickEvent);
-        new
 
-                Timer("Cubing-Leaderboard-Thread").
-
-                schedule(new TimerTask() {
-                    int lastKill;
-                    int index;
-                    int a;
-                    String[] arr;
-                    String[] arr2;
-
-                    @Override
-                    public void run() {
-                        try {
-                            arr = Database.connection.select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
-                            arr2 = Database.connection.select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).getStringArray();
-                            Database.connection.update("champ", "id=" + arr[3], "subject='kbffa_kill'");
-                            Database.connection.update("champ", "id=" + arr2[3], "subject='kbffa_dailykill'");
-                            lastKill = 0;
-                            index = 0;
-                            for (int i = 0; i < 10; i++) {
-                                a = Integer.parseInt(arr[i * 4 + 2]);
-                                if (lastKill != a) {
-                                    index = i + 1;
-                                    lastKill = a;
-                                }
-                                boardName[i] = arr[i * 4 + 3];
-                                board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr[i * 4], Integer.parseInt(arr[i * 4 + 3])).getPrefix() + arr[i * 4 + 1]).replace("%k%", arr[i * 4 + 2]);
-                            }
-                            lastKill = 0;
-                            index = 0;
-                            for (int i = 0; i < 10; i++) {
-                                a = Integer.parseInt(arr2[i * 4 + 2]);
-                                if (lastKill != a) {
-                                    index = i + 1;
-                                    lastKill = a;
-                                }
-                                dailyBoardName[i] = arr2[i * 4 + 3];
-                                dailyBoard[i] = arr2[i * 4 + 2].equals("0") ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr2[i * 4], Integer.parseInt(arr2[i * 4 + 3])).getPrefix() + arr2[i * 4 + 1]).replace("%k%", arr2[i * 4 + 2]);
-                            }
-                            for (Member m : Member.users.values()) {
-                                m.a();
-                                if (m.killedPlayer) {
-                                    m.killedPlayer = false;
-                                    m.user.dbUpdate("kbffa_kill=" + m.kill + ",kbffa_dailykill=" + m.dailyKill);
-                                }
-                                m.updatePlayerPos(false);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, 0, 1000);
         Calendar tomorrow = new GregorianCalendar();
         tomorrow.add(Calendar.DATE, 1);
-        new
-
-                Timer("Cubing-Daily-Thread").
-
-                schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        Member.users.values().forEach(a -> a.dailyKill = 0);
-                        Database.connection.update("playersdata", "kbffa_dailykill=0", "1");
-                    }
-                }, new
-
-                        GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.
-
-                        get(Calendar.MONTH), tomorrow.
-
-                        get(Calendar.DATE), 0, 0).
-
-                        getTime().
-
-                        getTime() - System.currentTimeMillis(), 86400000);
+        new Timer("Cubing-Daily-Thread").schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Member.users.values().forEach(a -> a.dailyKill = 0);
+                Database.connection.update("playersdata", "kbffa_dailykill=0", "1");
+            }
+        }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
+                tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis(), 86400000);
     }
 
-
+    @Override
     public void onDisable() {
         KnockBackFFA.Diff.keySet().forEach(a -> Bukkit.getWorld("world").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
         killEffectManager.saveKillEffects();
         projectileEffectManager.saveProjectileEffects();
     }
 
-    public static KnockBackFFA getInstance() {
-        return instance;
+    private void regitserCommands() {
+        getCommand("trollutils").setExecutor(new TrollUtilsCommand());
+        getCommand("killeffect").setExecutor(new CommandSWKillEffect(this));
+        getCommand("projectileeffect").setExecutor(new ProjectileCommand(this));
+        getCommand("cosmetic").setExecutor(new CosmeticCommand(this));
+        getCommand("debugffa").setExecutor(new DebugFFACommand());
+        getCommand("profile").setExecutor(new ProfileCommand());
+        getCommand("sendmessage").setExecutor(new SendMessageCommand());
+        getCommand("killmyself").setExecutor(new KillMyselfCommand());
+        getCommand("taggame").setExecutor(new TagGameCommand());
+        getCommand("taggamelist").setExecutor(new TagGameListCommand());
+        getCommand("invsee").setExecutor(new InvSeeCommand());
+        getCommand("mapview").setExecutor(new MapViewCommand());
+        getCommand("vote").setExecutor(new VoteCommand());
+        getCommand("changemap").setExecutor(new ChangeMapCommand());
+
+        Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
+            if (strings[6] == null) strings[6] = "150";
+            KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]), Double.parseDouble(strings[4]), Double.parseDouble(strings[5]), Double.parseDouble(strings[6]), strings[7]);
+            commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
+            return true;
+        });
+    }
+
+    private void registerListener() {
+        speedcubingServer.registerListeners(
+                new EventListeners(killEffectManager, projectileEffectManager),
+                new OceanBow(),
+                new KillListener(this),
+                new ProjectileListener(this),
+                new Fireball(),
+                new VerticalStick(),
+                guiKillEffectSelector = new GuiKillEffectSelector(this, killEffectManager),
+                guiProjectileEffectSelector = new GuiProjectileEffectSelector(this, projectileEffectManager),
+                guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager),
+                new TagGameListener(),
+                new VerticalStickProMax(),
+                new ChangeMapCommand());
     }
 
     public void loadVersion() {

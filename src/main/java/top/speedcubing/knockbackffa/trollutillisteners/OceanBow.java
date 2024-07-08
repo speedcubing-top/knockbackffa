@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.server.speedcubingServer;
 
 public class OceanBow implements Listener {
     @EventHandler
@@ -33,8 +34,8 @@ public class OceanBow implements Listener {
                         shootArrows(player);
 
 
-                        player.setMetadata("oceanBowCooldown", new FixedMetadataValue(KnockBackFFA.getInstance(), true));
-                        Bukkit.getScheduler().runTaskLater(KnockBackFFA.getInstance(), () -> player.removeMetadata("oceanBowCooldown", KnockBackFFA.getInstance()), 2);
+                        player.setMetadata("oceanBowCooldown", new FixedMetadataValue(speedcubingServer.getInstance(), true));
+                        Bukkit.getScheduler().runTaskLater(speedcubingServer.getInstance(), () -> player.removeMetadata("oceanBowCooldown", speedcubingServer.getInstance()), 2);
                     }
                 }
             }

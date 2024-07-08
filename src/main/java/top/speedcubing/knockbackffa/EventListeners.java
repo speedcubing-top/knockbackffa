@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import net.minecraft.server.v1_8_R3.BlockGlass;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -16,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
@@ -62,7 +59,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -87,7 +83,6 @@ import top.speedcubing.server.speedcubingServer;
 public class EventListeners implements Listener {
     private final KillEffectManager killEffectManager;
     private final ProjectileEffectManager projectileEffectManager;
-    KnockBackFFA plugin = KnockBackFFA.getInstance();
     HashMap<UUID, PermissionAttachment> perms = new HashMap<UUID, PermissionAttachment>();
 
     public EventListeners(KillEffectManager killEffectManager, ProjectileEffectManager projectileEffectManager) {
@@ -109,7 +104,8 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void onPlayerDeath(FFAPlayerDeathEvent e) {
-        if (isRbwMap(KnockBackFFA.currentMapName)) e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
+        if (isRbwMap(KnockBackFFA.currentMapName))
+            e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
 
         Member killer = Member.getMember(e.getKiller());
         int newKillstreak = e.getKiller().getLevel() + 1;
@@ -221,7 +217,7 @@ public class EventListeners implements Listener {
                         ((CraftArrow) arrow).setKnockbackStrength(1);
                     }
                 }
-            }.runTaskLater(KnockBackFFA.getInstance(), 8);
+            }.runTaskLater(speedcubingServer.getInstance(), 8);
         }
 
 
@@ -290,8 +286,8 @@ public class EventListeners implements Listener {
         if (player.getGameMode() == GameMode.SURVIVAL) {
             Member user = Member.getMember(player);
             Location to = e.getTo();
-            Location corner1 = new Location(player.getWorld(),948,134,976);
-            Location corner2 = new Location(player.getWorld(), 931,129,956);
+            Location corner1 = new Location(player.getWorld(), 948, 134, 976);
+            Location corner2 = new Location(player.getWorld(), 931, 129, 956);
             if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
@@ -317,7 +313,7 @@ public class EventListeners implements Listener {
             }
             //idk kys
             if (!User.getUser(player).isStaff && !isYt(player)) {
-                if (isInRange(player,corner1,corner2)) {
+                if (isInRange(player, corner1, corner2)) {
                     user.death(false);
                 }
             }
@@ -345,13 +341,14 @@ public class EventListeners implements Listener {
         if (entity instanceof Arrow)
             entity.remove();
     }
+
     @EventHandler
     public void fireballHit(ProjectileHitEvent e) {
-        if(!(e.getEntity() instanceof Fireball)) return;
+        if (!(e.getEntity() instanceof Fireball)) return;
         Location location = e.getEntity().getLocation();
 
         ProjectileSource projectileSource = e.getEntity().getShooter();
-        if(!(projectileSource instanceof Player)) return;
+        if (!(projectileSource instanceof Player)) return;
         double fireballHorizontal = 1.25 * -1;
         double fireballVertical = 0.88;
         double fireballExplosionSize = 3;
@@ -363,8 +360,8 @@ public class EventListeners implements Listener {
         assert world != null;
         Collection<Entity> nearbyEntities = world
                 .getNearbyEntities(location, fireballExplosionSize, fireballExplosionSize, fireballExplosionSize);
-        for(Entity entity : nearbyEntities) {
-            if(!(entity instanceof Player)) continue;
+        for (Entity entity : nearbyEntities) {
+            if (!(entity instanceof Player)) continue;
             Player player = (Player) entity;
 
 
@@ -374,17 +371,17 @@ public class EventListeners implements Listener {
             double y = normalizedVector.getY();
             double x = normalizedVector.getX();
             double z = normalizedVector.getZ();
-            if(y < 0 ) y += 1.5;
-            if(y <= 0.5 && x == -0.0 && z == -0.0) { //not moving and not jumping
-                y = fireballVertical* 1.7;
+            if (y < 0) y += 1.5;
+            if (y <= 0.5 && x == -0.0 && z == -0.0) { //not moving and not jumping
+                y = fireballVertical * 1.7;
             } else if (y <= 0.5 && x != 0.0 && z != 0.0) {
-                y = fireballVertical* 1.3;
+                y = fireballVertical * 1.3;
                 x = horizontalVector.getX() * 0.65;
                 z = horizontalVector.getZ() * 0.65;
             } else if (y > 0.5 && x == -0.0 && z == -0.0) {
-                y = y * fireballVertical* 1.5;
+                y = y * fireballVertical * 1.5;
             } else if (y > 0.5 && x != -0.0 && z != -0.0) {
-                y = fireballVertical* 1.7;
+                y = fireballVertical * 1.7;
                 x = horizontalVector.getX() * 0.8;
                 z = horizontalVector.getZ() * 0.8;
             }
@@ -542,7 +539,6 @@ public class EventListeners implements Listener {
         }
     }
 
-
     @EventHandler
     public void PlayerInteractEvent(PlayerInteractEvent e) {
         Player player = e.getPlayer();
@@ -572,7 +568,7 @@ public class EventListeners implements Listener {
 
             InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.user.lang]);
         } else if (player.getItemInHand().getType().equals(Material.EMERALD)) {
-            plugin.getGuiCosmeticsSelector().open(player);
+            KnockBackFFA.getPlugin(KnockBackFFA.class).getGuiCosmeticsSelector().open(player);
             e.setCancelled(true);
         }
         if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.CHEST && player.getGameMode() != GameMode.CREATIVE) {
@@ -630,7 +626,7 @@ public class EventListeners implements Listener {
         User user = User.getUser(p);
         //add bypass anticheat
         if (user.id == 4196 || user.id == 13758 || user.id == 27397) {
-            PermissionAttachment attachment = p.addAttachment(KnockBackFFA.getInstance());
+            PermissionAttachment attachment = p.addAttachment(speedcubingServer.getInstance());
             perms.put(user.bGetUniqueId(), attachment);
 
             PermissionAttachment pperms = perms.get(user.bGetUniqueId());
@@ -686,6 +682,7 @@ public class EventListeners implements Listener {
             e.setCancelled(true);
         }
     }
+
     @EventHandler
     public void witherBreak(EntityChangeBlockEvent e) {
         if (e.getEntity() instanceof Wither) e.setCancelled(true);
@@ -705,6 +702,7 @@ public class EventListeners implements Listener {
         User user = User.getUser(p);
         return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
     }
+
     private boolean isYt(Player p) {
         User user = User.getUser(p);
         return "yt".equals(user.displayRank) || "yt".equals(user.realRank) || "ytplus".equals(user.displayRank) || "ytplus".equals(user.realRank);
@@ -713,6 +711,7 @@ public class EventListeners implements Listener {
     private boolean isEquipmentSlot(int rawSlot) {
         return rawSlot >= 5 && rawSlot <= 8;
     }
+
     public boolean isInRange(Player player, Location corner1, Location corner2) {
         Location playerLocation = player.getLocation();
         double minX = Math.min(corner1.getX(), corner2.getX());
@@ -726,9 +725,11 @@ public class EventListeners implements Listener {
                 playerLocation.getY() >= minY && playerLocation.getY() <= maxY &&
                 playerLocation.getZ() >= minZ && playerLocation.getZ() <= maxZ;
     }
+
     public boolean isRbwMap(String s) {
         return s.equalsIgnoreCase("invasion");
     }
+
     private boolean isFireballHigherThanPlayer(Location fireballLocation, Location playerLocation) {
         return fireballLocation.getY() - 1 > playerLocation.getY();
     }

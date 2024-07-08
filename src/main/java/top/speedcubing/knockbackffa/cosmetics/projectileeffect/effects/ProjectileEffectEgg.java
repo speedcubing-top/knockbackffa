@@ -8,6 +8,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.server.speedcubingServer;
 
 public class ProjectileEffectEgg extends ProjectileEffect {
     public ProjectileEffectEgg() {
@@ -38,7 +39,7 @@ public class ProjectileEffectEgg extends ProjectileEffect {
             }
         };
 
-        particleTask.runTaskTimer(KnockBackFFA.getInstance(), 0L, 1L);
+        particleTask.runTaskTimer(speedcubingServer.getInstance(), 0L, 1L);
     }
 
     private void playEggParticles(World world, Location location) {
@@ -50,6 +51,6 @@ public class ProjectileEffectEgg extends ProjectileEffect {
             public void run() {
                 drop.remove();
             }
-        }.runTaskLater(KnockBackFFA.getInstance(), 10);
+        }.runTaskLater(speedcubingServer.getInstance(), 10);
     }
 }

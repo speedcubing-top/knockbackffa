@@ -16,6 +16,7 @@ import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyDisbandEvent;
 import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyJoinEvent;
 import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyKickEvent;
 import top.speedcubing.knockbackffa.games.tag.events.TagGameStartEvent;
+import top.speedcubing.server.speedcubingServer;
 
 public class TagGameCommand implements CommandExecutor {
     public static List<UUID> partyList = new ArrayList<>();
@@ -223,7 +224,7 @@ public class TagGameCommand implements CommandExecutor {
                     endGame();
                 }
             }
-        }.runTaskTimer(KnockBackFFA.getInstance(), 0, 20);
+        }.runTaskTimer(speedcubingServer.getInstance(), 0, 20);
     }
 
 

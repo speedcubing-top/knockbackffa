@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
-import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.server.speedcubingServer;
 
 public class Fireball implements Listener {
     @EventHandler
@@ -28,8 +28,8 @@ public class Fireball implements Listener {
                     fireball.setVelocity(direction);
                     item.setAmount(item.getAmount() - 1);
                     p.setItemInHand(item);
-                    p.setMetadata("fireballCooldown", new FixedMetadataValue(KnockBackFFA.getInstance(), true));
-                    Bukkit.getScheduler().runTaskLater(KnockBackFFA.getInstance(), () -> p.removeMetadata("fireballCooldown", KnockBackFFA.getInstance()), 18);
+                    p.setMetadata("fireballCooldown", new FixedMetadataValue(speedcubingServer.getInstance(), true));
+                    Bukkit.getScheduler().runTaskLater(speedcubingServer.getInstance(), () -> p.removeMetadata("fireballCooldown", speedcubingServer.getInstance()), 18);
                 }
             }
         }

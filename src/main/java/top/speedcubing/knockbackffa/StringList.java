@@ -1,7 +1,6 @@
 package top.speedcubing.knockbackffa;
 
 import top.speedcubing.server.lang.LangMessage;
-import top.speedcubing.server.utils.config;
 
 public class StringList {
     public static final String obj = "§c❤";

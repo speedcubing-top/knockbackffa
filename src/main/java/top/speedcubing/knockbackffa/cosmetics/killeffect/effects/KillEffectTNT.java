@@ -9,6 +9,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.server.speedcubingServer;
 
 public class KillEffectTNT extends KillEffect {
     public KillEffectTNT() {
@@ -19,7 +20,7 @@ public class KillEffectTNT extends KillEffect {
         Location loc = target.getLocation();
         World world = loc.getWorld();
         TNTPrimed tnt = (TNTPrimed) world.spawnEntity(loc, EntityType.PRIMED_TNT);
-        tnt.setMetadata("effectTNT", new FixedMetadataValue(KnockBackFFA.getInstance(), true));
+        tnt.setMetadata("effectTNT", new FixedMetadataValue(speedcubingServer.getInstance(), true));
         tnt.setFuseTicks(60);
         tnt.setVelocity(new Vector(0,1.2,0));
     }

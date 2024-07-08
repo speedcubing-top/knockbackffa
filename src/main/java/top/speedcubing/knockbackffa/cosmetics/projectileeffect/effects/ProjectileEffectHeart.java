@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Projectile;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.server.speedcubingServer;
 
 public class ProjectileEffectHeart extends ProjectileEffect {
 
@@ -37,7 +38,7 @@ public class ProjectileEffectHeart extends ProjectileEffect {
             }
         };
 
-        particleTask.runTaskTimer(KnockBackFFA.getInstance(), 0L, 2L);
+        particleTask.runTaskTimer(speedcubingServer.getInstance(), 0L, 2L);
     }
 
     private void playHeartParticles(Location location) {

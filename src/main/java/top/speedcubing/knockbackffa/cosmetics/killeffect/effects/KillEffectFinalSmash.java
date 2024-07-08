@@ -27,6 +27,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ParticleEffect;
+import top.speedcubing.server.speedcubingServer;
 
 public class KillEffectFinalSmash extends KillEffect {
 
@@ -124,7 +125,7 @@ public class KillEffectFinalSmash extends KillEffect {
 						fm.addEffect(FireworkEffect.builder().flicker(true).trail(true).with(Type.BALL_LARGE).withColor(Color.RED)
 								.withFade(Color.RED).build());
 						fw.setFireworkMeta(fm);
-						Bukkit.getScheduler().runTaskLater(KnockBackFFA.getInstance(), () -> {
+						Bukkit.getScheduler().runTaskLater(speedcubingServer.getInstance(), () -> {
 							fw.detonate();
 						}, 1L);
 						cancel();
@@ -133,6 +134,6 @@ public class KillEffectFinalSmash extends KillEffect {
 			}
 
 		};
-		runnable.runTaskTimer(KnockBackFFA.getInstance(), 1, 1);
+		runnable.runTaskTimer(speedcubingServer.getInstance(), 1, 1);
 	}
 }

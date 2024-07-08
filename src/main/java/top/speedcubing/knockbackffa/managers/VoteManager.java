@@ -6,10 +6,10 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
+import top.speedcubing.server.speedcubingServer;
 
 public class VoteManager {
     private static boolean voteStatus = false;
@@ -34,10 +34,10 @@ public class VoteManager {
                 Bukkit.getOnlinePlayers().forEach(player -> {
                     player.sendMessage("§6Voting ends §b" + calculateVoteGetMapName() + ": " + getVoteCountByMapName(calculateVoteGetMapName()));
                 });
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),MapManager.getMapCommandByMapName(calculateVoteGetMapName()) + " " + calculateVoteGetMapName());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), MapManager.getMapCommandByMapName(calculateVoteGetMapName()) + " " + calculateVoteGetMapName());
                 endVote();
             }
-        }.runTaskLater(KnockBackFFA.getInstance(), 20 * 60);
+        }.runTaskLater(speedcubingServer.getInstance(), 20 * 60);
 
         MapManager.getAllMapNames().forEach(map -> {
             votesCast.put(map, 0);
@@ -49,6 +49,7 @@ public class VoteManager {
         playerVote.clear();
         votesCast.clear();
     }
+
     public static String calculateVoteGetMapName() {
         String maxVotedOption = null;
         int maxVotes = Integer.MIN_VALUE;
@@ -62,6 +63,7 @@ public class VoteManager {
         }
         return maxVotedOption;
     }
+
     public static Integer getVoteCountByMapName(String mapName) {
         return votesCast.getOrDefault(mapName, null);
     }
