@@ -28,10 +28,9 @@ public class ProjectileListener implements Listener {
         Projectile projectile = e.getEntity();
         ProjectileEffectManager projectileEffectManager = plugin.getProjectileEffectManager();
         ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(p);
+        if (projectileEffect == null) return;
         if (projectile instanceof EnderPearl || projectile instanceof Fireball || projectile instanceof Arrow || projectile instanceof Egg || projectile instanceof Snowball || projectile instanceof FishHook) {
-            if (projectileEffect != null) {
-                projectileEffect.play(projectile);
-            }
+            projectileEffect.play(projectile);
         }
     }
 }
