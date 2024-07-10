@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -39,6 +40,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -49,6 +51,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -59,6 +62,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -71,6 +76,7 @@ import top.speedcubing.knockbackffa.managers.MapManager;
 import top.speedcubing.knockbackffa.managers.VoteManager;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
+import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
@@ -104,16 +110,30 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void onPlayerDeath(FFAPlayerDeathEvent e) {
-        if (isRbwMap(KnockBackFFA.currentMapName))
-            e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
-
         Member killer = Member.getMember(e.getKiller());
         int newKillstreak = e.getKiller().getLevel() + 1;
+        if (isRbwMap(KnockBackFFA.currentMapName)) {
+            e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
+            if (newKillstreak % 10 == 0) {
+                ItemBuilder jump = new ItemBuilder(Material.POTION).name("§aJump Boost").addPotion(new PotionEffect(PotionEffectType.JUMP, 200, 4));
+                e.getKiller().getInventory().addItem(jump.build());
+            }
+        }
+        killer.user.player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 8, 1));
         if (newKillstreak < 10 || newKillstreak % 5 != 0) return;
         String formatKillstreakColor = newKillstreak == 10 ? "§7" : newKillstreak == 15 ? "§f" : newKillstreak == 20 ? "§a" : newKillstreak == 25 ? "§2" : newKillstreak == 30 ? "§e" : newKillstreak == 35 ? "§6" : newKillstreak == 40 ? "§c" : newKillstreak == 45 ? "§4" : "§5";
         Bukkit.getOnlinePlayers().forEach(a -> {
             a.sendMessage("§8[§bKnockBackFFA§8] " + killer.user.getPrefixName(false) + " §ehas gotten a " + formatKillstreakColor + newKillstreak + " §ekillstreak");
         });
+    }
+
+    @EventHandler
+    public void onPotion(PlayerItemConsumeEvent e) {
+        if (e.getItem() == null) return;
+        ItemStack item = e.getItem();
+        if (item.getType().equals(Material.POTION)) {
+            e.getItem().setType(Material.AIR);
+        }
     }
 
     //MAP VIEW AND VOTE

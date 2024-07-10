@@ -148,6 +148,7 @@ public class Member {
         boolean killed = System.currentTimeMillis() - this.KillTime < 100000 && Damage != null;
         if (user.player.hasPotionEffect(PotionEffectType.ABSORPTION)) user.player.removePotionEffect(PotionEffectType.ABSORPTION);
         if (user.player.hasPotionEffect(PotionEffectType.REGENERATION)) user.player.removePotionEffect(PotionEffectType.REGENERATION);
+        if (user.player.hasPotionEffect(PotionEffectType.JUMP)) user.player.removePotionEffect(PotionEffectType.JUMP);
         if (killed) {
             Player damager = Damage.user.player;
 
