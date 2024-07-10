@@ -104,9 +104,9 @@ public class Member {
                 connection.sendPacket(a.maxHealPacket);
         });
         for (int i = 0; i < killBoard.length; i++) {
-            killBoard[i] = new Hologram("", false, false).setLocation(KnockBackFFA.holoX, 152 - i * 0.3, KnockBackFFA.holoZ, 0, 0).world("world").setClickEvent(KnockBackFFA.clickEvent).setListener(player).spawn();
+            killBoard[i] = new Hologram("", false, false).setLocation(KnockBackFFA.holoX, 152 - i * 0.3, KnockBackFFA.holoZ, 0, 0).world("kbffa").setClickEvent(KnockBackFFA.clickEvent).setListener(player).spawn();
         }
-        personal = new Hologram("", false, false).world("world").setLocation(KnockBackFFA.holoX, 148.9, KnockBackFFA.holoZ, 0, 0).setClickEvent(KnockBackFFA.clickEvent).setListener(player);
+        personal = new Hologram("", false, false).world("kbffa").setLocation(KnockBackFFA.holoX, 148.9, KnockBackFFA.holoZ, 0, 0).setClickEvent(KnockBackFFA.clickEvent).setListener(player);
         setDisplayType(true);
         users.put(user.id, this);
     }
