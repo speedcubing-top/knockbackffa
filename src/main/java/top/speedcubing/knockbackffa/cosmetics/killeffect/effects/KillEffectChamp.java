@@ -40,7 +40,7 @@ public class KillEffectChamp extends KillEffect {
                         cancel();
                     }
                 }
-            }.runTaskTimer(speedcubingServer.getInstance(),0,1);
+            }.runTaskTimer(speedcubingServer.instance,0,1);
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -48,7 +48,7 @@ public class KillEffectChamp extends KillEffect {
                         item.remove();
                     }
                 }
-            }.runTaskLater(speedcubingServer.getInstance(), 80);
+            }.runTaskLater(speedcubingServer.instance, 80);
         }
     }
 }

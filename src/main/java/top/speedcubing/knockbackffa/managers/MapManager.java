@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,6 +26,7 @@ public class MapManager {
     private static final String ZABER_THE_BUILDER = "https://i.imgur.com/kCPJtjD.png";
     //private static final String FROZEN_EARTH = "https://i.imgur.com/MtlkSAa.png";
     private static final String HOT_AIR_BALLOON = "https://i.imgur.com/eQwAkqj.png";
+    private static final String INVASION = "";
     private static final String BOX_CITY = "";
 
     public static String getMapByName(String mapName) {
@@ -89,6 +91,8 @@ public class MapManager {
 //                return "map 2000 1000 25 -99 2002.5 998.5"; map broken
             case "HOT_AIR_BALLOON":
                 return "map 2023 1225 50 -45 2026.5 1226.5 150";
+            case "INVASION":
+                return "map 8964 8964 60 0 8967.5 8967.5 150";
             case "BOX_CITY":
                 return "map 1204 1204 100 -180 1201.5 1201.5 150";
             default:
