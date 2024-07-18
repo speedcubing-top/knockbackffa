@@ -17,7 +17,6 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -62,6 +61,7 @@ import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.server.speedcubingServer;
+import top.speedcubing.server.utils.MapManager;
 
 public class KnockBackFFA extends JavaPlugin {
     private KillEffectManager killEffectManager;
@@ -154,10 +154,11 @@ public class KnockBackFFA extends JavaPlugin {
                 guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager)
         );
 
-        World world = Bukkit.getWorld("world");
-        world.setDifficulty(Difficulty.EASY);
-        world.setTime(6000);
-        world.setAutoSave(false);
+        try {
+            MapManager.install("map_kbffa", "kbffa", Difficulty.EASY, 6000, false);
+        } catch (Exception e) {
+            Bukkit.getServer().shutdown();
+        }
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Set<PacketPlayOutBlockBreakAnimation> a = new HashSet<>();
@@ -208,18 +209,18 @@ public class KnockBackFFA extends JavaPlugin {
         }
 
         personal[0] = new Hologram("", false, false).
-                world("world").
+                world("kbffa").
                 setLocation(KnockBackFFA.holoX, KnockBackFFA.centerY + 2.4, KnockBackFFA.holoZ, 0, 0).
                 setClickEvent(clickEvent);
 
         personal[1] = new Hologram("", false, false).
-                world("world").
+                world("kbffa").
                 setLocation(KnockBackFFA.holoX, KnockBackFFA.centerY - 1.8, KnockBackFFA.holoZ, 0, 0).
                 setClickEvent(clickEvent);
 
         new Hologram("§6§lClick to toggle!", true, true).
                 setLocation(holoX, 148.5, holoZ, 0, 0).
-                world("world").
+                world("kbffa").
                 setClickEvent(clickEvent);
 
         Calendar tomorrow = new GregorianCalendar();
@@ -236,7 +237,7 @@ public class KnockBackFFA extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        KnockBackFFA.Diff.keySet().forEach(a -> Bukkit.getWorld("world").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
+        KnockBackFFA.Diff.keySet().forEach(a -> Bukkit.getWorld("kbffa").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
         killEffectManager.saveKillEffects();
         projectileEffectManager.saveProjectileEffects();
     }
