@@ -1,6 +1,8 @@
 package top.speedcubing.knockbackffa.commands;
 
 import java.text.DecimalFormat;
+
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,13 +20,24 @@ public class ProfileCommand implements CommandExecutor {
                 return true;
             }
             if (args.length == 1) {
-                String target = args[0];
-                sendFFADataByName(player, target);
+                String targetName = args[0];
+                Player target = Bukkit.getPlayerExact(targetName);
+                if (target == null) {
+                    sendFFADataByName(player, targetName);
+                } else {
+                    User user = User.getUser(target);
+                    if (user.nicked()) {
+                        player.sendMessage("§cThis player disabled their stats api.");
+                    } else {
+                        sendFFADataByName(player, target.getName());
+                    }
+                }
                 return true;
             }
         }
         return false;
     }
+
     private void sendFFADataByName(Player sender, String playerName) {
         String[] data = Database.connection.select("priority,kbffa_kill,kbffa_dailykill,kbffa_blockplace,kbffa_death,kbffa_killstreak,name,kbffa_blockBreak").from("playersdata").where("name='" + playerName + "'").getStringArray();
         String rank = data[0];
