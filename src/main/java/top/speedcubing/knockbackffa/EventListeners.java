@@ -131,9 +131,11 @@ public class EventListeners implements Listener {
     public void onPotion(PlayerItemConsumeEvent e) {
         if (e.getItem() == null) return;
         ItemStack item = e.getItem();
-        if (item.getType().equals(Material.POTION)) {
-            e.getItem().setType(Material.AIR);
-        }
+        Bukkit.getScheduler().runTaskLater(speedcubingServer.getInstance(), () -> {
+            if (item.getType().equals(Material.POTION)) {
+                e.getPlayer().getInventory().remove(item);
+            }
+        }, 10);
     }
 
     //MAP VIEW AND VOTE
