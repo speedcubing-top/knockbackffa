@@ -482,6 +482,9 @@ public class EventListeners implements Listener {
         Member member = Member.getMember(player);
         if (e.getAction() == InventoryAction.PICKUP_HALF || e.getAction() == InventoryAction.PLACE_ONE) {
             if (member.isFighting) {
+                if (isEquipmentSlot(RawSlot) && player.getGameMode() == GameMode.SURVIVAL) {
+                    e.setCancelled(true);
+                }
                 return;
             }
             e.setCancelled(true);
@@ -489,7 +492,7 @@ public class EventListeners implements Listener {
         if (RawSlot != -999) {
             Inventory inventory = e.getInventory();
             if (inventory.getName().equals("container.crafting")) {
-                if (e.getWhoClicked().getGameMode() == GameMode.SURVIVAL) {
+                if (player.getGameMode() == GameMode.SURVIVAL) {
                     if (member.isFighting && !isEquipmentSlot(RawSlot)) {
                         return;
                     }
