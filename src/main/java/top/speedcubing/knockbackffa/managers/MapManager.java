@@ -28,6 +28,7 @@ public class MapManager {
     private static final String HOT_AIR_BALLOON = "https://i.imgur.com/eQwAkqj.png";
     private static final String INVASION = "";
     private static final String BOX_CITY = "";
+    private static final String GAMING = "";
 
     public static String getMapByName(String mapName) {
         try {
@@ -95,6 +96,8 @@ public class MapManager {
                 return "map 8964 8964 60 0 8967.5 8967.5 150";
             case "BOX_CITY":
                 return "map 1204 1204 100 -180 1201.5 1201.5 150";
+            case "GAMING":
+                return "map 40000 40000 100 0 40000 40008 150";
             default:
                 System.out.println("Occurred Error, could not found map command");
                 return null;
