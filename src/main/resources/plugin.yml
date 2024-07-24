@@ -40,4 +40,6 @@ commands:
     usage: /vote
   changemap:
     usage: /changemap
+  combo:
+    usage: /combo
 

@@ -29,6 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.events.ConfigReloadEvent;
 import top.speedcubing.knockbackffa.commands.ChangeMapCommand;
+import top.speedcubing.knockbackffa.commands.ComboCommand;
 import top.speedcubing.knockbackffa.commands.DebugFFACommand;
 import top.speedcubing.knockbackffa.commands.InvSeeCommand;
 import top.speedcubing.knockbackffa.commands.KillMyselfCommand;
@@ -257,6 +258,7 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("mapview").setExecutor(new MapViewCommand());
         getCommand("vote").setExecutor(new VoteCommand());
         getCommand("changemap").setExecutor(new ChangeMapCommand());
+        getCommand("combo").setExecutor(new ComboCommand());
 
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
             if (strings[6] == null) strings[6] = "150";
@@ -275,6 +277,7 @@ public class KnockBackFFA extends JavaPlugin {
                 new VerticalStick(),
                 new TagGameListener(),
                 new VerticalStickProMax(),
+                new ComboCommand(),
                 new ChangeMapCommand());
     }
 
