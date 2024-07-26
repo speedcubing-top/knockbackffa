@@ -641,6 +641,19 @@ public class EventListeners implements Listener {
             perms.get(player.getUniqueId()).unsetPermission("grim.nosetback");
             perms.get(player.getUniqueId()).unsetPermission("grim.nomodifypacket");
             perms.get(player.getUniqueId()).unsetPermission("grim.exempt");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.*");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.staff");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.alerts");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.gui");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.reload");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.autoban");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.bypass");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.bypass.ban");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.logs");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.info");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.recentbans");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.hover-debug");
+            perms.get(player.getUniqueId()).unsetPermission("karhu.mitigations");
             perms.remove(e.getPlayer().getUniqueId());
         }
     }
@@ -660,6 +673,20 @@ public class EventListeners implements Listener {
             pperms.setPermission("grim.nosetback", true);
             pperms.setPermission("grim.nomodifypacket", true);
             pperms.setPermission("grim.exempt", true);
+            pperms.setPermission("karhu.*", true);
+            pperms.setPermission("karhu.staff", true);
+            pperms.setPermission("karhu.alerts", true);
+            pperms.setPermission("karhu.gui", true);
+            pperms.setPermission("karhu.reload", true);
+            pperms.setPermission("karhu.autoban", true);
+            pperms.setPermission("karhu.bypass", true);
+            pperms.setPermission("karhu.bypass.ban", true);
+            pperms.setPermission("karhu.logs", true);
+            pperms.setPermission("karhu.info", true);
+            pperms.setPermission("karhu.recentbans", true);
+            pperms.setPermission("karhu.hover-debug", true);
+            pperms.setPermission("karhu.mitigations", true);
+
         }
         if (!isChampOrStaff(p)) {
             KillEffect killEffect = killEffectManager.getKillEffect(p);
