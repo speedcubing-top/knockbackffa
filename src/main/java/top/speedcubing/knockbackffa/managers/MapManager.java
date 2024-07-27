@@ -97,7 +97,7 @@ public class MapManager {
             case "BOX_CITY":
                 return "map 1204 1204 100 -180 1201.5 1201.5 150";
             case "GAMING":
-                return "map 40000 40000 100 0 40000.5 40008.5 150";
+                return "map 40000 40000 84 0 40000.5 40008.5 150";
             default:
                 System.out.println("Occurred Error, could not found map command");
                 return null;

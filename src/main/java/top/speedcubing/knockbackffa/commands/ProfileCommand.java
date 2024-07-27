@@ -54,12 +54,14 @@ public class ProfileCommand implements CommandExecutor {
             double kdr = (double) killsInt / deathsInt;
             DecimalFormat df = new DecimalFormat("#.##");
             String formattedKDR = df.format(kdr);
+            String equalsLine = "=".repeat(name.length());
             sender.sendMessage("======== §b" + name + " §r========\n" +
                     "Rank: " + rank +
                     "\nKills: " + kills + "\nDeaths: " + deaths + "\nKDR: " + formattedKDR
                     + "\nDaily Kills: " + dailyKills + "\nBest Kill Streak: " + killStreak
                     + "\nBlock Placed: " + blockPlaces +
-                    "\nBlock Breaks: " + blockBreaks);
+                    "\nBlock Breaks: " + blockBreaks +
+                    "\n========" + equalsLine + "========");
         } else {
             sender.sendMessage("This player profile cannot be found");
         }
