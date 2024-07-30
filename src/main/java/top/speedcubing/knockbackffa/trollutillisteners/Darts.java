@@ -69,7 +69,7 @@ public class Darts implements Listener {
                 Location loc = armorStand.getLocation();
                 armorStand.teleport(loc.add(direction));
 
-                if (armorStand.getLocation().distanceSquared(player.getLocation()) > 256) {
+                if (armorStand.getLocation().distanceSquared(player.getLocation()) > 2560) {
                     armorStand.remove();
                     cancel();
                     return;
