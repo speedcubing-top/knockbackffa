@@ -47,7 +47,7 @@ public class Darts implements Listener {
     }
 
     private void shootNetherStar(Player player) {
-        Location spawnLocation = player.getEyeLocation().subtract(0, 1.5, 0);
+        Location spawnLocation = player.getEyeLocation().subtract(0, 1, 0);
         ArmorStand armorStand = player.getWorld().spawn(spawnLocation, ArmorStand.class);
         armorStand.setVisible(false);
         armorStand.setGravity(false);
@@ -80,7 +80,7 @@ public class Darts implements Listener {
                     cancel();
                     return;
                 }
-                armorStand.getNearbyEntities(0.5, 0.5, 0.5).forEach(a -> {
+                armorStand.getNearbyEntities(0.85, 1, 0.85).forEach(a -> {
                     if (a instanceof Player) {
                         Player target = (Player) a;
                         if (target != player && target.getGameMode() == GameMode.SURVIVAL) {
@@ -93,8 +93,8 @@ public class Darts implements Listener {
                                     player.damage(0);
                                 } else {
                                     target.damage(1);
-                                    target.setVelocity(direction.multiply(0.12).setY(0.475));
-                                    player.playSound(player.getLocation(), Sound.ARROW_HIT, 1, 1);
+                                    target.setVelocity(direction.multiply(0.14).setY(0.485));
+                                    player.playSound(player.getLocation(), Sound.SUCCESSFUL_HIT, 1, 1);
                                 }
                                 victim.KillTime = System.currentTimeMillis();
                             }
