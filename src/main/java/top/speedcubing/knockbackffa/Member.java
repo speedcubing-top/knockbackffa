@@ -38,8 +38,8 @@ public class Member {
     }
 
     final User user;
-    Member Damage;
-    long KillTime;
+    public Member Damage;
+    public long KillTime;
     boolean iseditingkit;
     Set<EnderPearl> pearls = new HashSet<>();
     final PacketPlayOutScoreboardScore maxHealPacket;

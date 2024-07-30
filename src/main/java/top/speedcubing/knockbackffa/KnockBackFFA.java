@@ -52,6 +52,7 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.Projectil
 import top.speedcubing.knockbackffa.games.tag.commands.TagGameCommand;
 import top.speedcubing.knockbackffa.games.tag.commands.TagGameListCommand;
 import top.speedcubing.knockbackffa.games.tag.listeners.TagGameListener;
+import top.speedcubing.knockbackffa.trollutillisteners.Darts;
 import top.speedcubing.knockbackffa.trollutillisteners.Fireball;
 import top.speedcubing.knockbackffa.trollutillisteners.OceanBow;
 import top.speedcubing.knockbackffa.trollutillisteners.VerticalStick;
@@ -275,6 +276,7 @@ public class KnockBackFFA extends JavaPlugin {
                 new ProjectileListener(this),
                 new Fireball(),
                 new VerticalStick(),
+                new Darts(),
                 new TagGameListener(),
                 new VerticalStickProMax(),
                 new ComboCommand(),
