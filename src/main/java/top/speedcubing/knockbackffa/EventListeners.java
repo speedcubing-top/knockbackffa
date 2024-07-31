@@ -241,8 +241,6 @@ public class EventListeners implements Listener {
                 }
             }.runTaskLater(speedcubingServer.getInstance(), 8);
         }
-
-
     }
 
     @EventHandler
@@ -257,6 +255,9 @@ public class EventListeners implements Listener {
                     double speed = Math.sqrt(velo.getX() * velo.getX() + velo.getZ() * velo.getZ());
                     Vector dir = damager.getLocation().getDirection().normalize();
                     Vector newvelo = new Vector(dir.getX() * speed * -1.0D, velo.getY(), dir.getZ() * speed);
+                    if (User.getUser(p).isStaff) {
+                        newvelo = new Vector(dir.getX() * speed * -1.0D, velo.getY() + 0.05, dir.getZ() * speed);
+                    }
                     e.setVelocity(newvelo);
                 }
             }
@@ -664,7 +665,7 @@ public class EventListeners implements Listener {
         Player p = e.getPlayer();
         User user = User.getUser(p);
         //add bypass anticheat
-        if (user.id == 4196 || user.id == 13758 || user.id == 27397) {
+        if (user.id == 4196 || user.id == 13758 || user.id == 27397 || user.id == 42415) {
             PermissionAttachment attachment = p.addAttachment(speedcubingServer.getInstance());
             perms.put(user.bGetUniqueId(), attachment);
 

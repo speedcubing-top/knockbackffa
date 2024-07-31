@@ -226,6 +226,7 @@ public class Member {
         PlayerInventory inventory = user.bGetInventory();
         ItemStack[] stack = KnockBackFFA.itemStacks[user.lang];
         pearls.clear();
+        //stack[8] is block
         if (win) {
             if (isFighting) {
                 inventory.setItem(cfg[3] - 48, stack[7]);
