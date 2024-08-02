@@ -29,7 +29,7 @@ public class Darts implements Listener {
 
         if (cooldowns.containsKey(playerId)) {
             long lastUse = cooldowns.get(playerId);
-            if (System.currentTimeMillis() - lastUse < 500) {
+            if (System.currentTimeMillis() - lastUse < 450) {
                 return;
             }
         }
@@ -93,7 +93,9 @@ public class Darts implements Listener {
                                     player.damage(0);
                                 } else {
                                     target.damage(1);
-                                    target.setVelocity(direction.multiply(0.14).setY(0.475));
+                                    Vector dir = armorStand.getLocation().getDirection().normalize();
+                                    Vector newvelo = new Vector(dir.getX() * 0.2, 0.475, dir.getZ() * 0.2);
+                                    target.setVelocity(newvelo);
                                     player.playSound(player.getLocation(), Sound.SUCCESSFUL_HIT, 1, 1);
                                 }
                                 victim.KillTime = System.currentTimeMillis();
