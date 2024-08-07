@@ -273,10 +273,10 @@ public class EventListeners implements Listener {
         if (p.getGameMode() == GameMode.SURVIVAL) {
             if (KnockBackFFA.BlockPlaced.containsKey(block)) {
                 KnockBackFFA.BlockPlaced.remove(block);
-                e.setCancelled(true);
                 block.setType(Material.AIR);
                 member.breakBlock++;
             }
+            e.setCancelled(true);
         }
 
     }
