@@ -1,16 +1,5 @@
 package top.speedcubing.knockbackffa;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.function.Consumer;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
@@ -36,6 +25,7 @@ import top.speedcubing.knockbackffa.commands.KillMyselfCommand;
 import top.speedcubing.knockbackffa.commands.MapViewCommand;
 import top.speedcubing.knockbackffa.commands.ProfileCommand;
 import top.speedcubing.knockbackffa.commands.SendMessageCommand;
+import top.speedcubing.knockbackffa.commands.SetArmorColor;
 import top.speedcubing.knockbackffa.commands.TrollUtilsCommand;
 import top.speedcubing.knockbackffa.commands.VoteCommand;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.commands.CommandSWKillEffect;
@@ -64,6 +54,18 @@ import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.MapManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.function.Consumer;
 
 public class KnockBackFFA extends JavaPlugin {
     private KillEffectManager killEffectManager;
@@ -116,7 +118,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static final Inventory[] KitEditor = new Inventory[4];
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
-    public static final Map<Block, Integer[]> Diff = new HashMap<>();
+    public static final Map<Block, Integer[]> BlockPlaced = new HashMap<>();
 
 
     public static void switchMap(double centerX, double centerZ, double offsetY, float yaw, double holoX, double holoZ, double centerY, String mapName) {
@@ -165,7 +167,8 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Set<PacketPlayOutBlockBreakAnimation> a = new HashSet<>();
             Set<Block> ba = new HashSet<>();
-            for (Map.Entry<Block, Integer[]> x : Diff.entrySet()) {
+            Set<Block> bb = new HashSet<>();
+            for (Map.Entry<Block, Integer[]> x : BlockPlaced.entrySet()) {
                 int age = x.getValue()[1];
                 Block block = x.getKey();
                 a.add(new PacketPlayOutBlockBreakAnimation(x.getValue()[0], new BlockPosition(block.getX(), block.getY(), block.getZ()), age));
@@ -174,9 +177,11 @@ public class KnockBackFFA extends JavaPlugin {
                     ba.add(block);
                 }
             }
+
+
             Bukkit.getOnlinePlayers().forEach(b -> a.forEach(((CraftPlayer) b).getHandle().playerConnection::sendPacket));
-            ba.forEach(Diff::remove);
-            for (Integer[] x : Diff.values()) {
+            ba.forEach(BlockPlaced::remove);
+            for (Integer[] x : BlockPlaced.values()) {
                 x[1] += 1;
             }
         }, 0, 10);
@@ -239,7 +244,7 @@ public class KnockBackFFA extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        KnockBackFFA.Diff.keySet().forEach(a -> Bukkit.getWorld("kbffa").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
+        KnockBackFFA.BlockPlaced.keySet().forEach(a -> Bukkit.getWorld("kbffa").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
         killEffectManager.saveKillEffects();
         projectileEffectManager.saveProjectileEffects();
     }
@@ -260,6 +265,7 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("vote").setExecutor(new VoteCommand());
         getCommand("changemap").setExecutor(new ChangeMapCommand());
         getCommand("combo").setExecutor(new ComboCommand());
+        getCommand("setarmorcolor").setExecutor(new SetArmorColor());
 
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
             if (strings[6] == null) strings[6] = "150";

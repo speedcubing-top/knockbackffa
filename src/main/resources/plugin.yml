@@ -42,4 +42,6 @@ commands:
     usage: /changemap
   combo:
     usage: /combo
+  setarmorcolor:
+    usage: /setarmorcolor
 

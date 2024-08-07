@@ -1,12 +1,5 @@
 package top.speedcubing.knockbackffa;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -40,7 +33,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -84,6 +76,13 @@ import top.speedcubing.server.authenticator.ImageRenderer;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 
 public class EventListeners implements Listener {
@@ -269,16 +268,14 @@ public class EventListeners implements Listener {
         Player p = e.getPlayer();
         Member member = Member.getMember(p);
         Block block = e.getBlock();
-        if (p.getGameMode() == GameMode.CREATIVE) KnockBackFFA.Diff.remove(block);
+        if (p.getGameMode() == GameMode.CREATIVE) KnockBackFFA.BlockPlaced.remove(block);
 
         if (p.getGameMode() == GameMode.SURVIVAL) {
-            if (KnockBackFFA.Diff.containsKey(block)) {
-                KnockBackFFA.Diff.remove(block);
+            if (KnockBackFFA.BlockPlaced.containsKey(block)) {
+                KnockBackFFA.BlockPlaced.remove(block);
                 e.setCancelled(true);
                 block.setType(Material.AIR);
                 member.breakBlock++;
-            } else {
-                e.setCancelled(true);
             }
         }
 
@@ -297,7 +294,7 @@ public class EventListeners implements Listener {
             if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
                 e.setCancelled(true);
             else {
-                KnockBackFFA.Diff.put(block, new Integer[]{KnockBackFFA.id, 0});
+                KnockBackFFA.BlockPlaced.put(block, new Integer[]{KnockBackFFA.id, 0});
                 KnockBackFFA.id++;
             }
         }
@@ -634,7 +631,7 @@ public class EventListeners implements Listener {
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
         member.death(true);
-        member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_dailykill=" + member.dailyKill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak + ",kbffa_blockplace=kbffa_blockplace+" + member.placedBlock + ",kbffa_blockbreak=kbffa_blockbreak+" + member.breakBlock);
+        member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_dailykill=" + member.dailyKill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak + ",kbffa_blockplace=kbffa_blockplace+" + member.placedBlock + ",kbffa_blockbreak=kbffa_blockbreak+" + member.breakBlock + ",kbffa_armorcolor='" + member.armorColor + "'");
         Member.users.remove(member.user.id);
         //remove bypass anticheat
         if (perms.containsKey(e.getPlayer().getUniqueId())) {

@@ -3,9 +3,11 @@ package top.speedcubing.knockbackffa;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,6 +18,7 @@ import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import top.speedcubing.common.database.Database;
@@ -55,18 +58,20 @@ public class Member {
     final Hologram personal;
     int placedBlock;
     int breakBlock;
+    public String armorColor;
 
     public final Hologram[] killBoard = new Hologram[10];
 
     public Member(Player player) {
         this.user = User.getUser(player);
         maxHealPacket = new OutScoreboardScore().a(player.getName()).b(StringList.obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
-        String[] s = user.dbSelect("kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak,kbffa_dailykill").getStringArray();
+        String[] s = user.dbSelect("kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak,kbffa_dailykill,kbffa_armorcolor").getStringArray();
         inventory = s[0];
         kill = Integer.parseInt(s[1]);
         death = Integer.parseInt(s[2]);
         killstreak = Integer.parseInt(s[3]);
         dailyKill = Integer.parseInt(s[4]);
+        armorColor = s[5] == null ? "null" : s[5];
         player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, KnockBackFFA.centerY, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
         player.setLevel(0);
         player.setHealth(20);
@@ -146,8 +151,10 @@ public class Member {
     public void death(boolean quit) {
         isFighting = false;
         boolean killed = System.currentTimeMillis() - this.KillTime < 100000 && Damage != null;
-        if (user.player.hasPotionEffect(PotionEffectType.ABSORPTION)) user.player.removePotionEffect(PotionEffectType.ABSORPTION);
-        if (user.player.hasPotionEffect(PotionEffectType.REGENERATION)) user.player.removePotionEffect(PotionEffectType.REGENERATION);
+        if (user.player.hasPotionEffect(PotionEffectType.ABSORPTION))
+            user.player.removePotionEffect(PotionEffectType.ABSORPTION);
+        if (user.player.hasPotionEffect(PotionEffectType.REGENERATION))
+            user.player.removePotionEffect(PotionEffectType.REGENERATION);
         if (user.player.hasPotionEffect(PotionEffectType.JUMP)) user.player.removePotionEffect(PotionEffectType.JUMP);
         if (killed) {
             Player damager = Damage.user.player;
@@ -247,10 +254,29 @@ public class Member {
             inventory.setItem(cfg[5] - 48, stack[9]);
             inventory.setItem(cfg[6] - 48, stack[10]);
             inventory.setItem(cfg[7] - 48, stack[13]);
-            inventory.setHelmet(stack[0]);
-            inventory.setChestplate(stack[1]);
-            inventory.setLeggings(stack[2]);
-            inventory.setBoots(stack[3]);
+            ItemStack helmet = stack[0].clone();
+            ItemStack chestplate = stack[1].clone();
+            ItemStack leggings = stack[2].clone();
+            ItemStack boots = stack[3].clone();
+            LeatherArmorMeta meta = (LeatherArmorMeta) helmet.getItemMeta();
+            if (armorColor.equals("null") || armorColor.isEmpty())
+                armorColor = "160,101,64|160,101,64|160,101,64|160,101,64";
+            String[] rgb = armorColor.split("\\|");
+            meta.setColor(Color.fromRGB(Integer.parseInt(rgb[0].split(",")[0]), Integer.parseInt(rgb[0].split(",")[1]), Integer.parseInt(rgb[0].split(",")[2])));
+            helmet.setItemMeta(meta);
+            meta = (LeatherArmorMeta) chestplate.getItemMeta();
+            meta.setColor(Color.fromRGB(Integer.parseInt(rgb[1].split(",")[0]), Integer.parseInt(rgb[1].split(",")[1]), Integer.parseInt(rgb[1].split(",")[2])));
+            chestplate.setItemMeta(meta);
+            meta = (LeatherArmorMeta) leggings.getItemMeta();
+            meta.setColor(Color.fromRGB(Integer.parseInt(rgb[2].split(",")[0]), Integer.parseInt(rgb[2].split(",")[1]), Integer.parseInt(rgb[2].split(",")[2])));
+            leggings.setItemMeta(meta);
+            meta = (LeatherArmorMeta) boots.getItemMeta();
+            meta.setColor(Color.fromRGB(Integer.parseInt(rgb[3].split(",")[0]), Integer.parseInt(rgb[3].split(",")[1]), Integer.parseInt(rgb[3].split(",")[2])));
+            boots.setItemMeta(meta);
+            inventory.setHelmet(helmet);
+            inventory.setChestplate(chestplate);
+            inventory.setLeggings(leggings);
+            inventory.setBoots(boots);
         }
         user.bUpdateInventory();
     }
