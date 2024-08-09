@@ -167,7 +167,6 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Set<PacketPlayOutBlockBreakAnimation> a = new HashSet<>();
             Set<Block> ba = new HashSet<>();
-            Set<Block> bb = new HashSet<>();
             for (Map.Entry<Block, Integer[]> x : BlockPlaced.entrySet()) {
                 int age = x.getValue()[1];
                 Block block = x.getKey();

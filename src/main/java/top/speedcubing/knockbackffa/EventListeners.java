@@ -291,6 +291,7 @@ public class EventListeners implements Listener {
             Material old = e.getBlockReplacedState().getType();
             if (block.getY() >= 113 && isRbwMap(KnockBackFFA.currentMapName)) e.setCancelled(true);
             if (block.getY() >= 136 && KnockBackFFA.currentMapName.equals("GAMING")) e.setCancelled(true);
+            if (block.getY() >= 131 && KnockBackFFA.currentMapName.equals("ROMAN_ARENA")) e.setCancelled(true);
             if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
                 e.setCancelled(true);
             else {
