@@ -2,10 +2,11 @@ package top.speedcubing.knockbackffa.utils;
 
 import com.google.gson.Gson;
 
+import com.google.gson.GsonBuilder;
 import java.lang.reflect.Type;
 
-public class SerializeUtils {
-    private static final Gson gson = new Gson();
+public class GsonSerializer {
+    private static final Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
 
     public static String serializeObject(Object obj) {
         return gson.toJson(obj);
