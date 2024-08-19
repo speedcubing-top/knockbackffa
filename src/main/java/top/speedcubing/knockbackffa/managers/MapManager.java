@@ -24,7 +24,7 @@ public class MapManager {
     private static final String SEASONS = "https://i.imgur.com/sSGtu6O.png";
     private static final String FOOTBALL_FIELD = "https://i.imgur.com/s4DyC1X.png";
     private static final String ZABER_THE_BUILDER = "https://i.imgur.com/kCPJtjD.png";
-    //private static final String FROZEN_EARTH = "https://i.imgur.com/MtlkSAa.png";
+    private static final String FROZEN_EARTH = "https://i.imgur.com/MtlkSAa.png";
     private static final String HOT_AIR_BALLOON = "https://i.imgur.com/eQwAkqj.png";
     private static final String INVASION = "";
     private static final String BOX_CITY = "";
@@ -89,8 +89,8 @@ public class MapManager {
                 return "map 4000 4000 100 180 3997.5 3997.5 150";
             case "ZABER_THE_BUILDER":
                 return "map 20000 20000 100 180 19998.5 19998.5 150";
-//            case "FROZEN_EARTH":
-//                return "map 2000 1000 25 -99 2002.5 998.5"; map broken
+            case "FROZEN_EARTH":
+                return "map 5000 5000 100 90 5000.5 4997.5";
             case "HOT_AIR_BALLOON":
                 return "map 2023 1225 50 -45 2026.5 1226.5 150";
             case "INVASION":
