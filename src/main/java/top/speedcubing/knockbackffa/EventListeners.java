@@ -1,5 +1,6 @@
 package top.speedcubing.knockbackffa;
 
+import net.minecraft.server.v1_8_R3.BlockPosition;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -295,7 +296,7 @@ public class EventListeners implements Listener {
             if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
                 e.setCancelled(true);
             else {
-                KnockBackFFA.BlockPlaced.put(block, new Integer[]{KnockBackFFA.id, 0});
+                KnockBackFFA.BlockPlaced.put(new BlockPosition(block.getX(),block.getY(),block.getZ()), new Integer[]{KnockBackFFA.id, 0});
                 KnockBackFFA.id++;
             }
         }

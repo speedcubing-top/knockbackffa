@@ -1,12 +1,13 @@
 package top.speedcubing.knockbackffa;
 
+import com.google.gson.reflect.TypeToken;
+import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -47,6 +48,7 @@ import top.speedcubing.knockbackffa.trollutillisteners.Fireball;
 import top.speedcubing.knockbackffa.trollutillisteners.OceanBow;
 import top.speedcubing.knockbackffa.trollutillisteners.VerticalStick;
 import top.speedcubing.knockbackffa.trollutillisteners.VerticalStickProMax;
+import top.speedcubing.knockbackffa.utils.SerializeUtils;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.events.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
@@ -118,7 +120,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static final Inventory[] KitEditor = new Inventory[4];
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
-    public static final Map<Block, Integer[]> BlockPlaced = new HashMap<>();
+    public static final Map<BlockPosition, Integer[]> BlockPlaced = new HashMap<>();
 
 
     public static void switchMap(double centerX, double centerZ, double offsetY, float yaw, double holoX, double holoZ, double centerY, String mapName) {
@@ -166,13 +168,13 @@ public class KnockBackFFA extends JavaPlugin {
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Set<PacketPlayOutBlockBreakAnimation> a = new HashSet<>();
-            Set<Block> ba = new HashSet<>();
-            for (Map.Entry<Block, Integer[]> x : BlockPlaced.entrySet()) {
+            Set<BlockPosition> ba = new HashSet<>();
+            for (Map.Entry<BlockPosition, Integer[]> x : BlockPlaced.entrySet()) {
                 int age = x.getValue()[1];
-                Block block = x.getKey();
-                a.add(new PacketPlayOutBlockBreakAnimation(x.getValue()[0], new BlockPosition(block.getX(), block.getY(), block.getZ()), age));
+                BlockPosition block = x.getKey();
+                a.add(new PacketPlayOutBlockBreakAnimation(x.getValue()[0], block, age));
                 if (age == 10) {
-                    block.getWorld().getBlockAt(block.getX(), block.getY(), block.getZ()).setType(Material.AIR);
+                    Bukkit.getWorlds().get(0).getBlockAt(block.getX(), block.getY(), block.getZ()).setType(Material.AIR);
                     ba.add(block);
                 }
             }
@@ -239,11 +241,36 @@ public class KnockBackFFA extends JavaPlugin {
             }
         }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
                 tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis(), 86400000);
+
+        //Remove block placed
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+            String bps = Database.connection.select("value").from("settings").where("name='kbffa_blockplaced'").getString();
+            if (bps == null || bps.isEmpty()) {
+                System.out.println("BlockPlaced is empty");
+                return;
+            }
+            System.out.print(bps);
+            Map<BlockPosition, Integer[]> bp = SerializeUtils.deserializeObject(bps, new TypeToken<HashMap<BlockPosition, Integer[]>>() {}.getType());
+            System.out.print(bp);
+            System.out.println("Remove block placed");
+            bp.keySet().forEach(a -> {
+                System.out.println(a + " " + a.getClass());
+            });
+            bp.keySet().forEach(a -> Bukkit.getWorld("kbffa").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
+        }, 60);
     }
 
     @Override
     public void onDisable() {
-        KnockBackFFA.BlockPlaced.keySet().forEach(a -> Bukkit.getWorld("kbffa").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
+        String blockPlacedSerialize = SerializeUtils.serializeObject(BlockPlaced);
+        if (Database.connection.exist("settings", "name='kbffa_blockplaced'")) {
+            Database.connection.update("settings", "value='" + blockPlacedSerialize + "'", "name='kbffa_blockplaced'");
+            System.out.println("BlockPlaced saved");
+        } else {
+            Database.connection.insert("settings", "name,value", "'kbffa_blockplaced','" + blockPlacedSerialize + "'");
+            System.out.println("BlockPlaced inserted");
+        }
+        //KnockBackFFA.BlockPlaced.keySet().forEach(a -> Bukkit.getWorld("kbffa").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
         killEffectManager.saveKillEffects();
         projectileEffectManager.saveProjectileEffects();
     }
