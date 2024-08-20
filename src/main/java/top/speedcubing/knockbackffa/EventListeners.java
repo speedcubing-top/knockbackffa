@@ -12,6 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -309,8 +310,17 @@ public class EventListeners implements Listener {
         if (player.getGameMode() == GameMode.SURVIVAL) {
             Member user = Member.getMember(player);
             Location to = e.getTo();
-            Location corner1 = new Location(player.getWorld(), 948, 134, 976);
-            Location corner2 = new Location(player.getWorld(), 931, 129, 956);
+            Location musicRoomLoc1 = new Location(player.getWorld(), 948, 134, 976);
+            Location musicRoomLoc2 = new Location(player.getWorld(), 931, 129, 956);
+
+            Location yellowLoc1 = new Location(player.getWorld(), 29960, 99, 20062);
+            Location yellowLoc2 = new Location(player.getWorld(), 29958, 102, 20064);
+            Location greenLoc1 = new Location(player.getWorld(), 29960, 99, 19982);
+            Location greenLoc2 = new Location(player.getWorld(), 29958, 102, 19980);
+            Location redLoc1 = new Location(player.getWorld(), 30040, 99, 19982);
+            Location redLoc2 = new Location(player.getWorld(), 30042, 102, 19980);
+            Location blueLoc1 = new Location(player.getWorld(), 30040, 99, 20062);
+            Location blueLoc2 = new Location(player.getWorld(), 30042, 102, 20064);
             if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
@@ -334,9 +344,27 @@ public class EventListeners implements Listener {
             } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5)) {
                 user.death(false);
             }
+            if (KnockBackFFA.currentMapName.equals("F7")) {
+                if (isInRange(player, yellowLoc1, yellowLoc2)) {
+                    player.teleport(new Location(player.getWorld(), 29973.5, 101.5, 20034.5));
+                    player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                }
+                if (isInRange(player, greenLoc1, greenLoc2)) {
+                    player.teleport(new Location(player.getWorld(), 29973.5, 101.5, 20010.5));
+                    player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                }
+                if (isInRange(player, redLoc1, redLoc2)) {
+                    player.teleport(new Location(player.getWorld(), 30027.5, 107.5, 20010.5));
+                    player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                }
+                if (isInRange(player, blueLoc1, blueLoc2)) {
+                    player.teleport(new Location(player.getWorld(), 30027.5, 101.5, 20034.5));
+                    player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                }
+            }
             //idk kys
             if (!User.getUser(player).isStaff && !isYt(player)) {
-                if (isInRange(player, corner1, corner2)) {
+                if (isInRange(player, musicRoomLoc1, musicRoomLoc2)) {
                     user.death(false);
                 }
             }
@@ -745,6 +773,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void witherBreak(EntityChangeBlockEvent e) {
         if (e.getEntity() instanceof Wither) e.setCancelled(true);
+        if (e.getEntity() instanceof EnderDragon) e.setCancelled(true);
     }
 
     //Canceled tnt kill effect damage

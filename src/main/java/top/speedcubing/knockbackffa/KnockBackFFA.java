@@ -1,8 +1,5 @@
 package top.speedcubing.knockbackffa;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
@@ -14,6 +11,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
+
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
@@ -60,12 +58,12 @@ import top.speedcubing.knockbackffa.trollutillisteners.Fireball;
 import top.speedcubing.knockbackffa.trollutillisteners.OceanBow;
 import top.speedcubing.knockbackffa.trollutillisteners.VerticalStick;
 import top.speedcubing.knockbackffa.trollutillisteners.VerticalStickProMax;
-import top.speedcubing.knockbackffa.utils.GsonSerializer;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.events.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.CubingEventManager;
+import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.MapManager;
 
@@ -243,29 +241,38 @@ public class KnockBackFFA extends JavaPlugin {
                 tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis(), 86400000);
 
         //Remove block placed
-        Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
-            String bps = Database.connection.select("value").from("settings").where("name='kbffa_blockplaced'").getString();
-            if (bps == null || bps.isEmpty()) {
-                System.out.println("BlockPlaced is empty");
-                return;
-            }
-            Map<BlockPosition, Integer[]> bp = GsonSerializer.deserializeObject(bps, new TypeToken<HashMap<BlockPosition, Integer[]>>() {
-            }.getType());
-            bp.keySet().forEach(a -> Bukkit.getWorld("kbffa").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
-        }, 60);
+        //WE DON"T NEED THAT LOLOLOLOL
+//        Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+//            String bps = Database.connection.select("value").from("settings").where("name='kbffa_blockplaced'").getString();
+//            if (bps == null || bps.isEmpty()) {
+//                System.out.println("BlockPlaced is empty");
+//                return;
+//            }
+//            Map<BlockPosition, Integer[]> bp = GsonSerializer.deserializeObject(bps, new TypeToken<HashMap<BlockPosition, Integer[]>>() {
+//            }.getType());
+//            bp.keySet().forEach(a -> {
+//                System.out.println(a.getX() + " " + a.getY() + " " + a.getZ());
+//                Bukkit.getWorld("kbffa").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR);
+//            });
+//        }, 60);
     }
 
     @Override
     public void onDisable() {
-        String blockPlacedSerialize = GsonSerializer.serializeObject(BlockPlaced);
-        if (Database.connection.exist("settings", "name='kbffa_blockplaced'")) {
-            Database.connection.update("settings", "value='" + blockPlacedSerialize + "'", "name='kbffa_blockplaced'");
-            System.out.println("BlockPlaced saved");
-        } else {
-            Database.connection.insert("settings", "name,value", "'kbffa_blockplaced','" + blockPlacedSerialize + "'");
-            System.out.println("BlockPlaced inserted");
-        }
-        //KnockBackFFA.BlockPlaced.keySet().forEach(a -> Bukkit.getWorld("kbffa").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR));
+//        String blockPlacedSerialize = GsonSerializer.serializeObject(BlockPlaced);
+//        if (Database.connection.exist("settings", "name='kbffa_blockplaced'")) {
+//            Database.connection.update("settings", "value='" + blockPlacedSerialize + "'", "name='kbffa_blockplaced'");
+//            System.out.println("BlockPlaced saved");
+//        } else {
+//            Database.connection.insert("settings", "name,value", "'kbffa_blockplaced','" + blockPlacedSerialize + "'");
+//            System.out.println("BlockPlaced inserted");
+//        }
+        KnockBackFFA.BlockPlaced.keySet().forEach(a -> {
+            User.getUsers().stream().findFirst().ifPresent(user -> {
+                user.bGetWorld().getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR);
+            });
+
+        });
         killEffectManager.saveKillEffects();
         projectileEffectManager.saveProjectileEffects();
     }
