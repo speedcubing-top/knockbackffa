@@ -345,7 +345,7 @@ public class EventListeners implements Listener {
             } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5)) {
                 user.death(false);
             }
-            if (KnockBackFFA.currentMapName.equals("F7")) {
+            if (KnockBackFFA.currentMapName.equals("CRUSHERS")) {
                 if (isInRange(player, yellowLoc1, yellowLoc2)) {
                     player.teleport(new Location(player.getWorld(), 29973.5, 101.5, 20034.5));
                     player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);

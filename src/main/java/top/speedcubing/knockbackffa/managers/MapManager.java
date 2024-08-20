@@ -30,7 +30,7 @@ public class MapManager {
     private static final String BOX_CITY = "";
     private static final String GAMING = "";
     private static final String ROMAN_ARENA = "";
-    private static final String F7 = "";
+    private static final String CRUSHERS = "";
 
     public static String getMapByName(String mapName) {
         try {
@@ -102,7 +102,7 @@ public class MapManager {
                 return "map 40000 40000 84 0 40000.5 40008.5 150";
             case "ROMAN_ARENA":
                 return "map 6900 6900 108 0 6897.5 6900.5 150";
-            case "F7":
+            case "CRUSHERS":
                 return "map 30000.5 19996.5 70 0 29995.5 20000.5 150";
 
             default:
