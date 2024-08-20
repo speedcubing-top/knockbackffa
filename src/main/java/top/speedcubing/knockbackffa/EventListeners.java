@@ -314,14 +314,14 @@ public class EventListeners implements Listener {
             Location musicRoomLoc1 = new Location(player.getWorld(), 948, 134, 976);
             Location musicRoomLoc2 = new Location(player.getWorld(), 931, 129, 956);
 
-            Location yellowLoc1 = new Location(player.getWorld(), 29960, 99, 20062);
-            Location yellowLoc2 = new Location(player.getWorld(), 29958, 102, 20064);
-            Location greenLoc1 = new Location(player.getWorld(), 29960, 99, 19982);
-            Location greenLoc2 = new Location(player.getWorld(), 29958, 102, 19980);
-            Location redLoc1 = new Location(player.getWorld(), 30040, 99, 19982);
-            Location redLoc2 = new Location(player.getWorld(), 30042, 102, 19980);
-            Location blueLoc1 = new Location(player.getWorld(), 30040, 99, 20062);
-            Location blueLoc2 = new Location(player.getWorld(), 30042, 102, 20064);
+            Location yellowLoc1 = new Location(player.getWorld(), 29960.5, 99, 20062.5);
+            Location yellowLoc2 = new Location(player.getWorld(), 29958.5, 102, 20064.5);
+            Location greenLoc1 = new Location(player.getWorld(), 29960.5, 99, 19982.5);
+            Location greenLoc2 = new Location(player.getWorld(), 29958.5, 102, 19980.5);
+            Location redLoc1 = new Location(player.getWorld(), 30040.5, 99, 19982.5);
+            Location redLoc2 = new Location(player.getWorld(), 30042.5, 102, 19980.5);
+            Location blueLoc1 = new Location(player.getWorld(), 30040.5, 99, 20062.5);
+            Location blueLoc2 = new Location(player.getWorld(), 30042.5, 102, 20064.5);
             if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
