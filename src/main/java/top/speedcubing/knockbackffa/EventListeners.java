@@ -270,11 +270,12 @@ public class EventListeners implements Listener {
         Player p = e.getPlayer();
         Member member = Member.getMember(p);
         Block block = e.getBlock();
-        if (p.getGameMode() == GameMode.CREATIVE) KnockBackFFA.BlockPlaced.remove(block);
+        if (p.getGameMode() == GameMode.CREATIVE)
+            KnockBackFFA.BlockPlaced.remove(new BlockPosition(block.getX(), block.getY(), block.getZ()));
 
         if (p.getGameMode() == GameMode.SURVIVAL) {
-            if (KnockBackFFA.BlockPlaced.containsKey(block)) {
-                KnockBackFFA.BlockPlaced.remove(block);
+            if (KnockBackFFA.BlockPlaced.containsKey(new BlockPosition(block.getX(), block.getY(), block.getZ()))) {
+                KnockBackFFA.BlockPlaced.remove(new BlockPosition(block.getX(), block.getY(), block.getZ()));
                 block.setType(Material.AIR);
                 member.breakBlock++;
             }
@@ -297,7 +298,7 @@ public class EventListeners implements Listener {
             if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
                 e.setCancelled(true);
             else {
-                KnockBackFFA.BlockPlaced.put(new BlockPosition(block.getX(),block.getY(),block.getZ()), new Integer[]{KnockBackFFA.id, 0});
+                KnockBackFFA.BlockPlaced.put(new BlockPosition(block.getX(), block.getY(), block.getZ()), new Integer[]{KnockBackFFA.id, 0});
                 KnockBackFFA.id++;
             }
         }
