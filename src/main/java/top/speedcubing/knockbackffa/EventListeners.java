@@ -260,7 +260,7 @@ public class EventListeners implements Listener {
     public void onVelo(PlayerVelocityEvent e) {
         Player p = e.getPlayer();
         EntityDamageEvent event = p.getLastDamageCause();
-        if (event != null && !event.isCancelled() && event instanceof EntityDamageByEntityEvent) {
+        if (event != null && !event.isCancelled() && event instanceof EntityDamageByEntityEvent && !Member.getMember(p).isUsingTunnel) {
             Entity damager = ((EntityDamageByEntityEvent) event).getDamager();
             if (damager instanceof Arrow) {
                 if (((Arrow) damager).getShooter().equals(p)) {
