@@ -59,6 +59,7 @@ public class Member {
     int placedBlock;
     int breakBlock;
     public String armorColor;
+    public boolean isUsingTunnel = false;
 
     public final Hologram[] killBoard = new Hologram[10];
 

@@ -6,8 +6,8 @@ import org.bukkit.event.HandlerList;
 
 public class KillEffectChangeEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private Player player;
-    private String effectId;
+    private final Player player;
+    private final String effectId;
     public KillEffectChangeEvent(Player player, String effectId) {
         this.player = player;
         this.effectId = effectId;

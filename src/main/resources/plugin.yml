@@ -44,4 +44,6 @@ commands:
     usage: /combo
   setarmorcolor:
     usage: /setarmorcolor
+  myworld:
+    usage: /myworld
 

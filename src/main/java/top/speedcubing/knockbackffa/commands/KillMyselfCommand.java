@@ -12,6 +12,7 @@ public class KillMyselfCommand implements CommandExecutor {
         if (commandSender instanceof Player) {
             Member member = Member.getMember(commandSender);
             if (member.isFighting) {
+                member.isUsingTunnel = false;
                 member.death(false);
             } else {
                 commandSender.sendMessage("You are not fighting");

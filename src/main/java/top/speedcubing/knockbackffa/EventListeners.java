@@ -20,6 +20,7 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
@@ -33,8 +34,10 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -51,6 +54,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -62,6 +66,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
+import top.speedcubing.knockbackffa.api.events.MapSwitchEvent;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
@@ -112,6 +117,9 @@ public class EventListeners implements Listener {
     @EventHandler
     public void onPlayerDeath(FFAPlayerDeathEvent e) {
         Member killer = Member.getMember(e.getKiller());
+        if (Member.getMember(e.getPlayer()).isUsingTunnel) {
+            Member.getMember(e.getPlayer()).isUsingTunnel = false;
+        }
         int newKillstreak = e.getKiller().getLevel() + 1;
         if (isRbwMap(KnockBackFFA.currentMapName)) {
             e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
@@ -286,8 +294,11 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void BlockPlaceEvent(BlockPlaceEvent e) {
+        Member member = Member.getMember(e.getPlayer());
+        if (member.isUsingTunnel) {
+            e.setCancelled(true);
+        }
         if (e.getPlayer().getGameMode() == GameMode.SURVIVAL) {
-            Member member = Member.getMember(e.getPlayer());
             member.placedBlock++;
 
             Block block = e.getBlock();
@@ -303,7 +314,6 @@ public class EventListeners implements Listener {
             }
         }
     }
-
 
     @EventHandler
     public void PlayerMoveEvent(PlayerMoveEvent e) {
@@ -734,6 +744,31 @@ public class EventListeners implements Listener {
     }
 
     @EventHandler
+    public void MapSwitchEvent(MapSwitchEvent e) {
+        KnockBackFFA.clickToggle.despawn();
+        KnockBackFFA.clickToggle
+                .setLocation(KnockBackFFA.holoX, 148.5, KnockBackFFA.holoZ, 0, 0)
+                .world("world")
+                .spawn();
+    }
+
+    @EventHandler
+    public void VehicleExitEvent(VehicleExitEvent e) {
+        if (e.getVehicle() instanceof Minecart && e.getExited() instanceof Player player) {
+            if (Member.getMember(player).isUsingTunnel) {
+                e.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void EntityDeathEvent(EntityDeathEvent e) {
+        if (e.getEntity() instanceof Minecart && KnockBackFFA.currentMapName.equals("CRUSHERS")) {
+            e.getDrops().clear();
+        }
+    }
+
+    @EventHandler
     public void PlayerDropItemEvent(PlayerDropItemEvent e) {
         Player player = e.getPlayer();
         if (player.getGameMode() == GameMode.SURVIVAL) {
@@ -744,8 +779,20 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void PlayerTeleportEvent(PlayerTeleportEvent e) {
+        Member member = Member.getMember(e.getPlayer());
         if (e.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL && e.getTo().getY() >= KnockBackFFA.spawnprotectY)
             e.setCancelled(true);
+        if (member == null) return;
+        if (member.isUsingTunnel) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void PlayerDeathEvent(PlayerDeathEvent e) {
+        if (Member.getMember(e.getEntity().getPlayer()).isUsingTunnel) {
+            Member.getMember(e.getEntity().getPlayer()).isUsingTunnel = false;
+        }
     }
 
     @EventHandler
@@ -787,21 +834,21 @@ public class EventListeners implements Listener {
         }
     }
 
-    private boolean isChampOrStaff(Player p) {
+    private static boolean isChampOrStaff(Player p) {
         User user = User.getUser(p);
         return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
     }
 
-    private boolean isYt(Player p) {
+    private static boolean isYt(Player p) {
         User user = User.getUser(p);
         return "yt".equals(user.displayRank) || "yt".equals(user.realRank) || "ytplus".equals(user.displayRank) || "ytplus".equals(user.realRank);
     }
 
-    private boolean isEquipmentSlot(int rawSlot) {
+    private static boolean isEquipmentSlot(int rawSlot) {
         return rawSlot >= 5 && rawSlot <= 8;
     }
 
-    public boolean isInRange(Player player, Location corner1, Location corner2) {
+    public static boolean isInRange(Player player, Location corner1, Location corner2) {
         Location playerLocation = player.getLocation();
         double minX = Math.min(corner1.getX(), corner2.getX());
         double minY = Math.min(corner1.getY(), corner2.getY());
@@ -815,11 +862,11 @@ public class EventListeners implements Listener {
                 playerLocation.getZ() >= minZ && playerLocation.getZ() <= maxZ;
     }
 
-    public boolean isRbwMap(String s) {
+    public static boolean isRbwMap(String s) {
         return s.equalsIgnoreCase("invasion");
     }
 
-    private boolean isFireballHigherThanPlayer(Location fireballLocation, Location playerLocation) {
+    private static boolean isFireballHigherThanPlayer(Location fireballLocation, Location playerLocation) {
         return fireballLocation.getY() - 1 > playerLocation.getY();
     }
 

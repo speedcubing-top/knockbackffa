@@ -1,39 +1,35 @@
 package top.speedcubing.knockbackffa;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.function.Consumer;
-
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.events.ConfigReloadEvent;
+import top.speedcubing.knockbackffa.api.events.MapSwitchEvent;
 import top.speedcubing.knockbackffa.commands.ChangeMapCommand;
 import top.speedcubing.knockbackffa.commands.ComboCommand;
 import top.speedcubing.knockbackffa.commands.DebugFFACommand;
 import top.speedcubing.knockbackffa.commands.InvSeeCommand;
 import top.speedcubing.knockbackffa.commands.KillMyselfCommand;
 import top.speedcubing.knockbackffa.commands.MapViewCommand;
+import top.speedcubing.knockbackffa.commands.MyWorldCommand;
 import top.speedcubing.knockbackffa.commands.ProfileCommand;
 import top.speedcubing.knockbackffa.commands.SendMessageCommand;
 import top.speedcubing.knockbackffa.commands.SetArmorColor;
@@ -66,6 +62,19 @@ import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.MapManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 public class KnockBackFFA extends JavaPlugin {
     private KillEffectManager killEffectManager;
@@ -107,21 +116,24 @@ public class KnockBackFFA extends JavaPlugin {
     public static String currentMapName = "HOT_AIR_BALLOON";
 
     static final Consumer<ClickEvent> clickEvent = (r) -> Member.getMember(r.getPlayer()).setDisplayType(false);
+    static final Consumer<ClickEvent> tunnelClickEvent = (r) -> tunnel(r.getPlayer());
     public static final String[] board = new String[10];
     public static final String[] dailyBoard = new String[10];
     public static final String[] boardName = new String[10];
     public static final String[] dailyBoardName = new String[10];
     public static final Hologram[] personal = new Hologram[2];
-
+    public static Hologram clickToggle = null;
     public static final ItemStack[] Invalid = new ItemStack[4];
     public static final ItemStack[][] itemStacks = new ItemStack[4][14];
     public static final Inventory[] KitEditor = new Inventory[4];
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
     public static final Map<BlockPosition, Integer[]> BlockPlaced = new HashMap<>();
+    public static KnockBackFFA instance;
 
 
     public static void switchMap(double centerX, double centerZ, double offsetY, float yaw, double holoX, double holoZ, double centerY, String mapName) {
+        String oldMapName = KnockBackFFA.currentMapName;
         KnockBackFFA.centerX = centerX;
         KnockBackFFA.centerY = centerY == 0 ? 150 : centerY;
         KnockBackFFA.centerZ = centerZ;
@@ -132,7 +144,99 @@ public class KnockBackFFA extends JavaPlugin {
         personal[0].setLocation(KnockBackFFA.holoX, personal[0].armorStand.locY, KnockBackFFA.holoZ, 0, 0);
         personal[1].setLocation(KnockBackFFA.holoX, personal[1].armorStand.locY, KnockBackFFA.holoZ, 0, 0);
         KnockBackFFA.currentMapName = mapName;
+        Bukkit.getPluginManager().callEvent(new MapSwitchEvent(oldMapName, mapName));
     }
+
+    public static void tunnel(Player player) {
+        // true = at green
+        Member member = Member.getMember(player);
+        long l = System.currentTimeMillis();
+        if (l - member.lastClick < 60000) {
+            player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+            player.sendMessage("§cYou must wait another §e" + (60 - (l - member.lastClick) / 1000) + "s §cbefore using this!");
+            return;
+        }
+
+        boolean b = EventListeners.isInRange(player, new Location(player.getWorld(), 29978.5, 98, 20005.5), new Location(player.getWorld(), 29968.5, 105, 20015.5));
+        Location spawnLoc = b ? new Location(player.getWorld(), 29973.5, 106, 20010.5) : new Location(player.getWorld(), 30027.5, 106, 20034.5);
+        AtomicInteger stage = new AtomicInteger(0);
+        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                if (stage.get() == 0) {
+                    player.teleport(spawnLoc);
+                    member.isUsingTunnel = true;
+                    stage.set(1);
+                    return;
+                }
+                if (stage.get() != 0 && !member.isUsingTunnel) {
+                    cancel();
+                    return;
+                }
+                Location loc = player.getLocation();
+                switch (stage.get()) {
+                    case 1:
+                        if (loc.getY() < 130) {
+                            player.setVelocity(player.getVelocity().setY(1.5));
+                        } else {
+                            stage.set(2);
+                        }
+                        break;
+
+                    case 2:
+                        if (!b) {
+                            if (loc.getX() > 29973.5) {
+                                player.setVelocity(player.getVelocity().setX(-2).setY(0.04));
+                            } else {
+                                player.setVelocity(player.getVelocity().setX(0).setY(0));
+                                stage.set(3);
+                            }
+                        } else {
+                            if (loc.getZ() < 20034.5) {
+                                player.setVelocity(player.getVelocity().setZ(2).setY(0.04));
+                            } else {
+                                player.setVelocity(player.getVelocity().setZ(0).setY(0));
+                                stage.set(3);
+                            }
+                        }
+                        break;
+
+                    case 3:
+                        if (!b) {
+                            if (loc.getZ() > 20010.5) {
+                                player.setVelocity(player.getVelocity().setZ(-2).setY(0.04));
+                            } else {
+                                player.setVelocity(player.getVelocity().setZ(0).setY(0));
+                                stage.set(4);
+                            }
+                        } else {
+                            if (loc.getX() < 30027.5) {
+                                player.setVelocity(player.getVelocity().setX(2).setY(0.04));
+                            } else {
+                                player.setVelocity(player.getVelocity().setX(0).setY(0));
+                                stage.set(4);
+                            }
+                        }
+                        break;
+
+                    case 4:
+                        if (loc.getY() > 106) {
+                            player.setVelocity(player.getVelocity().setY(-1.5));
+                        } else {
+                            member.isUsingTunnel = false;
+                            player.teleport(new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY() - 4, player.getLocation().getZ()));
+                            cancel();
+                        }
+                        break;
+                }
+            }
+        }.runTaskTimer(KnockBackFFA.instance, 0, 1);
+
+        member.lastClick = l;
+    }
+
 
     @Override
     public void onEnable() {
@@ -142,6 +246,7 @@ public class KnockBackFFA extends JavaPlugin {
         new ConfigReloadEvent().call();
         regitserCommands();
         registerListener();
+        instance = this;
 
         loadVersion();
         saveDefaultConfig();
@@ -224,10 +329,22 @@ public class KnockBackFFA extends JavaPlugin {
                 setLocation(KnockBackFFA.holoX, KnockBackFFA.centerY - 1.8, KnockBackFFA.holoZ, 0, 0).
                 setClickEvent(clickEvent);
 
-        new Hologram("§6§lClick to toggle!", true, true).
+        clickToggle = new Hologram("§6§lClick to toggle!", true, true).
                 setLocation(holoX, 148.5, holoZ, 0, 0).
-                world("kbffa").
-                setClickEvent(clickEvent);
+                world("world").
+                setClickEvent(clickEvent).spawn();
+
+        //blue
+        new Hologram("§6§lTo Green Pipeline", true, true).
+                world("world").
+                setLocation(30027.5, 98, 20034.5, 0, 0).
+                setClickEvent(tunnelClickEvent).spawn();
+
+        //green
+        new Hologram("§6§lTo Blue Pipeline", true, true).
+                world("world").
+                setLocation(29973.5, 98, 20010.5, 0, 0).
+                setClickEvent(tunnelClickEvent).spawn();
 
         Calendar tomorrow = new GregorianCalendar();
         tomorrow.add(Calendar.DATE, 1);
@@ -239,34 +356,10 @@ public class KnockBackFFA extends JavaPlugin {
             }
         }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
                 tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis(), 86400000);
-
-        //Remove block placed
-        //WE DON"T NEED THAT LOLOLOLOL
-//        Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
-//            String bps = Database.connection.select("value").from("settings").where("name='kbffa_blockplaced'").getString();
-//            if (bps == null || bps.isEmpty()) {
-//                System.out.println("BlockPlaced is empty");
-//                return;
-//            }
-//            Map<BlockPosition, Integer[]> bp = GsonSerializer.deserializeObject(bps, new TypeToken<HashMap<BlockPosition, Integer[]>>() {
-//            }.getType());
-//            bp.keySet().forEach(a -> {
-//                System.out.println(a.getX() + " " + a.getY() + " " + a.getZ());
-//                Bukkit.getWorld("kbffa").getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR);
-//            });
-//        }, 60);
     }
 
     @Override
     public void onDisable() {
-//        String blockPlacedSerialize = GsonSerializer.serializeObject(BlockPlaced);
-//        if (Database.connection.exist("settings", "name='kbffa_blockplaced'")) {
-//            Database.connection.update("settings", "value='" + blockPlacedSerialize + "'", "name='kbffa_blockplaced'");
-//            System.out.println("BlockPlaced saved");
-//        } else {
-//            Database.connection.insert("settings", "name,value", "'kbffa_blockplaced','" + blockPlacedSerialize + "'");
-//            System.out.println("BlockPlaced inserted");
-//        }
         KnockBackFFA.BlockPlaced.keySet().forEach(a -> {
             User.getUsers().stream().findFirst().ifPresent(user -> {
                 user.bGetWorld().getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR);
@@ -294,6 +387,7 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("changemap").setExecutor(new ChangeMapCommand());
         getCommand("combo").setExecutor(new ComboCommand());
         getCommand("setarmorcolor").setExecutor(new SetArmorColor());
+        getCommand("myworld").setExecutor(new MyWorldCommand());
 
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
             if (strings[6] == null) strings[6] = "150";
