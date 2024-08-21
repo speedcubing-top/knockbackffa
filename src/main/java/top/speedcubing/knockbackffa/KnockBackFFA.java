@@ -156,7 +156,7 @@ public class KnockBackFFA extends JavaPlugin {
         long l = System.currentTimeMillis();
         if (l - member.lastClick < 30000) {
             player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-            player.sendMessage("§cYou must wait another §e" + (60 - (l - member.lastClick) / 1000) + "s §cbefore using this!");
+            player.sendMessage("§cYou must wait another §e" + (30 - (l - member.lastClick) / 1000) + "s §cbefore using this!");
             return;
         }
 
