@@ -153,14 +153,14 @@ public class KnockBackFFA extends JavaPlugin {
         // true = at green
         Member member = Member.getMember(player);
         long l = System.currentTimeMillis();
-        if (l - member.lastClick < 60000) {
-            player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-            player.sendMessage("§cYou must wait another §e" + (60 - (l - member.lastClick) / 1000) + "s §cbefore using this!");
-            return;
-        }
+//        if (l - member.lastClick < 60000) {
+//            player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+//            player.sendMessage("§cYou must wait another §e" + (60 - (l - member.lastClick) / 1000) + "s §cbefore using this!");
+//            return;
+//        }
 
         boolean b = EventListeners.isInRange(player, new Location(player.getWorld(), 29978.5, 98, 20005.5), new Location(player.getWorld(), 29968.5, 105, 20015.5));
-        Location spawnLoc = b ? new Location(player.getWorld(), 29973.5, 108, 20010.5) : new Location(player.getWorld(), 30027.5, 108, 20034.5);
+        Location spawnLoc = b ? new Location(player.getWorld(), 29973.5, 108, 20010.5, player.getLocation().getYaw(), player.getLocation().getPitch()) : new Location(player.getWorld(), 30027.5, 108, 20034.5, player.getLocation().getYaw(), player.getLocation().getPitch());
         AtomicInteger stage = new AtomicInteger(0);
         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1f, 2f);
         new BukkitRunnable() {
@@ -180,7 +180,7 @@ public class KnockBackFFA extends JavaPlugin {
                 Location loc = player.getLocation();
                 switch (stage.get()) {
                     case 1:
-                        if (loc.getY() < 130) {
+                        if (loc.getY() < 129.5) {
                             player.setVelocity(player.getVelocity().setY(1));
                         } else {
                             stage.set(2);
@@ -190,14 +190,14 @@ public class KnockBackFFA extends JavaPlugin {
                     case 2:
                         if (!b) {
                             if (loc.getX() > 29974.5) {
-                                player.setVelocity(player.getVelocity().setX(-2).setY(0.03));
+                                player.setVelocity(player.getVelocity().setX(-2).setY(0));
                             } else {
                                 player.setVelocity(player.getVelocity().setX(0).setY(0));
                                 stage.set(3);
                             }
                         } else {
                             if (loc.getZ() < 20033.5) {
-                                player.setVelocity(player.getVelocity().setZ(2).setY(0.03));
+                                player.setVelocity(player.getVelocity().setZ(2).setY(0));
                             } else {
                                 player.setVelocity(player.getVelocity().setZ(0).setY(0));
                                 stage.set(3);
@@ -208,14 +208,14 @@ public class KnockBackFFA extends JavaPlugin {
                     case 3:
                         if (!b) {
                             if (loc.getZ() > 20011.5) {
-                                player.setVelocity(player.getVelocity().setZ(-2).setY(0.03));
+                                player.setVelocity(player.getVelocity().setZ(-2).setY(0));
                             } else {
                                 player.setVelocity(player.getVelocity().setZ(0).setY(0));
                                 stage.set(4);
                             }
                         } else {
                             if (loc.getX() < 30026.5) {
-                                player.setVelocity(player.getVelocity().setX(2).setY(0.03));
+                                player.setVelocity(player.getVelocity().setX(2).setY(0));
                             } else {
                                 player.setVelocity(player.getVelocity().setX(0).setY(0));
                                 stage.set(4);
@@ -228,7 +228,7 @@ public class KnockBackFFA extends JavaPlugin {
                             player.setVelocity(player.getVelocity().setY(-1));
                         } else {
                             member.isUsingTunnel = false;
-                            player.teleport(new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY() - 4, player.getLocation().getZ()));
+                            player.teleport(new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY() - 4, player.getLocation().getZ(), player.getLocation().getYaw(), player.getLocation().getPitch()));
                             cancel();
                         }
                         break;

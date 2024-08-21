@@ -336,6 +336,11 @@ public class EventListeners implements Listener {
             Location redLoc2 = new Location(player.getWorld(), 30042.5, 102, 19980.5);
             Location blueLoc1 = new Location(player.getWorld(), 30040.5, 99, 20062.5);
             Location blueLoc2 = new Location(player.getWorld(), 30042.5, 102, 20064.5);
+
+            Location blueTunnelLoc1 = new Location(player.getWorld(), 30030.5, 105, 20037.5);
+            Location blueTunnelLoc2 = new Location(player.getWorld(), 30024.5, 133, 20030.5);
+            Location greenTunnelLoc1 = new Location(player.getWorld(), 29976.5, 105, 20007.5);
+            Location greenTunnelLoc2 = new Location(player.getWorld(), 29970.5, 133, 20013.5);
             if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
@@ -375,6 +380,12 @@ public class EventListeners implements Listener {
                 if (isInRange(player, blueLoc1, blueLoc2)) {
                     player.teleport(new Location(player.getWorld(), 30027.5, 101.5, 20034.5, player.getLocation().getYaw(), player.getLocation().getPitch()));
                     player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                }
+                if (isInRange(player, blueTunnelLoc1, blueTunnelLoc2) && !user.isUsingTunnel && player.getGameMode() == GameMode.SURVIVAL) {
+                    user.death(false);
+                }
+                if (isInRange(player, greenTunnelLoc1, greenTunnelLoc2) && !user.isUsingTunnel && player.getGameMode() == GameMode.SURVIVAL) {
+                    user.death(false);
                 }
             }
             //idk kys
