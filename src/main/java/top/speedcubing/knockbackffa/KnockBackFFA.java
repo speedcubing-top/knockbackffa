@@ -123,6 +123,8 @@ public class KnockBackFFA extends JavaPlugin {
     public static final String[] dailyBoardName = new String[10];
     public static final Hologram[] personal = new Hologram[2];
     public static Hologram clickToggle = null;
+    public static Hologram toBlueTunnel = null;
+    public static Hologram toGreenTunnel = null;
     public static final ItemStack[] Invalid = new ItemStack[4];
     public static final ItemStack[][] itemStacks = new ItemStack[4][14];
     public static final Inventory[] KitEditor = new Inventory[4];
@@ -158,7 +160,7 @@ public class KnockBackFFA extends JavaPlugin {
         }
 
         boolean b = EventListeners.isInRange(player, new Location(player.getWorld(), 29978.5, 98, 20005.5), new Location(player.getWorld(), 29968.5, 105, 20015.5));
-        Location spawnLoc = b ? new Location(player.getWorld(), 29973.5, 106, 20010.5) : new Location(player.getWorld(), 30027.5, 106, 20034.5);
+        Location spawnLoc = b ? new Location(player.getWorld(), 29973.5, 108, 20010.5) : new Location(player.getWorld(), 30027.5, 108, 20034.5);
         AtomicInteger stage = new AtomicInteger(0);
         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1f, 2f);
         new BukkitRunnable() {
@@ -179,7 +181,7 @@ public class KnockBackFFA extends JavaPlugin {
                 switch (stage.get()) {
                     case 1:
                         if (loc.getY() < 130) {
-                            player.setVelocity(player.getVelocity().setY(1.5));
+                            player.setVelocity(player.getVelocity().setY(1));
                         } else {
                             stage.set(2);
                         }
@@ -187,15 +189,15 @@ public class KnockBackFFA extends JavaPlugin {
 
                     case 2:
                         if (!b) {
-                            if (loc.getX() > 29973.5) {
-                                player.setVelocity(player.getVelocity().setX(-2).setY(0.04));
+                            if (loc.getX() > 29974.5) {
+                                player.setVelocity(player.getVelocity().setX(-2).setY(0.03));
                             } else {
                                 player.setVelocity(player.getVelocity().setX(0).setY(0));
                                 stage.set(3);
                             }
                         } else {
-                            if (loc.getZ() < 20034.5) {
-                                player.setVelocity(player.getVelocity().setZ(2).setY(0.04));
+                            if (loc.getZ() < 20033.5) {
+                                player.setVelocity(player.getVelocity().setZ(2).setY(0.03));
                             } else {
                                 player.setVelocity(player.getVelocity().setZ(0).setY(0));
                                 stage.set(3);
@@ -205,15 +207,15 @@ public class KnockBackFFA extends JavaPlugin {
 
                     case 3:
                         if (!b) {
-                            if (loc.getZ() > 20010.5) {
-                                player.setVelocity(player.getVelocity().setZ(-2).setY(0.04));
+                            if (loc.getZ() > 20011.5) {
+                                player.setVelocity(player.getVelocity().setZ(-2).setY(0.03));
                             } else {
                                 player.setVelocity(player.getVelocity().setZ(0).setY(0));
                                 stage.set(4);
                             }
                         } else {
-                            if (loc.getX() < 30027.5) {
-                                player.setVelocity(player.getVelocity().setX(2).setY(0.04));
+                            if (loc.getX() < 30026.5) {
+                                player.setVelocity(player.getVelocity().setX(2).setY(0.03));
                             } else {
                                 player.setVelocity(player.getVelocity().setX(0).setY(0));
                                 stage.set(4);
@@ -223,7 +225,7 @@ public class KnockBackFFA extends JavaPlugin {
 
                     case 4:
                         if (loc.getY() > 106) {
-                            player.setVelocity(player.getVelocity().setY(-1.5));
+                            player.setVelocity(player.getVelocity().setY(-1));
                         } else {
                             member.isUsingTunnel = false;
                             player.teleport(new Location(player.getWorld(), player.getLocation().getX(), player.getLocation().getY() - 4, player.getLocation().getZ()));
@@ -335,13 +337,13 @@ public class KnockBackFFA extends JavaPlugin {
                 setClickEvent(clickEvent).spawn();
 
         //blue
-        new Hologram("§6§lTo Green Pipeline", true, true).
+        toGreenTunnel = new Hologram("§6§lTo Green Pipeline", true, true).
                 world("world").
                 setLocation(30027.5, 98, 20034.5, 0, 0).
                 setClickEvent(tunnelClickEvent).spawn();
 
         //green
-        new Hologram("§6§lTo Blue Pipeline", true, true).
+        toBlueTunnel = new Hologram("§6§lTo Blue Pipeline", true, true).
                 world("world").
                 setLocation(29973.5, 98, 20010.5, 0, 0).
                 setClickEvent(tunnelClickEvent).spawn();

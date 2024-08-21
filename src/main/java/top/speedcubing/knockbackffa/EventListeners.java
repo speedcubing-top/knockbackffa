@@ -120,6 +120,10 @@ public class EventListeners implements Listener {
         if (Member.getMember(e.getPlayer()).isUsingTunnel) {
             Member.getMember(e.getPlayer()).isUsingTunnel = false;
         }
+        KnockBackFFA.toGreenTunnel.despawn();
+        KnockBackFFA.toGreenTunnel.spawn();
+        KnockBackFFA.toBlueTunnel.despawn();
+        KnockBackFFA.toBlueTunnel.spawn();
         int newKillstreak = e.getKiller().getLevel() + 1;
         if (isRbwMap(KnockBackFFA.currentMapName)) {
             e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
@@ -357,19 +361,19 @@ public class EventListeners implements Listener {
             }
             if (KnockBackFFA.currentMapName.equals("CRUSHERS")) {
                 if (isInRange(player, yellowLoc1, yellowLoc2)) {
-                    player.teleport(new Location(player.getWorld(), 29973.5, 101.5, 20034.5));
+                    player.teleport(new Location(player.getWorld(), 29973.5, 101.5, 20034.5, player.getLocation().getYaw(), player.getLocation().getPitch()));
                     player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
                 }
                 if (isInRange(player, greenLoc1, greenLoc2)) {
-                    player.teleport(new Location(player.getWorld(), 29973.5, 101.5, 20010.5));
+                    player.teleport(new Location(player.getWorld(), 29973.5, 101.5, 20010.5, player.getLocation().getYaw(), player.getLocation().getPitch()));
                     player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
                 }
                 if (isInRange(player, redLoc1, redLoc2)) {
-                    player.teleport(new Location(player.getWorld(), 30027.5, 107.5, 20010.5));
+                    player.teleport(new Location(player.getWorld(), 30027.5, 107.5, 20010.5, player.getLocation().getYaw(), player.getLocation().getPitch()));
                     player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
                 }
                 if (isInRange(player, blueLoc1, blueLoc2)) {
-                    player.teleport(new Location(player.getWorld(), 30027.5, 101.5, 20034.5));
+                    player.teleport(new Location(player.getWorld(), 30027.5, 101.5, 20034.5, player.getLocation().getYaw(), player.getLocation().getPitch()));
                     player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
                 }
             }
