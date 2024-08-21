@@ -153,11 +153,11 @@ public class KnockBackFFA extends JavaPlugin {
         // true = at green
         Member member = Member.getMember(player);
         long l = System.currentTimeMillis();
-//        if (l - member.lastClick < 60000) {
-//            player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-//            player.sendMessage("§cYou must wait another §e" + (60 - (l - member.lastClick) / 1000) + "s §cbefore using this!");
-//            return;
-//        }
+        if (l - member.lastClick < 60000) {
+            player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+            player.sendMessage("§cYou must wait another §e" + (60 - (l - member.lastClick) / 1000) + "s §cbefore using this!");
+            return;
+        }
 
         boolean b = EventListeners.isInRange(player, new Location(player.getWorld(), 29978.5, 98, 20005.5), new Location(player.getWorld(), 29968.5, 105, 20015.5));
         Location spawnLoc = b ? new Location(player.getWorld(), 29973.5, 108, 20010.5, player.getLocation().getYaw(), player.getLocation().getPitch()) : new Location(player.getWorld(), 30027.5, 108, 20034.5, player.getLocation().getYaw(), player.getLocation().getPitch());
