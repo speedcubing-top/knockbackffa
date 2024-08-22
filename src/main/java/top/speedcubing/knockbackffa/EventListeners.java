@@ -824,9 +824,9 @@ public class EventListeners implements Listener {
         Entity entity = e.getEntity();
         if (entity.getType() == EntityType.CREEPER || entity.getType() == EntityType.PRIMED_TNT || entity.getType() == EntityType.MINECART_TNT || entity.getType() == EntityType.FIREBALL || entity.getType() == EntityType.WITHER_SKULL || entity.getType() == EntityType.WITHER) {
             entity.getNearbyEntities(5, 5, 5).forEach(a -> {
-                if (a instanceof Player) {
-                    Player player = (Player) a;
-                    player.damage(5);
+                if (a instanceof Player player) {
+                    if (entity.hasMetadata("effectTNT")) return;
+                    player.damage(1);
                 }
             });
             e.setCancelled(true);
