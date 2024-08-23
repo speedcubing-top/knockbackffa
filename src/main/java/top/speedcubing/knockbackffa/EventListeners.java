@@ -10,6 +10,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArrow;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.EnderDragon;
@@ -73,6 +74,7 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.Projectil
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.knockbackffa.managers.MapManager;
 import top.speedcubing.knockbackffa.managers.VoteManager;
+import top.speedcubing.knockbackffa.utils.ItemDamageUtil;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
@@ -503,12 +505,12 @@ public class EventListeners implements Listener {
                 }
             }
         }
-        if (e.getEntity() instanceof ItemFrame && e.getDamager() instanceof Player) {
-            Player player = (Player) e.getDamager();
+        if (e.getEntity() instanceof ItemFrame && e.getDamager() instanceof Player player) {
             if (player.getGameMode() == GameMode.SURVIVAL) {
                 e.setCancelled(true);
             }
-        } else if (e.getEntity() instanceof ItemFrame && e.getDamager() instanceof Arrow || e.getDamager() instanceof TNTPrimed || e.getDamager() instanceof Fireball || e.getDamager() instanceof FishHook
+        }
+        if (e.getEntity() instanceof ItemFrame && e.getDamager() instanceof Arrow || e.getDamager() instanceof TNTPrimed || e.getDamager() instanceof Fireball || e.getDamager() instanceof FishHook
                 || e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg) {
             e.setCancelled(true);
         }
@@ -563,7 +565,7 @@ public class EventListeners implements Listener {
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
                             member.user.sendLangMessage(GlobalString.SavedSettings);
-                            List<Material> t = Arrays.asList(Material.GOLD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.STONE_PICKAXE);
+                            List<Material> t = Arrays.asList(Material.getMaterial(member.weaponId), Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.STONE_PICKAXE);
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
                                     int index = t.indexOf(inv.getItem(i).getType());
@@ -632,7 +634,7 @@ public class EventListeners implements Listener {
             inventory.setItem(4, new ItemStack(Material.AIR));
             ItemStack[] itemStacks = KnockBackFFA.itemStacks[member.user.lang];
             char[] cfg = member.inventory.toCharArray();
-            inventory.setItem(cfg[0] - 48, itemStacks[4]);
+            inventory.setItem(cfg[0] - 48, ItemDamageUtil.setAttackDamage(new ItemBuilder(Material.getMaterial(member.weaponId)).unBreak().ench(Enchantment.DAMAGE_ALL,1).build(), 5.25));
             inventory.setItem(cfg[1] - 48, itemStacks[5]);
             inventory.setItem(cfg[2] - 48, itemStacks[6]);
             inventory.setItem(cfg[3] - 48, itemStacks[7]);
@@ -687,7 +689,7 @@ public class EventListeners implements Listener {
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
         member.death(true);
-        member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_dailykill=" + member.dailyKill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak + ",kbffa_blockplace=kbffa_blockplace+" + member.placedBlock + ",kbffa_blockbreak=kbffa_blockbreak+" + member.breakBlock + ",kbffa_armorcolor='" + member.armorColor + "'");
+        member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_dailykill=" + member.dailyKill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak + ",kbffa_blockplace=kbffa_blockplace+" + member.placedBlock + ",kbffa_blockbreak=kbffa_blockbreak+" + member.breakBlock + ",kbffa_armorcolor='" + member.armorColor + "',kbffa_weapon=" + member.weaponId);
         Member.users.remove(member.user.id);
         //remove bypass anticheat
         if (perms.containsKey(e.getPlayer().getUniqueId())) {

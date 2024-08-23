@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,9 +24,11 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
+import top.speedcubing.knockbackffa.utils.ItemDamageUtil;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.SideBar;
 import top.speedcubing.lib.bukkit.entity.Hologram;
+import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
 import top.speedcubing.server.player.User;
 
@@ -60,6 +63,8 @@ public class Member {
     int breakBlock;
     public String armorColor;
     public boolean isUsingTunnel = false;
+    //weapon selector
+    public int weaponId;
 
     public final Hologram[] killBoard = new Hologram[10];
 
@@ -73,6 +78,7 @@ public class Member {
         killstreak = Integer.parseInt(s[3]);
         dailyKill = Integer.parseInt(s[4]);
         armorColor = s[5] == null ? "null" : s[5];
+        weaponId = user.dbSelect("kbffa_weapon").getInt();
         player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, KnockBackFFA.centerY, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
         player.setLevel(0);
         player.setHealth(20);
@@ -247,7 +253,8 @@ public class Member {
             }
         } else {
             inventory.setItem(4, new ItemStack(Material.AIR));
-            inventory.setItem(cfg[0] - 48, stack[4]);
+            inventory.setItem(cfg[0] - 48, ItemDamageUtil.setAttackDamage(new ItemBuilder(Material.getMaterial(weaponId)).unBreak().ench(Enchantment.DAMAGE_ALL,1).build(), 5.25));
+            //inventory.setItem(cfg[0] - 48, stack[4]);
             inventory.setItem(cfg[1] - 48, stack[5]);
             inventory.setItem(cfg[2] - 48, stack[6]);
             inventory.setItem(cfg[3] - 48, stack[7]);

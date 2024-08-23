@@ -114,7 +114,7 @@ public class GuiKillEffectSelector implements Listener {
                     "§aLightning Kill Effect",
                     "§7Select the Lightning",
                     "§7Kill Effect.",
-                    "§7This change is cosmetic",
+                    "§7This change is cosmetic.",
                     "",
                     (!killEffectManager.hasSelected(p, "LIGHTNING") ? "§eClick to select!" : "§aSELECTED!"));
             inventory.setItem(20, LIGHTNING);
@@ -123,7 +123,7 @@ public class GuiKillEffectSelector implements Listener {
                     "§aLightning Kill Effect",
                     "§7Select the Lightning",
                     "§7Kill Effect.",
-                    "§7This change is cosmetic",
+                    "§7This change is cosmetic.",
                     "",
                     (!killEffectManager.hasSelected(p, "LIGHTNING") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(20, LOCKED_LIGHTNING);
@@ -133,7 +133,7 @@ public class GuiKillEffectSelector implements Listener {
                     "§aLightning Kill Effect",
                     "§7Select the TNT",
                     "§7Kill Effect.",
-                    "§7This change is cosmetic",
+                    "§7This change is cosmetic.",
                     "",
                     (!killEffectManager.hasSelected(p, "TNT") ? "§eClick to select!" : "§aSELECTED!"));
             inventory.setItem(21, TNT);
@@ -152,7 +152,7 @@ public class GuiKillEffectSelector implements Listener {
                     "§aChamp Kill Effect",
                     "§7Select the Champ,",
                     "§7Kill Effect.",
-                    "§7This change is cosmetic",
+                    "§7This change is cosmetic.",
                     "",
                     (!killEffectManager.hasSelected(p,"CHAMP") ? "§eClick to select!" : "§aSELECTED!"));
             inventory.setItem(22, CHAMP);
@@ -161,7 +161,7 @@ public class GuiKillEffectSelector implements Listener {
                     "§aChamp Kill Effect",
                     "§7Select the Champ,",
                     "§7Kill Effect.",
-                    "§7This change is cosmetic",
+                    "§7This change is cosmetic.",
                     "",
                     (!killEffectManager.hasSelected(p,"CHAMP") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(22, LOCKED_CHAMP);

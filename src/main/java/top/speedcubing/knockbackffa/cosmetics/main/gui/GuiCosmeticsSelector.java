@@ -7,7 +7,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -22,15 +21,12 @@ import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManag
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
-import top.speedcubing.lib.bukkit.events.inventory.ClickInventoryEvent;
 import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.server.player.User;
-
-import java.awt.*;
 
 public class GuiCosmeticsSelector implements Listener {
     private KnockBackFFA plugin;
@@ -47,6 +43,13 @@ public class GuiCosmeticsSelector implements Listener {
 
     public void open(Player p) {
         Inventory inventory = Bukkit.createInventory(null, 54, "Cosmetics");
+        ItemStack AXE = new CustomItem(Material.DIAMOND_AXE, 1, "§aWeapon Selector",
+                "§7Click this option",
+                "§7change to Weapon Selector.");
+        ItemMeta meta1 = AXE.getItemMeta();
+        meta1.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        AXE.setItemMeta(meta1);
+        inventory.setItem(13, AXE);
         KillEffect killEffect = killEffectManager.getKillEffect(p);
         if (killEffect != null) {
             killEffectName = killEffect.getName();
@@ -128,6 +131,9 @@ public class GuiCosmeticsSelector implements Listener {
                     if (e.getSlot() == 49) {
                         p.closeInventory();
                     }
+                    if (e.getSlot() == 13) {
+                        openWeaponSelector(p);
+                    }
                     if (e.getSlot() == 21) {
                         plugin.getGuiKillEffectSelector().open(p);
                     }
@@ -142,6 +148,113 @@ public class GuiCosmeticsSelector implements Listener {
         }
     }
 
+    private void openWeaponSelector(Player p) {
+        InventoryBuilder inv = new InventoryBuilder(54, "Weapon Selector");
+        ItemStack grayGlass = new ItemBuilder(Material.STAINED_GLASS_PANE).name(" ").durability(7).build();
+        int id = Member.getMember(p).weaponId;
+        ItemStack woodSword = Material.WOOD_SWORD.getId() == id ? new ItemBuilder(Material.WOOD_SWORD).name("§fWood Sword").glow().lore(
+                        "§7Select the Wood Sword", "§7Weapon.", "§7This change is cosmetic.", "", "§aSELECTED!").hideAttr()
+                .build() : new ItemBuilder(Material.WOOD_SWORD).name("§fWood Sword").lore(
+                "§7Select the Wood Sword", "§7Weapon.", "§7This change is cosmetic.", "", "§eClick to select!").hideAttr().build();
+
+        ItemStack stoneSword = Material.STONE_SWORD.getId() == id ? new ItemBuilder(Material.STONE_SWORD).name("§fStone Sword").glow().lore(
+                "§7Select the Stone Sword", "§7Weapon.", "§7This change is cosmetic.", ""
+                , "§aSELECTED!").hideAttr().build() : new ItemBuilder(Material.STONE_SWORD).name("§fStone Sword").lore(
+                "§7Select the Stone Sword", "§7Weapon.", "§7This change is cosmetic.", "", "§eClick to select!").hideAttr().build();
+
+        ItemStack ironSword = Material.IRON_SWORD.getId() == id ? new ItemBuilder(Material.IRON_SWORD).name("§fIron Sword").glow().lore(
+                "§7Select the Iron Sword", "§7Weapon.", "§7This change is cosmetic.", ""
+                , "§aSELECTED!").hideAttr().build() : new ItemBuilder(Material.IRON_SWORD).name("§fIron Sword").lore(
+                "§7Select the Iron Sword", "§7Weapon.", "§7This change is cosmetic.", "", "§eClick to select!").hideAttr().build();
+
+        ItemStack goldenSwrod = Material.GOLD_SWORD.getId() == id ? new ItemBuilder(Material.GOLD_SWORD).name("§fGolden Sword").glow().lore(
+                "§7Select the Golden Sword", "§7Weapon.", "§7This change is cosmetic.", ""
+                , "§aSELECTED!").hideAttr().build() : new ItemBuilder(Material.GOLD_SWORD).name("§fGolden Sword").lore(
+                "§7Select the Golden Sword", "§7Weapon.", "§7This change is cosmetic.", "", "§eClick to select!").hideAttr().build();
+
+        ItemStack diamondSword = Material.DIAMOND_SWORD.getId() == id ? new ItemBuilder(Material.DIAMOND_SWORD).name("§fDiamond Sword").glow().lore(
+                "§7Select the Diamond Sword", "§7Weapon.", "§7This change is cosmetic.", ""
+                , "§aSELECTED!").hideAttr().build() : new ItemBuilder(Material.DIAMOND_SWORD).name("§fDiamond Sword").lore(
+                "§7Select the Diamond Sword", "§7Weapon.", "§7This change is cosmetic.", "", "§eClick to select!").hideAttr().build();
+
+        inv.setItem(woodSword, (ex) -> {
+            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
+                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
+                return;
+            }
+            Member.getMember(p).weaponId = Material.WOOD_SWORD.getId();
+            p.sendMessage("§aSelected Wood Sword!");
+            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+            openWeaponSelector(p);
+        }, 10);
+
+        inv.setItem(stoneSword, (ex) -> {
+            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
+                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
+                return;
+            }
+            Member.getMember(p).weaponId = Material.STONE_SWORD.getId();
+            p.sendMessage("§aSelected Stone Sword!");
+            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+            openWeaponSelector(p);
+        }, 11);
+
+        inv.setItem(ironSword, (ex) -> {
+            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
+                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
+                return;
+            }
+            Member.getMember(p).weaponId = Material.IRON_SWORD.getId();
+            p.sendMessage("§aSelected Iron Sword!");
+            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+            openWeaponSelector(p);
+        }, 12);
+
+        inv.setItem(goldenSwrod, (ex) -> {
+            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
+                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
+                return;
+            }
+            Member.getMember(p).weaponId = Material.GOLD_SWORD.getId();
+            p.sendMessage("§aSelected Golden Sword!");
+            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+            openWeaponSelector(p);
+        }, 13);
+
+        inv.setItem(diamondSword, (ex) -> {
+            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
+                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
+                return;
+            }
+            Member.getMember(p).weaponId = Material.DIAMOND_SWORD.getId();
+            p.sendMessage("§aSelected Diamond Sword!");
+            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+            openWeaponSelector(p);
+        }, 14);
+
+        for (int i = 0; i < 9; i++) {
+            inv.setItem(grayGlass, i);
+            inv.setItem(grayGlass, i + 45);
+        }
+        for (int i = 0; i < 6; i++) {
+            inv.setItem(grayGlass, i * 9);
+            inv.setItem(grayGlass, i * 9 + 8);
+        }
+        inv.setItem(new ItemBuilder(Material.ARROW).name("§aGo Back").lore("§7Back to Cosmetics Menu").build(), (ex) -> {
+            open(p);
+        }, 45);
+        inv.setItem(new ItemBuilder(Material.BARRIER).name("§cClose").build(), (ex) -> {
+            p.closeInventory();
+        }, 49);
+        inv.setClickable(false);
+        p.openInventory(inv.getInventory());
+    }
+
     private void openArmorSelector(Player p) {
         String armorColor = Member.getMember(p).armorColor.equals("null") ? "default" : Member.getMember(p).armorColor;
         boolean hasColor = !armorColor.equals("default") && !armorColor.isEmpty();
@@ -150,7 +263,7 @@ public class GuiCosmeticsSelector implements Listener {
         ItemStack chestplate;
         ItemStack leggings;
         ItemStack boots;
-        ItemStack back = new ItemBuilder(Material.ARROW).name("§7Back").build();
+        ItemStack back = new ItemBuilder(Material.ARROW).name("§aGo Back").lore("§7Back to Cosmetics Menu").build();
         ItemStack close = new ItemBuilder(Material.BARRIER).name("§cClose").build();
         if (hasColor) {
             String[] colors = armorColor.split("\\|");
