@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ComboCommand implements CommandExecutor, Listener {
-    static Set<Player> comboSet = new HashSet<>();
+    public static Set<Player> comboSet = new HashSet<>();
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) return true;
