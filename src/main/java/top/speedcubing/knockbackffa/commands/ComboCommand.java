@@ -43,9 +43,7 @@ public class ComboCommand implements CommandExecutor, Listener {
     }
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent e) {
-        if (e.getDamager() instanceof Player && e.getEntity() instanceof Player) {
-            Player damager = (Player) e.getDamager();
-            Player target = (Player) e.getEntity();
+        if (e.getDamager() instanceof Player damager && e.getEntity() instanceof Player target) {
             if (comboSet.contains(damager)) {
                 target.setMaximumNoDamageTicks(0);
             } else {

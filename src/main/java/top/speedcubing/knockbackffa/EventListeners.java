@@ -514,6 +514,14 @@ public class EventListeners implements Listener {
                 || e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg) {
             e.setCancelled(true);
         }
+        //test
+        if (e.getEntity() instanceof Player victim && e.getDamager() instanceof Player player) {
+            if (User.getUser(player).uuid.toString().equals("aa6a05e5-bf62-49bd-9d25-7fce00db25c2")) {
+                victim.setMaximumNoDamageTicks(19);
+            } else {
+                victim.setMaximumNoDamageTicks(20);
+            }
+        }
     }
 
     @EventHandler
@@ -839,6 +847,13 @@ public class EventListeners implements Listener {
     public void witherBreak(EntityChangeBlockEvent e) {
         if (e.getEntity() instanceof Wither) e.setCancelled(true);
         if (e.getEntity() instanceof EnderDragon) e.setCancelled(true);
+    }
+    @EventHandler
+    public void onPlayerConsume(PlayerItemConsumeEvent e) {
+        if (e.getItem().getItemMeta().getEnchants().containsKey(Enchantment.DAMAGE_ALL)) {
+            e.setCancelled(true);
+            e.getPlayer().sendMessage("§cWhy you eating your sowrd??!?");
+        }
     }
 
     //Canceled tnt kill effect damage
