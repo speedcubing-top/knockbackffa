@@ -515,14 +515,6 @@ public class EventListeners implements Listener {
                 || e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg) {
             e.setCancelled(true);
         }
-        //test
-        if (e.getEntity() instanceof Player victim && e.getDamager() instanceof Player player) {
-            if (User.getUser(player).uuid.toString().equals("aa6a05e5-bf62-49bd-9d25-7fce00db25c2") && !ComboCommand.comboSet.contains(player)) {
-                victim.setMaximumNoDamageTicks(19);
-            } else {
-                victim.setMaximumNoDamageTicks(20);
-            }
-        }
     }
 
     @EventHandler
