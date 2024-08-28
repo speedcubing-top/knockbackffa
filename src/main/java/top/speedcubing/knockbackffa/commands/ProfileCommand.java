@@ -13,8 +13,7 @@ import top.speedcubing.server.player.User;
 public class ProfileCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
+        if (sender instanceof Player player) {
             if (args.length == 0) {
                 sendFFADataByName(player, User.getUser(player).realName);
                 return true;

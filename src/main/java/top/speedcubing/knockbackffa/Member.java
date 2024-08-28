@@ -162,6 +162,7 @@ public class Member {
             user.player.removePotionEffect(PotionEffectType.ABSORPTION);
         if (user.player.hasPotionEffect(PotionEffectType.REGENERATION))
             user.player.removePotionEffect(PotionEffectType.REGENERATION);
+        user.player.setItemOnCursor(new ItemStack(Material.AIR));
         if (user.player.hasPotionEffect(PotionEffectType.JUMP)) user.player.removePotionEffect(PotionEffectType.JUMP);
         if (killed) {
             Player damager = Damage.user.player;

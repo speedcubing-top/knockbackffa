@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ComboCommand implements CommandExecutor, Listener {
-    public static Set<Player> comboSet = new HashSet<>();
+    static Set<Player> comboSet = new HashSet<>();
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) return true;
@@ -48,7 +48,6 @@ public class ComboCommand implements CommandExecutor, Listener {
                 target.setMaximumNoDamageTicks(0);
             } else {
                 target.setMaximumNoDamageTicks(20);
-                target.setLastDamage(0.25);
             }
         }
     }
