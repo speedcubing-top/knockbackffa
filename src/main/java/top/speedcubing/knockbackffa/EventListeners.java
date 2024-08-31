@@ -305,6 +305,9 @@ public class EventListeners implements Listener {
         if (member.isUsingTunnel) {
             e.setCancelled(true);
         }
+        if (e.getPlayer().getGameMode() != GameMode.CREATIVE && !member.isFighting) {
+            e.setCancelled(true);
+        }
         if (e.getPlayer().getGameMode() == GameMode.SURVIVAL) {
             member.placedBlock++;
 
@@ -325,6 +328,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void PlayerMoveEvent(PlayerMoveEvent e) {
         Player player = e.getPlayer();
+        
         if (player.getGameMode() == GameMode.SURVIVAL) {
             Member user = Member.getMember(player);
             Location to = e.getTo();

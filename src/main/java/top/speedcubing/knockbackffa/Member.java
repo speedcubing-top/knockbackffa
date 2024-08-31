@@ -255,7 +255,6 @@ public class Member {
         } else {
             inventory.setItem(4, new ItemStack(Material.AIR));
             inventory.setItem(cfg[0] - 48, ItemDamageUtil.setAttackDamage(new ItemBuilder(Material.getMaterial(weaponId)).unBreak().ench(Enchantment.DAMAGE_ALL,1).build(), 5.25));
-            //inventory.setItem(cfg[0] - 48, stack[4]);
             inventory.setItem(cfg[1] - 48, stack[5]);
             inventory.setItem(cfg[2] - 48, stack[6]);
             inventory.setItem(cfg[3] - 48, stack[7]);
