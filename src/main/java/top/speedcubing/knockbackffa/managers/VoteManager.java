@@ -6,15 +6,15 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.server.speedcubingServer;
 
 public class VoteManager {
     private static boolean voteStatus = false;
-    private static Map<UUID, String> playerVote = new HashMap<>();
-    private static Map<String, Integer> votesCast = new HashMap<>();
+    private static final Map<UUID, String> playerVote = new HashMap<>();
+    private static final Map<String, Integer> votesCast = new HashMap<>();
 
     public static boolean getVoteStatus() {
         return voteStatus;
@@ -23,7 +23,7 @@ public class VoteManager {
     public static void startVote() {
         setVoteStatus(true);
         Bukkit.getOnlinePlayers().forEach(player -> {
-            TextBuilder textBuilder = new TextBuilder()
+            ComponentText textBuilder = new ComponentText()
                     .str("§eMap Vote in 60s")
                     .both("\n§dClick to vote!", TextClickEvent.runCommand("/vote"), TextHoverEvent.showText("§dCLICK ME!"));
             player.sendMessage(textBuilder.toBungee());

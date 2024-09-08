@@ -1,5 +1,11 @@
 package top.speedcubing.knockbackffa;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -68,7 +74,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
 import top.speedcubing.knockbackffa.api.events.MapSwitchEvent;
-import top.speedcubing.knockbackffa.commands.ComboCommand;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
@@ -79,20 +84,12 @@ import top.speedcubing.knockbackffa.utils.ItemDamageUtil;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
-import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.server.authenticator.ImageRenderer;
-import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 
 
 public class EventListeners implements Listener {
@@ -223,7 +220,7 @@ public class EventListeners implements Listener {
         Player player = e.getPlayer();
         if (!VoteManager.getVoteStatus()) return;
         if (VoteManager.isPlayerVoted(player)) return;
-        TextBuilder textBuilder = new TextBuilder()
+        ComponentText textBuilder = new ComponentText()
                 .str("§eMap Voting!")
                 .both("\n§dClick to vote!", TextClickEvent.runCommand("/vote"), TextHoverEvent.showText("§dCLICK ME!"));
         player.sendMessage(textBuilder.toBungee());
@@ -328,7 +325,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void PlayerMoveEvent(PlayerMoveEvent e) {
         Player player = e.getPlayer();
-        
+
         if (player.getGameMode() == GameMode.SURVIVAL) {
             Member user = Member.getMember(player);
             Location to = e.getTo();
@@ -569,7 +566,7 @@ public class EventListeners implements Listener {
                         member.user.sound(Sound.CLICK);
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
-                            member.user.sendLangMessage(GlobalString.SavedSettings);
+                            member.user.sendMessage("%lang_general_saved_setting%");
                             List<Material> t = Arrays.asList(Material.getMaterial(member.weaponId), Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.STONE_PICKAXE);
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
@@ -617,7 +614,7 @@ public class EventListeners implements Listener {
             Member member = Member.getMember(player);
             if (member.iseditingkit) {
                 member.iseditingkit = false;
-                member.user.sendLangMessage(GlobalString.UnSavedSettings);
+                member.user.sendMessage("%lang_inventory_discard%");
                 Inventory inventory = player.getInventory();
                 inventory.clear();
                 inventory.setItem(4, KnockBackFFA.itemStacks[member.user.lang][11]);
@@ -639,7 +636,7 @@ public class EventListeners implements Listener {
             inventory.setItem(4, new ItemStack(Material.AIR));
             ItemStack[] itemStacks = KnockBackFFA.itemStacks[member.user.lang];
             char[] cfg = member.inventory.toCharArray();
-            inventory.setItem(cfg[0] - 48, ItemDamageUtil.setAttackDamage(new ItemBuilder(Material.getMaterial(member.weaponId)).unBreak().ench(Enchantment.DAMAGE_ALL,1).build(), 5.25));
+            inventory.setItem(cfg[0] - 48, ItemDamageUtil.setAttackDamage(new ItemBuilder(Material.getMaterial(member.weaponId)).unBreak().ench(Enchantment.DAMAGE_ALL, 1).build(), 5.25));
             inventory.setItem(cfg[1] - 48, itemStacks[5]);
             inventory.setItem(cfg[2] - 48, itemStacks[6]);
             inventory.setItem(cfg[3] - 48, itemStacks[7]);
@@ -845,6 +842,7 @@ public class EventListeners implements Listener {
         if (e.getEntity() instanceof Wither) e.setCancelled(true);
         if (e.getEntity() instanceof EnderDragon) e.setCancelled(true);
     }
+
     @EventHandler
     public void onPlayerConsume(PlayerItemConsumeEvent e) {
         if (e.getItem().getItemMeta().getEnchants().containsKey(Enchantment.DAMAGE_ALL)) {

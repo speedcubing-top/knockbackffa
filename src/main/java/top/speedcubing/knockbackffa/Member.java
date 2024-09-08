@@ -3,7 +3,6 @@ package top.speedcubing.knockbackffa;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
@@ -30,6 +29,7 @@ import top.speedcubing.lib.bukkit.SideBar;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
+import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.player.User;
 
 public class Member {
@@ -129,12 +129,16 @@ public class Member {
         if (l - lastClick > 1000) {
             displayType = !displayType;
             a();
+            String dailyTitle = Lang.of("%lang_kbffa_daily_title%").getString(user.lang);
+            String lifetimetitle = Lang.of("%lang_kbffa_lifetime_title%").getString(user.lang);
+            String type = Lang.of("%lang_kbffa_holo_switch%").getString(user.lang);
+            String type2 = Lang.of("%lang_kbffa_holo_switch%2").getString(user.lang);
             if (spawn) {
-                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? StringList.title2.get(user.lang) : StringList.title.get(user.lang)).spawn().setListener();
-                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? StringList.type2.get(user.lang) : StringList.type.get(user.lang)).spawn().setListener();
+                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? lifetimetitle : dailyTitle).spawn().setListener();
+                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? type2 : type).spawn().setListener();
             } else {
-                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? StringList.title2.get(user.lang) : StringList.title.get(user.lang)).setListener();
-                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? StringList.type2.get(user.lang) : StringList.type.get(user.lang)).setListener();
+                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? lifetimetitle : dailyTitle).setListener();
+                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? type2 : type).setListener();
             }
             updatePlayerPos(spawn);
             lastClick = l;
@@ -172,8 +176,8 @@ public class Member {
 
             double heal = damager.getHealth() / 2;
             String color = heal > 8.5 ? "§a" : (heal > 6.5 ? "§e" : (heal > 4.5 ? "§6" : "§c"));
-            user.sendLangMessage(StringList.died, user.getColorName(false), Damage.user.getColorName(false), color + (int) Math.round(heal));
-            Damage.user.sendLangMessage(StringList.died, user.getColorName(false), Damage.user.getColorName(false), color + (int) Math.round(heal));
+            user.sendMessage("%lang_kbffa_kill%", user.getColorName(false), Damage.user.getColorName(false), color + (int) Math.round(heal));
+            Damage.user.sendMessage("%lang_kbffa_kill%", user.getColorName(false), Damage.user.getColorName(false), color + (int) Math.round(heal));
             SideBar sideBar = SideBar.getSidebar(damager);
             Damage.user.sound(Sound.SUCCESSFUL_HIT);
             damager.setHealth(20);
@@ -188,7 +192,7 @@ public class Member {
             }
             death += 1;
         } else if (!quit)
-            user.sendLangMessage(StringList.diedYourself);
+            user.sendMessage("%lang_kbffa_die%");
         for (Member m : users.values()) {
             if (m.Damage == this)
                 m.Damage = null;
@@ -223,14 +227,13 @@ public class Member {
     public void updatePlayerPos(boolean spawn) {
         personal.setName(
                 (displayType ? kill : dailyKill) == 0 ?
-                        StringList.noData.get(user.lang) :
-                        KnockBackFFA.bold(
-                                StringList.leaderboard.replace("%i%", Integer.toString(
-                                                Database.connection.select("COUNT(*)").from("playersdata")
-                                                        .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
-                                                        .getInt() + 1))
-                                        .replace("%j%", user.getPrefixName(false))
-                                        .replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
+                        Lang.of("%lang_leaderboard_nodata%").getString(user.lang) :
+                        KnockBackFFA.bold(StringList.leaderboard.replace("%i%", Integer.toString(
+                                        Database.connection.select("COUNT(*)").from("playersdata")
+                                                .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
+                                                .getInt() + 1))
+                                .replace("%j%", user.getPrefixName(false))
+                                .replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
         if (spawn)
             personal.spawn();
     }
@@ -254,7 +257,7 @@ public class Member {
             }
         } else {
             inventory.setItem(4, new ItemStack(Material.AIR));
-            inventory.setItem(cfg[0] - 48, ItemDamageUtil.setAttackDamage(new ItemBuilder(Material.getMaterial(weaponId)).unBreak().ench(Enchantment.DAMAGE_ALL,1).build(), 5.25));
+            inventory.setItem(cfg[0] - 48, ItemDamageUtil.setAttackDamage(new ItemBuilder(Material.getMaterial(weaponId)).unBreak().ench(Enchantment.DAMAGE_ALL, 1).build(), 5.25));
             inventory.setItem(cfg[1] - 48, stack[5]);
             inventory.setItem(cfg[2] - 48, stack[6]);
             inventory.setItem(cfg[3] - 48, stack[7]);

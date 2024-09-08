@@ -24,7 +24,7 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.Projectil
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
-import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.server.player.User;
@@ -407,7 +407,7 @@ public class GuiCosmeticsSelector implements Listener {
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new TextBuilder().both("§eClick here to set your armor color."
+                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
                         , TextClickEvent.suggestCommand("/setarmorcolor 1 <R>,<G>,<B>")
                         , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
@@ -425,7 +425,7 @@ public class GuiCosmeticsSelector implements Listener {
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new TextBuilder().both("§eClick here to set your armor color."
+                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
                         , TextClickEvent.suggestCommand("/setarmorcolor 2 <R>,<G>,<B>")
                         , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
@@ -443,7 +443,7 @@ public class GuiCosmeticsSelector implements Listener {
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new TextBuilder().both("§eClick here to set your armor color."
+                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
                         , TextClickEvent.suggestCommand("/setarmorcolor 3 <R>,<G>,<B>")
                         , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
@@ -461,7 +461,7 @@ public class GuiCosmeticsSelector implements Listener {
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new TextBuilder().both("§eClick here to set your armor color."
+                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
                         , TextClickEvent.suggestCommand("/setarmorcolor 4 <R>,<G>,<B>")
                         , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
@@ -487,6 +487,7 @@ public class GuiCosmeticsSelector implements Listener {
         User user = User.getUser(p);
         return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
     }
+
     private static ItemStack weaponGenerator(int weaponId, Material weapon, String name) {
         return weaponId == weapon.getId() ? new ItemBuilder(weapon).name(name).glow().lore(
                 "§7Select the " + ChatColor.stripColor(name), "§7Weapon.", "§7This change is cosmetic.", ""

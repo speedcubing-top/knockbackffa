@@ -7,12 +7,13 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.events.ConfigReloadEvent;
 import top.speedcubing.common.events.CubingTickEvent;
 import top.speedcubing.common.rank.Rank;
+import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.lib.bukkit.events.packet.PlayInEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.events.player.ToggleFlyEvent;
-import top.speedcubing.server.lang.GlobalString;
+import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.share.Chat;
 
 public class ServerEvent {
@@ -77,7 +78,8 @@ public class ServerEvent {
             String message = ((PacketPlayInChat) e.getPacket()).a();
             if (message.charAt(0) != '/') {
                 e.setCancelled(true);
-                Chat.globalChat(Bukkit.getOnlinePlayers(), e.getPlayer(), GlobalString.MessageFormat, message, Member.getMember(e.getPlayer()).user.getPrefixName(false), Member.getMember(e.getPlayer()).user.getChatColor(false));
+                RankFormat format = Member.getMember(e.getPlayer()).user.getFormat(false);
+                Chat.globalChat(Bukkit.getOnlinePlayers(), e.getPlayer(), Lang.of("%lang_message_format%"), message, format.getPrefix() + e.getPlayer().getName(), format.getChatColor());
             }
         }
     }
@@ -85,18 +87,18 @@ public class ServerEvent {
     @CubingEventHandler
     public void nickEvent(NickEvent e) {
         e.setCancelled(true);
-        Member.getMember(e.getPlayer()).user.sendLangMessage(GlobalString.OnlyInHub);
+        Member.getMember(e.getPlayer()).user.sendMessage("%lang_general_lobby_only%");
     }
 
     @CubingEventHandler
     public void skinEvent(SkinEvent e) {
         e.setCancelled(true);
-        Member.getMember(e.getPlayer()).user.sendLangMessage(GlobalString.OnlyInHub);
+        Member.getMember(e.getPlayer()).user.sendMessage("%lang_general_lobby_only%");
     }
 
     @CubingEventHandler
     public void toggleFlyEvent(ToggleFlyEvent e) {
         e.setCancelled(true);
-        Member.getMember(e.getPlayer()).user.sendLangMessage(GlobalString.OnlyInHub);
+        Member.getMember(e.getPlayer()).user.sendMessage("%lang_general_lobby_only%");
     }
 }
