@@ -1,4 +1,4 @@
-package top.speedcubing.knockbackffa;
+package top.speedcubing.knockbackffa.original.list;
 
 public class StringList {
     public static final String obj = "§c❤";

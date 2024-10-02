@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.knockbackffa.api.events.ProjectileEffectChangeEvent;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectChamp;

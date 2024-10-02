@@ -7,7 +7,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.server.speedcubingServer;
 
 public class ProjectileEffectEgg extends ProjectileEffect {

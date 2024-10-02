@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;

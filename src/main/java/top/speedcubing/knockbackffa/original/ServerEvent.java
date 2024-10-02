@@ -1,4 +1,4 @@
-package top.speedcubing.knockbackffa;
+package top.speedcubing.knockbackffa.original;
 
 import net.minecraft.server.v1_8_R3.PacketPlayInChat;
 import org.bukkit.Bukkit;
@@ -8,6 +8,7 @@ import top.speedcubing.common.events.ConfigReloadEvent;
 import top.speedcubing.common.events.CubingTickEvent;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
+import top.speedcubing.knockbackffa.original.list.StringList;
 import top.speedcubing.lib.bukkit.events.packet.PlayInEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.server.events.player.NickEvent;
@@ -20,13 +21,13 @@ public class ServerEvent {
 
     @CubingEventHandler
     public void configReloadEvent(ConfigReloadEvent e) {
-        KnockBackFFA.centerX = ServerConfig.config.getAsJsonObject("defaultkbffa").get("x").getAsDouble();
-        KnockBackFFA.centerZ = ServerConfig.config.getAsJsonObject("defaultkbffa").get("z").getAsDouble();
-        KnockBackFFA.offsetY = ServerConfig.config.getAsJsonObject("defaultkbffa").get("y").getAsDouble();
-        KnockBackFFA.yaw = ServerConfig.config.getAsJsonObject("defaultkbffa").get("yaw").getAsFloat();
-        KnockBackFFA.holoX = ServerConfig.config.getAsJsonObject("defaultkbffa").get("holox").getAsDouble();
-        KnockBackFFA.holoZ = ServerConfig.config.getAsJsonObject("defaultkbffa").get("holoz").getAsDouble();
-        KnockBackFFA.spawnprotectY = ServerConfig.config.getAsJsonObject("defaultkbffa").get("spawnproty").getAsInt();
+        Configuration.centerX = ServerConfig.config.getAsJsonObject("defaultkbffa").get("x").getAsDouble();
+        Configuration.centerZ = ServerConfig.config.getAsJsonObject("defaultkbffa").get("z").getAsDouble();
+        Configuration.offsetY = ServerConfig.config.getAsJsonObject("defaultkbffa").get("y").getAsDouble();
+        Configuration.yaw = ServerConfig.config.getAsJsonObject("defaultkbffa").get("yaw").getAsFloat();
+        Configuration.holoX = ServerConfig.config.getAsJsonObject("defaultkbffa").get("holox").getAsDouble();
+        Configuration.holoZ = ServerConfig.config.getAsJsonObject("defaultkbffa").get("holoz").getAsDouble();
+        Configuration.spawnprotectY = ServerConfig.config.getAsJsonObject("defaultkbffa").get("spawnproty").getAsInt();
     }
 
     @CubingEventHandler

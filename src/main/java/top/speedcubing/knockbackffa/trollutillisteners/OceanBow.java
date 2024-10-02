@@ -11,7 +11,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
-import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.server.speedcubingServer;
 
 public class OceanBow implements Listener {
