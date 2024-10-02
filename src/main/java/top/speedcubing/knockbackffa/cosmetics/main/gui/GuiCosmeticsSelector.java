@@ -30,11 +30,9 @@ import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.server.player.User;
 
 public class GuiCosmeticsSelector implements Listener {
-    private KnockBackFFA plugin;
-    private KillEffectManager killEffectManager;
-    private ProjectileEffectManager projectileEffectManager;
-    private String killEffectName;
-    private String projectileEffectName;
+    private final KnockBackFFA plugin;
+    private final KillEffectManager killEffectManager;
+    private final ProjectileEffectManager projectileEffectManager;
 
     public GuiCosmeticsSelector(KnockBackFFA plugin, KillEffectManager killEffectManager, ProjectileEffectManager projectileEffectManager) {
         this.plugin = plugin;
@@ -52,6 +50,7 @@ public class GuiCosmeticsSelector implements Listener {
         AXE.setItemMeta(meta1);
         inventory.setItem(13, AXE);
         KillEffect killEffect = killEffectManager.getKillEffect(p);
+        String killEffectName;
         if (killEffect != null) {
             killEffectName = killEffect.getName();
         } else {
@@ -89,6 +88,7 @@ public class GuiCosmeticsSelector implements Listener {
         inventory.setItem(22, ARMOR);
 
         ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(p);
+        String projectileEffectName;
         if (projectileEffect != null) {
             projectileEffectName = projectileEffect.getName();
         } else {
@@ -320,12 +320,8 @@ public class GuiCosmeticsSelector implements Listener {
             inv.setItem(grayGlass, i * 9);
             inv.setItem(grayGlass, i * 9 + 8);
         }
-        inv.setItem(new ItemBuilder(Material.ARROW).name("§aGo Back").lore("§7Back to Cosmetics Menu").build(), (ex) -> {
-            open(p);
-        }, 45);
-        inv.setItem(new ItemBuilder(Material.BARRIER).name("§cClose").build(), (ex) -> {
-            p.closeInventory();
-        }, 49);
+        inv.setItem(new ItemBuilder(Material.ARROW).name("§aGo Back").lore("§7Back to Cosmetics Menu").build(), (ex) -> open(p), 45);
+        inv.setItem(new ItemBuilder(Material.BARRIER).name("§cClose").build(), (ex) -> p.closeInventory(), 49);
         inv.setClickable(false);
         p.openInventory(inv.getInventory());
     }
@@ -473,12 +469,8 @@ public class GuiCosmeticsSelector implements Listener {
             }
         }, 3);
 
-        builder.setItem(back, (ex) -> {
-            plugin.getGuiCosmeticsSelector().open(p);
-        }, 7);
-        builder.setItem(close, (ex) -> {
-            p.closeInventory();
-        }, 8);
+        builder.setItem(back, (ex) -> plugin.getGuiCosmeticsSelector().open(p), 7);
+        builder.setItem(close, (ex) -> p.closeInventory(), 8);
         builder.setClickable(false);
         p.openInventory(builder.getInventory());
     }

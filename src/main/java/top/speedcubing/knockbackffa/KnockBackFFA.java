@@ -165,7 +165,6 @@ public class KnockBackFFA extends JavaPlugin {
         AtomicInteger stage = new AtomicInteger(0);
         player.playSound(player.getLocation(), Sound.NOTE_PLING, 1f, 2f);
         new BukkitRunnable() {
-
             @Override
             public void run() {
                 if (stage.get() == 0) {
