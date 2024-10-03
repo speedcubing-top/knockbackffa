@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import top.speedcubing.knockbackffa.Member;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,8 +16,7 @@ public class ComboCommand implements CommandExecutor, Listener {
     static Set<Player> comboSet = new HashSet<>();
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player)) return true;
-        Player p = (Player) sender;
+        if (!(sender instanceof Player p)) return true;
         if (args.length == 0) {
             p.sendMessage("§cUsage: /combo <player>");
             return true;
