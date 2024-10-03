@@ -24,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
-import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ParticleEffect;
 import top.speedcubing.server.speedcubingServer;

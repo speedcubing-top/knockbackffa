@@ -1,5 +1,11 @@
-package top.speedcubing.knockbackffa;
+package top.speedcubing.knockbackffa.original;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,7 +15,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArrow;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
@@ -68,37 +73,29 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
 import top.speedcubing.knockbackffa.api.events.MapSwitchEvent;
-import top.speedcubing.knockbackffa.commands.ComboCommand;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.knockbackffa.managers.MapManager;
 import top.speedcubing.knockbackffa.managers.VoteManager;
-import top.speedcubing.knockbackffa.utils.ItemDamageUtil;
+import top.speedcubing.knockbackffa.original.list.EntityList;
+import top.speedcubing.knockbackffa.original.list.ItemList;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
-import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.server.authenticator.ImageRenderer;
-import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 
 
 public class EventListeners implements Listener {
     private final KillEffectManager killEffectManager;
     private final ProjectileEffectManager projectileEffectManager;
-    HashMap<UUID, PermissionAttachment> perms = new HashMap<UUID, PermissionAttachment>();
+    HashMap<UUID, PermissionAttachment> perms = new HashMap<>();
 
     public EventListeners(KillEffectManager killEffectManager, ProjectileEffectManager projectileEffectManager) {
         this.killEffectManager = killEffectManager;
@@ -120,18 +117,18 @@ public class EventListeners implements Listener {
     @EventHandler
     public void onPlayerDeath(FFAPlayerDeathEvent e) {
         Member killer = Member.getMember(e.getKiller());
-        if (Member.getMember(e.getPlayer()).isUsingTunnel) {
-            Member.getMember(e.getPlayer()).isUsingTunnel = false;
-        }
-        KnockBackFFA.toGreenTunnel.despawn();
-        KnockBackFFA.toGreenTunnel.spawn();
-        KnockBackFFA.toBlueTunnel.despawn();
-        KnockBackFFA.toBlueTunnel.spawn();
+
+        Member.getMember(e.getPlayer()).isUsingTunnel = false;
+
+        EntityList.toGreenTunnel.despawn();
+        EntityList.toGreenTunnel.spawn();
+        EntityList.toBlueTunnel.despawn();
+        EntityList.toBlueTunnel.spawn();
         int newKillstreak = e.getKiller().getLevel() + 1;
         if (isRbwMap(KnockBackFFA.currentMapName)) {
             e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
             if (newKillstreak % 10 == 0) {
-                ItemBuilder jump = new ItemBuilder(Material.POTION).name("§aJump Boost").addPotion(new PotionEffect(PotionEffectType.JUMP, 200, 4));
+                ItemBuilder jump = new ItemBuilder(Material.POTION).name("§aJump Boost").potion(PotionEffectType.JUMP, 200, 4);
                 e.getKiller().getInventory().addItem(jump.build());
             }
         }
@@ -223,7 +220,7 @@ public class EventListeners implements Listener {
         Player player = e.getPlayer();
         if (!VoteManager.getVoteStatus()) return;
         if (VoteManager.isPlayerVoted(player)) return;
-        TextBuilder textBuilder = new TextBuilder()
+        ComponentText textBuilder = new ComponentText()
                 .str("§eMap Voting!")
                 .both("\n§dClick to vote!", TextClickEvent.runCommand("/vote"), TextHoverEvent.showText("§dCLICK ME!"));
         player.sendMessage(textBuilder.toBungee());
@@ -245,14 +242,14 @@ public class EventListeners implements Listener {
 
         if (!User.getUser(player).isStaff) return;
 
-        if (((CraftArrow) arrow).getKnockbackStrength() == 1) {
-            ((CraftArrow) arrow).setKnockbackStrength(2);
+        if (arrow.getKnockbackStrength() == 1) {
+            arrow.setKnockbackStrength(2);
 
             new BukkitRunnable() {
                 @Override
                 public void run() {
                     if (!arrow.isDead()) {
-                        ((CraftArrow) arrow).setKnockbackStrength(1);
+                        arrow.setKnockbackStrength(1);
                     }
                 }
             }.runTaskLater(speedcubingServer.getInstance(), 8);
@@ -316,7 +313,7 @@ public class EventListeners implements Listener {
             if (block.getY() >= 113 && isRbwMap(KnockBackFFA.currentMapName)) e.setCancelled(true);
             if (block.getY() >= 136 && KnockBackFFA.currentMapName.equals("GAMING")) e.setCancelled(true);
             if (block.getY() >= 131 && KnockBackFFA.currentMapName.equals("ROMAN_ARENA")) e.setCancelled(true);
-            if (block.getY() > KnockBackFFA.spawnprotectY || Math.abs(block.getZ() - KnockBackFFA.centerZ) > 500 || Math.abs(block.getX() - KnockBackFFA.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
+            if (block.getY() > Configuration.spawnprotectY || Math.abs(block.getZ() - Configuration.centerZ) > 500 || Math.abs(block.getX() - Configuration.centerX) > 500 || old.equals(Material.STATIONARY_LAVA) || old.equals(Material.LAVA) || old.equals(Material.STATIONARY_WATER) || old.equals(Material.WATER))
                 e.setCancelled(true);
             else {
                 KnockBackFFA.BlockPlaced.put(new BlockPosition(block.getX(), block.getY(), block.getZ()), new Integer[]{KnockBackFFA.id, 0});
@@ -328,7 +325,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void PlayerMoveEvent(PlayerMoveEvent e) {
         Player player = e.getPlayer();
-        
+
         if (player.getGameMode() == GameMode.SURVIVAL) {
             Member user = Member.getMember(player);
             Location to = e.getTo();
@@ -348,7 +345,7 @@ public class EventListeners implements Listener {
             Location blueTunnelLoc2 = new Location(player.getWorld(), 30024.5, 133, 20030.5);
             Location greenTunnelLoc1 = new Location(player.getWorld(), 29976.5, 105, 20007.5);
             Location greenTunnelLoc2 = new Location(player.getWorld(), 29970.5, 133, 20013.5);
-            if (to.getY() < KnockBackFFA.spawnprotectY && !user.isFighting) {
+            if (to.getY() < Configuration.spawnprotectY && !user.isFighting) {
                 user.isFighting = true;
                 user.item(false);
                 player.getInventory().remove(Material.EMERALD);
@@ -368,7 +365,7 @@ public class EventListeners implements Listener {
                     }
                 }
 
-            } else if (to.getY() <= KnockBackFFA.offsetY || (Math.abs(to.getX() - KnockBackFFA.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - KnockBackFFA.centerZ - 0.5) > 499.5)) {
+            } else if (to.getY() <= Configuration.offsetY || (Math.abs(to.getX() - Configuration.centerX - 0.5) > 499.5 || Math.abs(to.getZ() - Configuration.centerZ - 0.5) > 499.5)) {
                 user.death(false);
             }
             if (KnockBackFFA.currentMapName.equals("CRUSHERS")) {
@@ -445,8 +442,8 @@ public class EventListeners implements Listener {
         Collection<Entity> nearbyEntities = world
                 .getNearbyEntities(location, fireballExplosionSize, fireballExplosionSize, fireballExplosionSize);
         for (Entity entity : nearbyEntities) {
-            if (!(entity instanceof Player)) continue;
-            Player player = (Player) entity;
+            if (!(entity instanceof Player player))
+                continue;
 
 
             Vector playerVector = player.getLocation().toVector();
@@ -569,7 +566,7 @@ public class EventListeners implements Listener {
                         member.user.sound(Sound.CLICK);
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
-                            member.user.sendLangMessage(GlobalString.SavedSettings);
+                            member.user.sendMessage("%lang_general_saved_setting%");
                             List<Material> t = Arrays.asList(Material.getMaterial(member.weaponId), Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.STONE_PICKAXE);
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
@@ -578,8 +575,7 @@ public class EventListeners implements Listener {
                                 }
                             }
                             inv.clear();
-                            inv.setItem(4, KnockBackFFA.itemStacks[member.user.lang][11]);
-                            inv.setItem(6, KnockBackFFA.itemStacks[member.user.lang][12]);
+                            member.setHotbarDefault();
                             member.iseditingkit = false;
                             player.closeInventory();
                         } else {
@@ -617,11 +613,10 @@ public class EventListeners implements Listener {
             Member member = Member.getMember(player);
             if (member.iseditingkit) {
                 member.iseditingkit = false;
-                member.user.sendLangMessage(GlobalString.UnSavedSettings);
+                member.user.sendMessage("%lang_inventory_discard%");
                 Inventory inventory = player.getInventory();
                 inventory.clear();
-                inventory.setItem(4, KnockBackFFA.itemStacks[member.user.lang][11]);
-                inventory.setItem(6, KnockBackFFA.itemStacks[member.user.lang][12]);
+                member.setHotbarDefault();
             }
         }
     }
@@ -635,25 +630,13 @@ public class EventListeners implements Listener {
                 return;
             }
             member.user.sound(Sound.CLICK);
-            Inventory inventory = player.getInventory();
-            inventory.setItem(4, new ItemStack(Material.AIR));
-            ItemStack[] itemStacks = KnockBackFFA.itemStacks[member.user.lang];
-            char[] cfg = member.inventory.toCharArray();
-            inventory.setItem(cfg[0] - 48, ItemDamageUtil.setAttackDamage(new ItemBuilder(Material.getMaterial(member.weaponId)).unBreak().ench(Enchantment.DAMAGE_ALL,1).build(), 5.25));
-            inventory.setItem(cfg[1] - 48, itemStacks[5]);
-            inventory.setItem(cfg[2] - 48, itemStacks[6]);
-            inventory.setItem(cfg[3] - 48, itemStacks[7]);
-            inventory.setItem(cfg[4] - 48, itemStacks[8]);
-            inventory.setItem(cfg[5] - 48, itemStacks[9]);
-            inventory.setItem(cfg[6] - 48, itemStacks[10]);
-            inventory.setItem(cfg[7] - 48, itemStacks[13]);
-
+            member.giveHotbarItems(true);
             member.iseditingkit = true;
             player.openInventory(KnockBackFFA.KitEditor[member.user.lang]);
 
             player.getInventory().remove(Material.EMERALD);
 
-            InventoryUtils.fillItem(inventory, 9, 36, KnockBackFFA.Invalid[member.user.lang]);
+            InventoryUtils.fillItem(player.getInventory(), 9, 36, ItemList.invalid.get(1));
         } else if (player.getItemInHand().getType().equals(Material.EMERALD)) {
             KnockBackFFA.getPlugin(KnockBackFFA.class).getGuiCosmeticsSelector().open(player);
             e.setCancelled(true);
@@ -679,7 +662,7 @@ public class EventListeners implements Listener {
         if (player.getItemInHand() != null && player.getItemInHand().getType() == Material.EXPLOSIVE_MINECART) {
             e.setCancelled(true);
         }
-        if (player.getLocation().getY() > KnockBackFFA.spawnprotectY && player.getGameMode() != GameMode.CREATIVE) {
+        if (player.getLocation().getY() > Configuration.spawnprotectY && player.getGameMode() != GameMode.CREATIVE) {
             e.setCancelled(true);
             player.updateInventory();
         }
@@ -767,9 +750,9 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void MapSwitchEvent(MapSwitchEvent e) {
-        KnockBackFFA.clickToggle.despawn();
-        KnockBackFFA.clickToggle
-                .setLocation(KnockBackFFA.holoX, 148.5, KnockBackFFA.holoZ, 0, 0)
+        EntityList.clickToggle.despawn();
+        EntityList.clickToggle
+                .setLocation(Configuration.holoX, 148.5, Configuration.holoZ, 0, 0)
                 .world("world")
                 .spawn();
     }
@@ -802,7 +785,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void PlayerTeleportEvent(PlayerTeleportEvent e) {
         Member member = Member.getMember(e.getPlayer());
-        if (e.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL && e.getTo().getY() >= KnockBackFFA.spawnprotectY)
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL && e.getTo().getY() >= Configuration.spawnprotectY)
             e.setCancelled(true);
         if (member == null) return;
         if (member.isUsingTunnel) {
@@ -845,6 +828,7 @@ public class EventListeners implements Listener {
         if (e.getEntity() instanceof Wither) e.setCancelled(true);
         if (e.getEntity() instanceof EnderDragon) e.setCancelled(true);
     }
+
     @EventHandler
     public void onPlayerConsume(PlayerItemConsumeEvent e) {
         if (e.getItem().getItemMeta().getEnchants().containsKey(Enchantment.DAMAGE_ALL)) {
@@ -891,7 +875,7 @@ public class EventListeners implements Listener {
                 playerLocation.getZ() >= minZ && playerLocation.getZ() <= maxZ;
     }
 
-    public static boolean isRbwMap(String s) {
+    private static boolean isRbwMap(String s) {
         return s.equalsIgnoreCase("invasion");
     }
 

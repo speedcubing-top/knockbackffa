@@ -1,4 +1,4 @@
-package top.speedcubing.knockbackffa;
+package top.speedcubing.knockbackffa.original;
 
 import net.minecraft.server.v1_8_R3.PacketPlayInChat;
 import org.bukkit.Bukkit;
@@ -7,25 +7,27 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.events.ConfigReloadEvent;
 import top.speedcubing.common.events.CubingTickEvent;
 import top.speedcubing.common.rank.Rank;
+import top.speedcubing.common.rank.RankFormat;
+import top.speedcubing.knockbackffa.original.list.StringList;
 import top.speedcubing.lib.bukkit.events.packet.PlayInEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.events.player.ToggleFlyEvent;
-import top.speedcubing.server.lang.GlobalString;
+import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.share.Chat;
 
 public class ServerEvent {
 
     @CubingEventHandler
     public void configReloadEvent(ConfigReloadEvent e) {
-        KnockBackFFA.centerX = ServerConfig.config.getAsJsonObject("defaultkbffa").get("x").getAsDouble();
-        KnockBackFFA.centerZ = ServerConfig.config.getAsJsonObject("defaultkbffa").get("z").getAsDouble();
-        KnockBackFFA.offsetY = ServerConfig.config.getAsJsonObject("defaultkbffa").get("y").getAsDouble();
-        KnockBackFFA.yaw = ServerConfig.config.getAsJsonObject("defaultkbffa").get("yaw").getAsFloat();
-        KnockBackFFA.holoX = ServerConfig.config.getAsJsonObject("defaultkbffa").get("holox").getAsDouble();
-        KnockBackFFA.holoZ = ServerConfig.config.getAsJsonObject("defaultkbffa").get("holoz").getAsDouble();
-        KnockBackFFA.spawnprotectY = ServerConfig.config.getAsJsonObject("defaultkbffa").get("spawnproty").getAsInt();
+        Configuration.centerX = ServerConfig.config.getAsJsonObject("defaultkbffa").get("x").getAsDouble();
+        Configuration.centerZ = ServerConfig.config.getAsJsonObject("defaultkbffa").get("z").getAsDouble();
+        Configuration.offsetY = ServerConfig.config.getAsJsonObject("defaultkbffa").get("y").getAsDouble();
+        Configuration.yaw = ServerConfig.config.getAsJsonObject("defaultkbffa").get("yaw").getAsFloat();
+        Configuration.holoX = ServerConfig.config.getAsJsonObject("defaultkbffa").get("holox").getAsDouble();
+        Configuration.holoZ = ServerConfig.config.getAsJsonObject("defaultkbffa").get("holoz").getAsDouble();
+        Configuration.spawnprotectY = ServerConfig.config.getAsJsonObject("defaultkbffa").get("spawnproty").getAsInt();
     }
 
     @CubingEventHandler
@@ -77,7 +79,8 @@ public class ServerEvent {
             String message = ((PacketPlayInChat) e.getPacket()).a();
             if (message.charAt(0) != '/') {
                 e.setCancelled(true);
-                Chat.globalChat(Bukkit.getOnlinePlayers(), e.getPlayer(), GlobalString.MessageFormat, message, Member.getMember(e.getPlayer()).user.getPrefixName(false), Member.getMember(e.getPlayer()).user.getChatColor(false));
+                RankFormat format = Member.getMember(e.getPlayer()).user.getFormat(false);
+                Chat.globalChat(Bukkit.getOnlinePlayers(), e.getPlayer(), Lang.of("%lang_message_format%"), message, format.getPrefix() + e.getPlayer().getName(), format.getChatColor());
             }
         }
     }
@@ -85,18 +88,18 @@ public class ServerEvent {
     @CubingEventHandler
     public void nickEvent(NickEvent e) {
         e.setCancelled(true);
-        Member.getMember(e.getPlayer()).user.sendLangMessage(GlobalString.OnlyInHub);
+        Member.getMember(e.getPlayer()).user.sendMessage("%lang_general_lobby_only%");
     }
 
     @CubingEventHandler
     public void skinEvent(SkinEvent e) {
         e.setCancelled(true);
-        Member.getMember(e.getPlayer()).user.sendLangMessage(GlobalString.OnlyInHub);
+        Member.getMember(e.getPlayer()).user.sendMessage("%lang_general_lobby_only%");
     }
 
     @CubingEventHandler
     public void toggleFlyEvent(ToggleFlyEvent e) {
         e.setCancelled(true);
-        Member.getMember(e.getPlayer()).user.sendLangMessage(GlobalString.OnlyInHub);
+        Member.getMember(e.getPlayer()).user.sendMessage("%lang_general_lobby_only%");
     }
 }

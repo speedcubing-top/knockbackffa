@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import top.speedcubing.knockbackffa.Member;
+import top.speedcubing.knockbackffa.original.Member;
 import top.speedcubing.server.speedcubingServer;
 
 import java.util.HashMap;

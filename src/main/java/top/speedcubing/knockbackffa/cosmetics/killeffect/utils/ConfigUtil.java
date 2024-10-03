@@ -4,7 +4,7 @@ package top.speedcubing.knockbackffa.cosmetics.killeffect.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import top.speedcubing.knockbackffa.KnockBackFFA;
+import top.speedcubing.knockbackffa.original.KnockBackFFA;
 
 public class ConfigUtil {
 

@@ -1,9 +1,8 @@
-package top.speedcubing.knockbackffa;
+package top.speedcubing.knockbackffa.original;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
@@ -17,6 +16,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -24,12 +24,17 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
+import top.speedcubing.knockbackffa.original.list.EntityList;
+import top.speedcubing.knockbackffa.original.list.ItemList;
+import top.speedcubing.knockbackffa.original.list.StringList;
 import top.speedcubing.knockbackffa.utils.ItemDamageUtil;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.SideBar;
 import top.speedcubing.lib.bukkit.entity.Hologram;
+import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
+import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.player.User;
 
 public class Member {
@@ -79,7 +84,7 @@ public class Member {
         dailyKill = Integer.parseInt(s[4]);
         armorColor = s[5] == null ? "null" : s[5];
         weaponId = user.dbSelect("kbffa_weapon").getInt();
-        player.teleport(new Location(player.getWorld(), KnockBackFFA.centerX + 0.5, KnockBackFFA.centerY, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
+        player.teleport(new Location(player.getWorld(), Configuration.centerX + 0.5, Configuration.centerY, Configuration.centerZ + 0.5, Configuration.yaw, 0));
         player.setLevel(0);
         player.setHealth(20);
         player.setGameMode(GameMode.SURVIVAL);
@@ -91,8 +96,7 @@ public class Member {
         inventory.setLeggings(new ItemStack(Material.AIR));
         inventory.setBoots(new ItemStack(Material.AIR));
         inventory.clear();
-        inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
-        inventory.setItem(6, KnockBackFFA.itemStacks[user.lang][12]);
+        setHotbarDefault();
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
         String[] sidebar = StringList.sidebar[user.lang];
         SideBar sideBar = new SideBar(player, sidebar[0])
@@ -116,25 +120,33 @@ public class Member {
                 connection.sendPacket(a.maxHealPacket);
         });
         for (int i = 0; i < killBoard.length; i++) {
-            killBoard[i] = new Hologram("", false, false).setLocation(KnockBackFFA.holoX, 152 - i * 0.3, KnockBackFFA.holoZ, 0, 0).world("kbffa").setClickEvent(KnockBackFFA.clickEvent).setListener(player).spawn();
+            killBoard[i] = new Hologram("", false, false).setLocation(Configuration.holoX, 152 - i * 0.3, Configuration.holoZ, 0, 0).world("kbffa").setClickEvent(KnockBackFFA.clickEvent).setListener(player).spawn();
         }
-        personal = new Hologram("", false, false).world("kbffa").setLocation(KnockBackFFA.holoX, 148.9, KnockBackFFA.holoZ, 0, 0).setClickEvent(KnockBackFFA.clickEvent).setListener(player);
+        personal = new Hologram("", false, false).world("kbffa").setLocation(Configuration.holoX, 148.9, Configuration.holoZ, 0, 0).setClickEvent(KnockBackFFA.clickEvent).setListener(player);
         setDisplayType(true);
         users.put(user.id, this);
     }
 
+    public void setHotbarDefault() {
+        user.setLangItem(4, ItemList.inventory);
+        user.setLangItem(6, ItemList.cosmetics);
+    }
 
     public void setDisplayType(boolean spawn) {
         long l = System.currentTimeMillis();
         if (l - lastClick > 1000) {
             displayType = !displayType;
             a();
+            String dailyTitle = Lang.of("%lang_kbffa_daily_title%").getString(user.lang);
+            String lifetimetitle = Lang.of("%lang_kbffa_lifetime_title%").getString(user.lang);
+            String type = Lang.of("%lang_kbffa_holo_switch%").getString(user.lang);
+            String type2 = Lang.of("%lang_kbffa_holo_switch%2").getString(user.lang);
             if (spawn) {
-                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? StringList.title2.get(user.lang) : StringList.title.get(user.lang)).spawn().setListener();
-                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? StringList.type2.get(user.lang) : StringList.type.get(user.lang)).spawn().setListener();
+                EntityList.personal[0].setListener(user.player).setName(displayType ? lifetimetitle : dailyTitle).spawn().setListener();
+                EntityList.personal[1].setListener(user.player).setName(displayType ? type2 : type).spawn().setListener();
             } else {
-                KnockBackFFA.personal[0].setListener(user.player).setName(displayType ? StringList.title2.get(user.lang) : StringList.title.get(user.lang)).setListener();
-                KnockBackFFA.personal[1].setListener(user.player).setName(displayType ? StringList.type2.get(user.lang) : StringList.type.get(user.lang)).setListener();
+                EntityList.personal[0].setListener(user.player).setName(displayType ? lifetimetitle : dailyTitle).setListener();
+                EntityList.personal[1].setListener(user.player).setName(displayType ? type2 : type).setListener();
             }
             updatePlayerPos(spawn);
             lastClick = l;
@@ -172,8 +184,8 @@ public class Member {
 
             double heal = damager.getHealth() / 2;
             String color = heal > 8.5 ? "§a" : (heal > 6.5 ? "§e" : (heal > 4.5 ? "§6" : "§c"));
-            user.sendLangMessage(StringList.died, user.getColorName(false), Damage.user.getColorName(false), color + (int) Math.round(heal));
-            Damage.user.sendLangMessage(StringList.died, user.getColorName(false), Damage.user.getColorName(false), color + (int) Math.round(heal));
+            user.sendMessage("%lang_kbffa_kill%", user.getColorName(false), Damage.user.getColorName(false), color + (int) Math.round(heal));
+            Damage.user.sendMessage("%lang_kbffa_kill%", user.getColorName(false), Damage.user.getColorName(false), color + (int) Math.round(heal));
             SideBar sideBar = SideBar.getSidebar(damager);
             Damage.user.sound(Sound.SUCCESSFUL_HIT);
             damager.setHealth(20);
@@ -188,7 +200,7 @@ public class Member {
             }
             death += 1;
         } else if (!quit)
-            user.sendLangMessage(StringList.diedYourself);
+            user.sendMessage("%lang_kbffa_die%");
         for (Member m : users.values()) {
             if (m.Damage == this)
                 m.Damage = null;
@@ -202,8 +214,7 @@ public class Member {
             inventory.setChestplate(new ItemStack(Material.AIR));
             inventory.setLeggings(new ItemStack(Material.AIR));
             inventory.setBoots(new ItemStack(Material.AIR));
-            inventory.setItem(4, KnockBackFFA.itemStacks[user.lang][11]);
-            inventory.setItem(6, KnockBackFFA.itemStacks[user.lang][12]);
+            setHotbarDefault();
             if (killed)
                 sideBar.setLineByScore(StringList.sidebar[user.lang][10] + death, 3);
             sideBar.setLineByScore(StringList.sidebar[user.lang][4] + 0, 9);
@@ -214,7 +225,7 @@ public class Member {
                 user.bSetFireTicks(0);
             }, 1);
             PlayerUtils.removeArrows(user.player);
-            user.bTeleport(new Location(user.player.getWorld(), KnockBackFFA.centerX + 0.5, KnockBackFFA.centerY, KnockBackFFA.centerZ + 0.5, KnockBackFFA.yaw, 0));
+            user.bTeleport(new Location(user.player.getWorld(), Configuration.centerX + 0.5, Configuration.centerY, Configuration.centerZ + 0.5, Configuration.yaw, 0));
             if (pearls != null)
                 pearls.forEach(EnderPearl::remove);
         }
@@ -223,25 +234,43 @@ public class Member {
     public void updatePlayerPos(boolean spawn) {
         personal.setName(
                 (displayType ? kill : dailyKill) == 0 ?
-                        StringList.noData.get(user.lang) :
-                        KnockBackFFA.bold(
-                                StringList.leaderboard.replace("%i%", Integer.toString(
-                                                Database.connection.select("COUNT(*)").from("playersdata")
-                                                        .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
-                                                        .getInt() + 1))
-                                        .replace("%j%", user.getPrefixName(false))
-                                        .replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
+                        Lang.of("%lang_leaderboard_nodata%").getString(user.lang) :
+                        KnockBackFFA.bold(StringList.leaderboard.replace("%i%", Integer.toString(
+                                        Database.connection.select("COUNT(*)").from("playersdata")
+                                                .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
+                                                .getInt() + 1))
+                                .replace("%j%", user.getPrefixName(false))
+                                .replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
         if (spawn)
             personal.spawn();
+    }
+
+    public void giveHotbarItems(boolean editKit) {
+        char[] cfg = inventory.toCharArray();
+        ItemStack[] stack = ItemList.itemStacks;
+        Inventory inventory = user.bGetInventory();
+        if (editKit) {
+            InventoryUtils.fillItem(inventory, 0, 8, new ItemStack(Material.AIR));
+        } else {
+            inventory.clear();
+        }
+        inventory.setItem(cfg[0] - 48, ItemDamageUtil.setAttackDamage(new ItemBuilder(Material.getMaterial(weaponId)).unBreak().ench(Enchantment.DAMAGE_ALL, 1).build(), 5.25));
+        inventory.setItem(cfg[1] - 48, stack[5]);
+        inventory.setItem(cfg[2] - 48, stack[6]);
+        inventory.setItem(cfg[3] - 48, stack[7]);
+        inventory.setItem(cfg[4] - 48, stack[8]);
+        inventory.setItem(cfg[5] - 48, stack[9]);
+        inventory.setItem(cfg[6] - 48, stack[10]);
+        inventory.setItem(cfg[7] - 48, stack[13]);
     }
 
     public void item(boolean win) {
         user.bCloseInventory();
         char[] cfg = inventory.toCharArray();
         PlayerInventory inventory = user.bGetInventory();
-        ItemStack[] stack = KnockBackFFA.itemStacks[user.lang];
+        ItemStack[] stack = ItemList.itemStacks;
         pearls.clear();
-        //stack[8] is block
+        //stack[8] is blocked
         if (win) {
             if (isFighting) {
                 inventory.setItem(cfg[3] - 48, stack[7]);
@@ -253,15 +282,7 @@ public class Member {
                     inventory.setItem(cfg[2] - 48, stack[6]);
             }
         } else {
-            inventory.setItem(4, new ItemStack(Material.AIR));
-            inventory.setItem(cfg[0] - 48, ItemDamageUtil.setAttackDamage(new ItemBuilder(Material.getMaterial(weaponId)).unBreak().ench(Enchantment.DAMAGE_ALL,1).build(), 5.25));
-            inventory.setItem(cfg[1] - 48, stack[5]);
-            inventory.setItem(cfg[2] - 48, stack[6]);
-            inventory.setItem(cfg[3] - 48, stack[7]);
-            inventory.setItem(cfg[4] - 48, stack[8]);
-            inventory.setItem(cfg[5] - 48, stack[9]);
-            inventory.setItem(cfg[6] - 48, stack[10]);
-            inventory.setItem(cfg[7] - 48, stack[13]);
+            giveHotbarItems(false);
             ItemStack helmet = stack[0].clone();
             ItemStack chestplate = stack[1].clone();
             ItemStack leggings = stack[2].clone();

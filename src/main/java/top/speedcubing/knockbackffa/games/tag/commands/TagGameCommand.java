@@ -10,7 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import top.speedcubing.knockbackffa.KnockBackFFA;
 import top.speedcubing.knockbackffa.games.tag.events.TagGameEndEvent;
 import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyDisbandEvent;
 import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyJoinEvent;

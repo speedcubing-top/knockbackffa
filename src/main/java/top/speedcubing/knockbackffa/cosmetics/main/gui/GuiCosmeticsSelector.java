@@ -15,8 +15,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import top.speedcubing.knockbackffa.KnockBackFFA;
-import top.speedcubing.knockbackffa.Member;
+import top.speedcubing.knockbackffa.original.KnockBackFFA;
+import top.speedcubing.knockbackffa.original.Member;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
@@ -24,17 +24,15 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.Projectil
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
-import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.server.player.User;
 
 public class GuiCosmeticsSelector implements Listener {
-    private KnockBackFFA plugin;
-    private KillEffectManager killEffectManager;
-    private ProjectileEffectManager projectileEffectManager;
-    private String killEffectName;
-    private String projectileEffectName;
+    private final KnockBackFFA plugin;
+    private final KillEffectManager killEffectManager;
+    private final ProjectileEffectManager projectileEffectManager;
 
     public GuiCosmeticsSelector(KnockBackFFA plugin, KillEffectManager killEffectManager, ProjectileEffectManager projectileEffectManager) {
         this.plugin = plugin;
@@ -52,6 +50,7 @@ public class GuiCosmeticsSelector implements Listener {
         AXE.setItemMeta(meta1);
         inventory.setItem(13, AXE);
         KillEffect killEffect = killEffectManager.getKillEffect(p);
+        String killEffectName;
         if (killEffect != null) {
             killEffectName = killEffect.getName();
         } else {
@@ -89,6 +88,7 @@ public class GuiCosmeticsSelector implements Listener {
         inventory.setItem(22, ARMOR);
 
         ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(p);
+        String projectileEffectName;
         if (projectileEffect != null) {
             projectileEffectName = projectileEffect.getName();
         } else {
@@ -320,12 +320,8 @@ public class GuiCosmeticsSelector implements Listener {
             inv.setItem(grayGlass, i * 9);
             inv.setItem(grayGlass, i * 9 + 8);
         }
-        inv.setItem(new ItemBuilder(Material.ARROW).name("§aGo Back").lore("§7Back to Cosmetics Menu").build(), (ex) -> {
-            open(p);
-        }, 45);
-        inv.setItem(new ItemBuilder(Material.BARRIER).name("§cClose").build(), (ex) -> {
-            p.closeInventory();
-        }, 49);
+        inv.setItem(new ItemBuilder(Material.ARROW).name("§aGo Back").lore("§7Back to Cosmetics Menu").build(), (ex) -> open(p), 45);
+        inv.setItem(new ItemBuilder(Material.BARRIER).name("§cClose").build(), (ex) -> p.closeInventory(), 49);
         inv.setClickable(false);
         p.openInventory(inv.getInventory());
     }
@@ -407,7 +403,7 @@ public class GuiCosmeticsSelector implements Listener {
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new TextBuilder().both("§eClick here to set your armor color."
+                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
                         , TextClickEvent.suggestCommand("/setarmorcolor 1 <R>,<G>,<B>")
                         , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
@@ -425,7 +421,7 @@ public class GuiCosmeticsSelector implements Listener {
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new TextBuilder().both("§eClick here to set your armor color."
+                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
                         , TextClickEvent.suggestCommand("/setarmorcolor 2 <R>,<G>,<B>")
                         , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
@@ -443,7 +439,7 @@ public class GuiCosmeticsSelector implements Listener {
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new TextBuilder().both("§eClick here to set your armor color."
+                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
                         , TextClickEvent.suggestCommand("/setarmorcolor 3 <R>,<G>,<B>")
                         , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
@@ -461,7 +457,7 @@ public class GuiCosmeticsSelector implements Listener {
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new TextBuilder().both("§eClick here to set your armor color."
+                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
                         , TextClickEvent.suggestCommand("/setarmorcolor 4 <R>,<G>,<B>")
                         , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
@@ -473,12 +469,8 @@ public class GuiCosmeticsSelector implements Listener {
             }
         }, 3);
 
-        builder.setItem(back, (ex) -> {
-            plugin.getGuiCosmeticsSelector().open(p);
-        }, 7);
-        builder.setItem(close, (ex) -> {
-            p.closeInventory();
-        }, 8);
+        builder.setItem(back, (ex) -> plugin.getGuiCosmeticsSelector().open(p), 7);
+        builder.setItem(close, (ex) -> p.closeInventory(), 8);
         builder.setClickable(false);
         p.openInventory(builder.getInventory());
     }
@@ -487,6 +479,7 @@ public class GuiCosmeticsSelector implements Listener {
         User user = User.getUser(p);
         return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
     }
+
     private static ItemStack weaponGenerator(int weaponId, Material weapon, String name) {
         return weaponId == weapon.getId() ? new ItemBuilder(weapon).name(name).glow().lore(
                 "§7Select the " + ChatColor.stripColor(name), "§7Weapon.", "§7This change is cosmetic.", ""

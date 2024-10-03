@@ -4,10 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import top.speedcubing.knockbackffa.Member;
+import top.speedcubing.knockbackffa.original.Member;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
