@@ -22,6 +22,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
 import top.speedcubing.knockbackffa.original.list.EntityList;
@@ -34,10 +36,12 @@ import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
+import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.player.User;
 
 public class Member {
+    private static final Logger log = LoggerFactory.getLogger(Member.class);
     public static ConcurrentHashMap<Integer, Member> users = new ConcurrentHashMap<>();
 
     public static Member getMember(CommandSender sender) {
@@ -76,14 +80,14 @@ public class Member {
     public Member(Player player) {
         this.user = User.getUser(player);
         maxHealPacket = new OutScoreboardScore().a(player.getName()).b(StringList.obj).c(20).d(PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE).packet;
-        String[] s = user.dbSelect("kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak,kbffa_dailykill,kbffa_armorcolor").getStringArray();
-        inventory = s[0];
-        kill = Integer.parseInt(s[1]);
-        death = Integer.parseInt(s[2]);
-        killstreak = Integer.parseInt(s[3]);
-        dailyKill = Integer.parseInt(s[4]);
-        armorColor = s[5] == null ? "null" : s[5];
-        weaponId = user.dbSelect("kbffa_weapon").getInt();
+        SQLRow r = user.dbSelect("kbffa_inventory,kbffa_kill,kbffa_death,kbffa_killstreak,kbffa_dailykill,kbffa_armorcolor");
+        inventory = r.getString(0);
+        kill = r.getInt(1);
+        death = r.getInt(2);
+        killstreak = r.getInt(3);
+        dailyKill = r.getInt(4);
+        armorColor = r.getString(5) == null ? "null" : r.getString(5);
+        weaponId = user.dbSelect("kbffa_weapon").getInt(0);
         player.teleport(new Location(player.getWorld(), Configuration.centerX + 0.5, Configuration.centerY, Configuration.centerZ + 0.5, Configuration.yaw, 0));
         player.setLevel(0);
         player.setHealth(20);
@@ -236,9 +240,9 @@ public class Member {
                 (displayType ? kill : dailyKill) == 0 ?
                         Lang.of("%lang_leaderboard_nodata%").getString(user.lang) :
                         KnockBackFFA.bold(StringList.leaderboard.replace("%i%", Integer.toString(
-                                        Database.connection.select("COUNT(*)").from("playersdata")
+                                        Database.getCubing().select("COUNT(*)").from("playersdata")
                                                 .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
-                                                .getInt() + 1))
+                                                .executeResult().getInt() + 1))
                                 .replace("%j%", user.getPrefixName(false))
                                 .replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
         if (spawn)

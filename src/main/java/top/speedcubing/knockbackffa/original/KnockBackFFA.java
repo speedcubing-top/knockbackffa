@@ -192,7 +192,7 @@ public class KnockBackFFA extends JavaPlugin {
             @Override
             public void run() {
                 Member.users.values().forEach(a -> a.dailyKill = 0);
-                Database.connection.update("playersdata", "kbffa_dailykill=0", "1");
+                Database.getCubing().update("playersdata", "kbffa_dailykill=0", "1");
             }
         }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
                 tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis(), 86400000);

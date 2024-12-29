@@ -1,13 +1,13 @@
 package top.speedcubing.knockbackffa.commands;
 
 import java.text.DecimalFormat;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.common.database.Database;
+import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.server.player.User;
 
 public class ProfileCommand implements CommandExecutor {
@@ -38,15 +38,15 @@ public class ProfileCommand implements CommandExecutor {
     }
 
     private void sendFFADataByName(Player sender, String playerName) {
-        String[] data = Database.connection.select("priority,kbffa_kill,kbffa_dailykill,kbffa_blockplace,kbffa_death,kbffa_killstreak,name,kbffa_blockBreak").from("playersdata").where("name='" + playerName + "'").getStringArray();
-        String rank = data[0];
-        String kills = data[1];
-        String dailyKills = data[2];
-        String blockPlaces = data[3];
-        String deaths = data[4];
-        String killStreak = data[5];
-        String name = data[6];
-        String blockBreaks = data[7];
+        SQLRow r = Database.getCubing().select("priority,kbffa_kill,kbffa_dailykill,kbffa_blockplace,kbffa_death,kbffa_killstreak,name,kbffa_blockBreak").from("playersdata").where("name=?").setString(1, playerName).executeResult().get(0);
+        String rank = r.getString(0);
+        String kills = r.getString(1);
+        String dailyKills = r.getString(2);
+        String blockPlaces = r.getString(3);
+        String deaths = r.getString(4);
+        String killStreak = r.getString(5);
+        String name = r.getString(6);
+        String blockBreaks = r.getString(7);
         if (rank != null && kills != null && dailyKills != null && blockPlaces != null && deaths != null && killStreak != null && blockBreaks != null) {
             int killsInt = Integer.parseInt(kills);
             int deathsInt = Integer.parseInt(deaths);
