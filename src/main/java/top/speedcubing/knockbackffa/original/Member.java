@@ -36,6 +36,7 @@ import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardScore;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.player.User;
@@ -236,15 +237,17 @@ public class Member {
     }
 
     public void updatePlayerPos(boolean spawn) {
-        personal.setName(
-                (displayType ? kill : dailyKill) == 0 ?
-                        Lang.of("%lang_leaderboard_nodata%").getString(user.lang) :
-                        KnockBackFFA.bold(StringList.leaderboard.replace("%i%", Integer.toString(
-                                        Database.getCubing().select("COUNT(*)").from("playersdata")
-                                                .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
-                                                .executeResult().getInt() + 1))
-                                .replace("%j%", user.getPrefixName(false))
-                                .replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
+        try (SQLConnection connection = Database.getCubing()) {
+            personal.setName(
+                    (displayType ? kill : dailyKill) == 0 ?
+                            Lang.of("%lang_leaderboard_nodata%").getString(user.lang) :
+                            KnockBackFFA.bold(StringList.leaderboard.replace("%i%", Integer.toString(
+                                            connection.select("COUNT(*)").from("playersdata")
+                                                    .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
+                                                    .executeResult().getInt() + 1))
+                                    .replace("%j%", user.getPrefixName(false))
+                                    .replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
+        }
         if (spawn)
             personal.spawn();
     }

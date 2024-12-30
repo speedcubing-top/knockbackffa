@@ -11,6 +11,7 @@ import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.knockbackffa.original.list.StringList;
 import top.speedcubing.lib.bukkit.events.packet.PlayInEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SQL.SQLResult;
 import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.server.events.player.NickEvent;
@@ -34,11 +35,11 @@ public class ServerEvent {
 
     @CubingEventHandler
     public void cubingTickEvent(CubingTickEvent e) {
-        try {
-            SQLResult arr = Database.getCubing().select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).executeResult();
-            SQLResult arr2 = Database.getCubing().select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).executeResult();
-            Database.getCubing().update("champ", "id=" + arr.get(0).getInt(3), "subject='kbffa_kill'");
-            Database.getCubing().update("champ", "id=" + arr2.get(0).getInt(3), "subject='kbffa_dailykill'");
+        try (SQLConnection connection = Database.getCubing()) {
+            SQLResult arr = connection.select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).executeResult();
+            SQLResult arr2 = connection.select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).executeResult();
+            connection.update("champ", "id=" + arr.get(0).getInt(3), "subject='kbffa_kill'");
+            connection.update("champ", "id=" + arr2.get(0).getInt(3), "subject='kbffa_dailykill'");
             int lastKill = 0;
             int index = 0;
             int i = 0;
