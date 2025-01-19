@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
+
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBlockBreakAnimation;
@@ -54,6 +55,7 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.Projectil
 import top.speedcubing.knockbackffa.games.tag.commands.TagGameCommand;
 import top.speedcubing.knockbackffa.games.tag.commands.TagGameListCommand;
 import top.speedcubing.knockbackffa.games.tag.listeners.TagGameListener;
+import top.speedcubing.knockbackffa.managers.VoteManager;
 import top.speedcubing.knockbackffa.original.list.EntityList;
 import top.speedcubing.knockbackffa.original.list.ItemList;
 import top.speedcubing.knockbackffa.trollutillisteners.Darts;
@@ -173,9 +175,7 @@ public class KnockBackFFA extends JavaPlugin {
         String[] title = {"§cKnockBack FFA Inventar", "§cKnockBack FFA Inventory", "§cKnockBack FFA 物品欄", "§cKnockBack FFA 物品栏"};
         String[] save = {"§aÄnderungen speichern", "§aSave Changes", "§a儲存設定", "§a储存设置"};
         String[] unsave = {"§cnicht gespeicherte Änderungen", "§cUnSave Changes", "§c不儲存設定", "§c不储存设置"};
-        for (
-                int i = 0;
-                i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             KitEditor[i] = Bukkit.createInventory(KitEditorHolder, 9, title[i]);
             InventoryUtils.fillItem(KitEditor[i], 0, 9, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name("§a").build());
             KitEditor[i].setItem(3, new ItemBuilder(Material.INK_SACK).durability(10).name(save[i]).build());
@@ -184,7 +184,7 @@ public class KnockBackFFA extends JavaPlugin {
 
         EntityList.init();
         ItemList.init();
-
+        VoteManager.startHourlyVoteTask();
 
         Calendar tomorrow = new GregorianCalendar();
         tomorrow.add(Calendar.DATE, 1);

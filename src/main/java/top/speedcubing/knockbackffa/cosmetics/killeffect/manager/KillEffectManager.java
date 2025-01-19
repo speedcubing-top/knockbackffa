@@ -100,9 +100,6 @@ public class KillEffectManager {
 
     public void setKillEffect(Player p, String effectId) {
         String uuid = p.getUniqueId().toString();
-        if (killEffectMap.containsKey(uuid)) {
-            killEffectMap.remove(uuid);
-        }
         KillEffect effect = getKillEffectById(effectId);
         if (effect != null) {
             killEffectMap.put(uuid, effect);
@@ -119,10 +116,7 @@ public class KillEffectManager {
     }
 
     public boolean hasSelected(Player p, String effectId) {
-        if (hasSelectedOne(p) && getKillEffect(p).getId().contentEquals(effectId)) {
-            return true;
-        }
-        return false;
+        return hasSelectedOne(p) && getKillEffect(p).getId().contentEquals(effectId);
     }
 
 

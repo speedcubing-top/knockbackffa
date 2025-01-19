@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
@@ -18,6 +19,10 @@ public class VoteManager {
 
     public static boolean getVoteStatus() {
         return voteStatus;
+    }
+    public static void startHourlyVoteTask() {
+        long ticksPerHour = 3600L * 20L;
+        Bukkit.getScheduler().runTaskTimer(KnockBackFFA.instance, VoteManager::startVote, 0L, ticksPerHour);
     }
 
     public static void startVote() {

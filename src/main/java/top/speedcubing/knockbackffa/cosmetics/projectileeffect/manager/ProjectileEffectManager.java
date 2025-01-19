@@ -64,9 +64,6 @@ public class ProjectileEffectManager {
     }
     public void setProjectileEffect(Player p, String effectId) {
         String uuid = p.getUniqueId().toString();
-        if (projectileEffectMap.containsKey(uuid)) {
-            projectileEffectMap.remove(uuid);
-        }
         ProjectileEffect effect = getProjectileEffectById(effectId);
         if (effect != null) {
             projectileEffectMap.put(uuid, effect);
@@ -75,10 +72,7 @@ public class ProjectileEffectManager {
         }
     }
     public boolean hasSelected(Player p, String effectId) {
-        if (hasSelectedOne(p) && getProjectileEffect(p).getId().contentEquals(effectId)) {
-            return true;
-        }
-        return false;
+        return hasSelectedOne(p) && getProjectileEffect(p).getId().contentEquals(effectId);
     }
     public boolean hasSelectedOne(Player p) {
         return getProjectileEffect(p) != null;
