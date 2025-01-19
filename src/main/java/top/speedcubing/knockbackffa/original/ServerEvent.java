@@ -11,6 +11,9 @@ import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.knockbackffa.original.list.StringList;
 import top.speedcubing.lib.bukkit.events.packet.PlayInEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.lib.utils.SQL.SQLResult;
+import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.events.player.ToggleFlyEvent;
@@ -32,32 +35,36 @@ public class ServerEvent {
 
     @CubingEventHandler
     public void cubingTickEvent(CubingTickEvent e) {
-        try {
-            String[] arr = Database.connection.select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).getStringArray();
-            String[] arr2 = Database.connection.select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).getStringArray();
-            Database.connection.update("champ", "id=" + arr[3], "subject='kbffa_kill'");
-            Database.connection.update("champ", "id=" + arr2[3], "subject='kbffa_dailykill'");
+        try (SQLConnection connection = Database.getCubing()) {
+            SQLResult arr = connection.select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).executeResult();
+            SQLResult arr2 = connection.select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).executeResult();
+            connection.update("champ", "id=" + arr.get(0).getInt(3), "subject='kbffa_kill'");
+            connection.update("champ", "id=" + arr2.get(0).getInt(3), "subject='kbffa_dailykill'");
             int lastKill = 0;
             int index = 0;
-            for (int i = 0; i < 10; i++) {
-                int a = Integer.parseInt(arr[i * 4 + 2]);
+            int i = 0;
+            for (SQLRow r : arr) {
+                int a = r.getInt(2);
                 if (lastKill != a) {
                     index = i + 1;
                     lastKill = a;
                 }
-                KnockBackFFA.boardName[i] = arr[i * 4 + 3];
-                KnockBackFFA.board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr[i * 4], Integer.parseInt(arr[i * 4 + 3])).getPrefix() + arr[i * 4 + 1]).replace("%k%", arr[i * 4 + 2]);
+                KnockBackFFA.boardName[i] = r.getString(3);
+                KnockBackFFA.board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(r.getString(0), r.getInt(3)).getPrefix() + r.getString(1)).replace("%k%", r.getString(2));
+                i++;
             }
             lastKill = 0;
             index = 0;
-            for (int i = 0; i < 10; i++) {
-                int a = Integer.parseInt(arr2[i * 4 + 2]);
+            i = 0;
+            for (SQLRow r : arr2) {
+                int a = r.getInt(2);
                 if (lastKill != a) {
                     index = i + 1;
                     lastKill = a;
                 }
-                KnockBackFFA.dailyBoardName[i] = arr2[i * 4 + 3];
-                KnockBackFFA.dailyBoard[i] = arr2[i * 4 + 2].equals("0") ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(arr2[i * 4], Integer.parseInt(arr2[i * 4 + 3])).getPrefix() + arr2[i * 4 + 1]).replace("%k%", arr2[i * 4 + 2]);
+                KnockBackFFA.dailyBoardName[i] = r.getString(3);
+                KnockBackFFA.dailyBoard[i] = r.getInt(2) == 0 ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(r.getString(0), r.getInt(3)).getPrefix() + r.getString(1)).replace("%k%", r.getString(2));
+                i++;
             }
             for (Member m : Member.users.values()) {
                 m.a();

@@ -67,6 +67,7 @@ import top.speedcubing.lib.bukkit.events.entity.ClickEvent;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.CubingEventManager;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.MapManager;
@@ -192,7 +193,9 @@ public class KnockBackFFA extends JavaPlugin {
             @Override
             public void run() {
                 Member.users.values().forEach(a -> a.dailyKill = 0);
-                Database.connection.update("playersdata", "kbffa_dailykill=0", "1");
+                try (SQLConnection connection = Database.getCubing()) {
+                    connection.update("playersdata", "kbffa_dailykill=0", "1");
+                }
             }
         }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
                 tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis(), 86400000);
