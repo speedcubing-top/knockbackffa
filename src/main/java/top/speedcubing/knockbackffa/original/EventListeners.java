@@ -490,6 +490,10 @@ public class EventListeners implements Listener {
             }
             if (damager != null) {
                 Player victim = (Player) e.getEntity();
+                if (victim.getMaximumNoDamageTicks() == 0 || victim.getNoDamageTicks() > victim.getMaximumNoDamageTicks() / 2) {
+                    e.setCancelled(true);
+                    return;
+                }
                 Member victimMember = Member.getMember(victim);
                 Member Damager = Member.getMember(damager);
                 if (victimMember.isFighting && Damager.isFighting) {
