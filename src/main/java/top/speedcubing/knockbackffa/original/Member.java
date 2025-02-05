@@ -26,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
+import top.speedcubing.knockbackffa.original.configuration.Configuration;
 import top.speedcubing.knockbackffa.original.list.EntityList;
 import top.speedcubing.knockbackffa.original.list.ItemList;
 import top.speedcubing.knockbackffa.original.list.StringList;
-import top.speedcubing.knockbackffa.utils.ItemDamageUtil;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.SideBar;
 import top.speedcubing.lib.bukkit.entity.Hologram;
@@ -261,7 +261,7 @@ public class Member {
         } else {
             inventory.clear();
         }
-        inventory.setItem(cfg[0] - 48, ItemDamageUtil.setAttackDamage(new ItemBuilder(Material.getMaterial(weaponId)).unBreak().ench(Enchantment.DAMAGE_ALL, 1).build(), 5.25));
+        inventory.setItem(cfg[0] - 48, new ItemBuilder(Material.WOOD_SWORD).unBreak().ench(Enchantment.DAMAGE_ALL, 1).build());
         inventory.setItem(cfg[1] - 48, stack[5]);
         inventory.setItem(cfg[2] - 48, stack[6]);
         inventory.setItem(cfg[3] - 48, stack[7]);

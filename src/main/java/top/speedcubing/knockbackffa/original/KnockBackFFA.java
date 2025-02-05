@@ -21,10 +21,8 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.events.ConfigReloadEvent;
@@ -56,6 +54,7 @@ import top.speedcubing.knockbackffa.games.tag.commands.TagGameCommand;
 import top.speedcubing.knockbackffa.games.tag.commands.TagGameListCommand;
 import top.speedcubing.knockbackffa.games.tag.listeners.TagGameListener;
 import top.speedcubing.knockbackffa.managers.VoteManager;
+import top.speedcubing.knockbackffa.original.configuration.Configuration;
 import top.speedcubing.knockbackffa.original.list.EntityList;
 import top.speedcubing.knockbackffa.original.list.ItemList;
 import top.speedcubing.knockbackffa.trollutillisteners.Darts;
@@ -122,13 +121,12 @@ public class KnockBackFFA extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
+        instance = this;
         MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
-        CubingEventManager.registerListeners(new ServerEvent());
-        new ConfigReloadEvent().call();
+        CubingEventManager.registerListeners(new ServerEvent(), new Configuration());
         regitserCommands();
         registerListener();
-        instance = this;
+        Configuration.reload();
 
         loadVersion();
         saveDefaultConfig();

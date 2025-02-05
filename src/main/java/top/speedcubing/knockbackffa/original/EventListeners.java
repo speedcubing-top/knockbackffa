@@ -66,7 +66,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -79,6 +78,7 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.Projectil
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.knockbackffa.managers.MapManager;
 import top.speedcubing.knockbackffa.managers.VoteManager;
+import top.speedcubing.knockbackffa.original.configuration.Configuration;
 import top.speedcubing.knockbackffa.original.list.EntityList;
 import top.speedcubing.knockbackffa.original.list.ItemList;
 import top.speedcubing.lib.bukkit.PlayerUtils;
@@ -132,7 +132,6 @@ public class EventListeners implements Listener {
                 e.getKiller().getInventory().addItem(jump.build());
             }
         }
-        killer.user.player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 8, 1));
         if (newKillstreak < 10 || newKillstreak % 5 != 0) return;
         String formatKillstreakColor = newKillstreak == 10 ? "§7" : newKillstreak == 15 ? "§f" : newKillstreak == 20 ? "§a" : newKillstreak == 25 ? "§2" : newKillstreak == 30 ? "§e" : newKillstreak == 35 ? "§6" : newKillstreak == 40 ? "§c" : newKillstreak == 45 ? "§4" : "§5";
         Bukkit.getOnlinePlayers().forEach(a -> {

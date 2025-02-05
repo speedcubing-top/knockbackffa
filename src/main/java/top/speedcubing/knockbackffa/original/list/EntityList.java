@@ -1,6 +1,6 @@
 package top.speedcubing.knockbackffa.original.list;
 
-import top.speedcubing.knockbackffa.original.Configuration;
+import top.speedcubing.knockbackffa.original.configuration.Configuration;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.knockbackffa.original.Tunnel;
 import top.speedcubing.lib.bukkit.entity.Hologram;

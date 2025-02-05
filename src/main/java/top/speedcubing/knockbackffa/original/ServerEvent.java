@@ -8,6 +8,7 @@ import top.speedcubing.common.events.ConfigReloadEvent;
 import top.speedcubing.common.events.CubingTickEvent;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
+import top.speedcubing.knockbackffa.original.configuration.Configuration;
 import top.speedcubing.knockbackffa.original.list.StringList;
 import top.speedcubing.lib.bukkit.events.packet.PlayInEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
@@ -21,17 +22,6 @@ import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.share.Chat;
 
 public class ServerEvent {
-
-    @CubingEventHandler
-    public void configReloadEvent(ConfigReloadEvent e) {
-        Configuration.centerX = ServerConfig.config.getAsJsonObject("defaultkbffa").get("x").getAsDouble();
-        Configuration.centerZ = ServerConfig.config.getAsJsonObject("defaultkbffa").get("z").getAsDouble();
-        Configuration.offsetY = ServerConfig.config.getAsJsonObject("defaultkbffa").get("y").getAsDouble();
-        Configuration.yaw = ServerConfig.config.getAsJsonObject("defaultkbffa").get("yaw").getAsFloat();
-        Configuration.holoX = ServerConfig.config.getAsJsonObject("defaultkbffa").get("holox").getAsDouble();
-        Configuration.holoZ = ServerConfig.config.getAsJsonObject("defaultkbffa").get("holoz").getAsDouble();
-        Configuration.spawnprotectY = ServerConfig.config.getAsJsonObject("defaultkbffa").get("spawnproty").getAsInt();
-    }
 
     @CubingEventHandler
     public void cubingTickEvent(CubingTickEvent e) {
