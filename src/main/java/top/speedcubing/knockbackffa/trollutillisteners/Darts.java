@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class Darts implements Listener {
-    private HashMap<UUID, Long> cooldowns = new HashMap<>();
+    private final HashMap<UUID, Long> cooldowns = new HashMap<>();
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {

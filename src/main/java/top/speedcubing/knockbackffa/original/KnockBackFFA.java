@@ -124,9 +124,9 @@ public class KnockBackFFA extends JavaPlugin {
         instance = this;
         MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
         CubingEventManager.registerListeners(new ServerEvent(), new Configuration());
+        Configuration.reload();
         regitserCommands();
         registerListener();
-        Configuration.reload();
 
         loadVersion();
         saveDefaultConfig();

@@ -25,7 +25,7 @@ public class Configuration {
         Configuration.spawnprotectY = ServerConfig.getConfig().getAsJsonObject("defaultkbffa").get("spawnproty").getAsInt();
     }
 
-    @CubingEventHandler
+    @CubingEventHandler(priority = 30)
     public void configReloadEvent(ConfigReloadEvent e) {
         //reload();
     }
