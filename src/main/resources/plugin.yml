@@ -20,6 +20,8 @@ commands:
     usage: /debugffa <mode>
   profile:
     usage: /profile <player>
+  stats:
+    usage: /stats <player>
   sendmessage:
     aliases: [ sm ]
     usage: /sendmessage <player> <message>
