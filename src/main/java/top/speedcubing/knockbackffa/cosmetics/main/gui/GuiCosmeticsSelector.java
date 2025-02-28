@@ -56,7 +56,7 @@ public class GuiCosmeticsSelector implements Listener {
         } else {
             killEffectName = "NONE";
         }
-        if (!isChampOrStaff(p)) {
+        if (isChampOrStaff(p)) {
             if (killEffect != null) {
                 if (killEffect.getId().equals("CHAMP")) {
                     killEffectManager.setKillEffect(p, "NONE");
@@ -94,7 +94,7 @@ public class GuiCosmeticsSelector implements Listener {
         } else {
             projectileEffectName = "NONE";
         }
-        if (!isChampOrStaff(p)) {
+        if (isChampOrStaff(p)) {
             if (projectileEffect != null) {
                 if (projectileEffect.getId().equals("CHAMP")) {
                     projectileEffectManager.setProjectileEffect(p, "NONE");
@@ -156,7 +156,7 @@ public class GuiCosmeticsSelector implements Listener {
         ItemStack woodSword = weaponGenerator(id, Material.WOOD_SWORD, "§fWood Sword");
         ItemStack stoneSword = weaponGenerator(id, Material.STONE_SWORD, "§fStone Sword");
         ItemStack ironSword = weaponGenerator(id, Material.IRON_SWORD, "§fIron Sword");
-        ItemStack goldenSwrod = weaponGenerator(id, Material.GOLD_SWORD, "§fGolden Sword");
+        ItemStack goldenSword = weaponGenerator(id, Material.GOLD_SWORD, "§fGolden Sword");
         ItemStack diamondSword = weaponGenerator(id, Material.DIAMOND_SWORD, "§fDiamond Sword");
         ItemStack apple = weaponGenerator(id, Material.APPLE, "§fApple Sword");
         ItemStack goldenApple = weaponGenerator(id, Material.GOLDEN_APPLE, "§fGolden Apple Sword");
@@ -203,7 +203,7 @@ public class GuiCosmeticsSelector implements Listener {
             openWeaponSelector(p);
         }, 12);
 
-        inv.setItem(goldenSwrod, (ex) -> {
+        inv.setItem(goldenSword, (ex) -> {
             if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
                 p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
                 p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
@@ -477,7 +477,7 @@ public class GuiCosmeticsSelector implements Listener {
 
     private static boolean isChampOrStaff(Player p) {
         User user = User.getUser(p);
-        return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
+        return !user.isStaff && !"champ".equals(user.displayRank) && !"champ".equals(user.realRank);
     }
 
     private static ItemStack weaponGenerator(int weaponId, Material weapon, String name) {
