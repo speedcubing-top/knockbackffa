@@ -20,6 +20,7 @@ public class VoteManager {
     public static boolean getVoteStatus() {
         return voteStatus;
     }
+
     public static void startHourlyVoteTask() {
         long ticksPerHour = 3600L * 20L;
         Bukkit.getScheduler().runTaskTimer(KnockBackFFA.instance, VoteManager::startVote, 0L, ticksPerHour);
@@ -36,8 +37,12 @@ public class VoteManager {
         new BukkitRunnable() {
             @Override
             public void run() {
+                int voteCount = getVoteCountByMapName(calculateVoteGetMapName());
+                if (voteCount == 0) {
+                    return;
+                }
                 Bukkit.getOnlinePlayers().forEach(player -> {
-                    player.sendMessage("§6Voting ends §b" + calculateVoteGetMapName() + ": " + getVoteCountByMapName(calculateVoteGetMapName()));
+                    player.sendMessage("§6Voting ends §b" + calculateVoteGetMapName() + ": " + voteCount);
                 });
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), MapManager.getMapCommandByMapName(calculateVoteGetMapName()) + " " + calculateVoteGetMapName());
                 endVote();
