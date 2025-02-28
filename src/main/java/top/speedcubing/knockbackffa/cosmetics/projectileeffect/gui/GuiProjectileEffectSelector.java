@@ -10,14 +10,14 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
+import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.server.player.User;
 
 public class GuiProjectileEffectSelector implements Listener {
-    private KnockBackFFA plugin;
-    private ProjectileEffectManager projectileEffectManager;
+    private final KnockBackFFA plugin;
+    private final ProjectileEffectManager projectileEffectManager;
 
     public GuiProjectileEffectSelector(KnockBackFFA plugin, ProjectileEffectManager projectileEffectManager) {
         this.plugin = plugin;
@@ -30,7 +30,7 @@ public class GuiProjectileEffectSelector implements Listener {
         ItemStack NONE = new CustomItem(Material.BARRIER, 1, "§aNONE", "§7Selecting this option",
                 "§7disables your Kill Effect.",
                 "",
-                (projectileEffectManager.hasSelectedOne(p) ? "§eClick to select!" : "§aSELECTED!"));
+                    (!projectileEffectManager.hasSelected(p, "NONE") ? "§eClick to select!" : "§aSELECTED!"));
         inventory.setItem(11, NONE);
         if (p.hasPermission("projectileeffect.heart") || user.hasPermission("projectileeffect.heart")) {
             ItemStack HEART = new CustomItem(projectileEffectManager.getProjectileEffectById("HEART_PARTICLE").getIcon(), 1,
@@ -52,22 +52,22 @@ public class GuiProjectileEffectSelector implements Listener {
             inventory.setItem(12, LOCKED_HEART);
         }
         if (p.hasPermission("projectiileeffect.note") || user.hasPermission("projectileeffect.note")) {
-            ItemStack NOTE = new CustomItem(projectileEffectManager.getProjectileEffectById("NOTE_PARTICLE").getIcon(),1,
+            ItemStack NOTE = new CustomItem(projectileEffectManager.getProjectileEffectById("NOTE_PARTICLE").getIcon(), 1,
                     "§aNote Projectile Effect",
                     "§7Select the Note Particle",
                     "§7Projectile Effect. This change is",
                     "§7cosmetic.",
                     "",
-                    (!projectileEffectManager.hasSelected(p,"NOTE_PARTICLE") ? "§eClick to select!" : "§aSELECTED!"));
+                    (!projectileEffectManager.hasSelected(p, "NOTE_PARTICLE") ? "§eClick to select!" : "§aSELECTED!"));
             inventory.setItem(13, NOTE);
         } else {
-            ItemStack LOCKED_NOTE = new CustomItem(projectileEffectManager.getProjectileEffectById("NOTE_PARTICLE").getIcon(),1,
+            ItemStack LOCKED_NOTE = new CustomItem(projectileEffectManager.getProjectileEffectById("NOTE_PARTICLE").getIcon(), 1,
                     "§aNote Projectile Effect",
                     "§7Select the Note Particle",
                     "§7Projectile Effect. This change is",
                     "§7cosmetic.",
                     "",
-                    (!projectileEffectManager.hasSelected(p,"NOTE_PARTICLE") ? "§cLocked!" : "§aSELECTED!"));
+                    (!projectileEffectManager.hasSelected(p, "NOTE_PARTICLE") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(13, LOCKED_NOTE);
         }
         if (p.hasPermission("projectileeffect.egg") || user.hasPermission("projectileeffect.egg")) {
@@ -90,29 +90,29 @@ public class GuiProjectileEffectSelector implements Listener {
             inventory.setItem(14, LOCKED_EGG);
         }
         if (p.hasPermission("projectileeffect.champ") || user.hasPermission("projectileeffect.champ")) {
-            ItemStack CHAMP = new CustomItem(projectileEffectManager.getProjectileEffectById("CHAMP").getIcon(),1,
+            ItemStack CHAMP = new CustomItem(projectileEffectManager.getProjectileEffectById("CHAMP").getIcon(), 1,
                     "§aChamp Projectile Effect",
                     "§7Select the Champ Particle",
                     "§7projectile Effect. This change is",
                     "§7cosmetic.",
                     "",
                     (!projectileEffectManager.hasSelected(p, "CHAMP") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(15,CHAMP);
+            inventory.setItem(15, CHAMP);
         } else {
-            ItemStack LOCKED_CHAMP = new CustomItem(projectileEffectManager.getProjectileEffectById("CHAMP").getIcon(),1,
+            ItemStack LOCKED_CHAMP = new CustomItem(projectileEffectManager.getProjectileEffectById("CHAMP").getIcon(), 1,
                     "§aChamp Projectile Effect",
                     "§7Select the Champ Particle",
                     "§7projectile Effect. This change is",
                     "§7cosmetic.",
                     "",
                     (!projectileEffectManager.hasSelected(p, "CHAMP") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(15,LOCKED_CHAMP);
+            inventory.setItem(15, LOCKED_CHAMP);
         }
         ItemStack close = new CustomItem(Material.BARRIER, 1, "§cClose");
         ItemStack back = new CustomItem(Material.ARROW, 1, "§aGo Back",
                 "§7Back to Cosmetics Menu");
-        inventory.setItem(45,back);
-        inventory.setItem(49,close);
+        inventory.setItem(45, back);
+        inventory.setItem(49, close);
         p.openInventory(inventory);
     }
 

@@ -202,9 +202,9 @@ public class KnockBackFFA extends JavaPlugin {
     @Override
     public void onDisable() {
         //bad code
-        KnockBackFFA.BlockPlaced.keySet().forEach(a -> User.getUsers().stream().findFirst().ifPresent(user -> user.bGetWorld().getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR)));
         killEffectManager.saveKillEffects();
         projectileEffectManager.saveProjectileEffects();
+        KnockBackFFA.BlockPlaced.keySet().forEach(a -> User.getUsers().stream().findFirst().ifPresent(user -> user.bGetWorld().getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR)));
     }
 
     private void regitserCommands() {

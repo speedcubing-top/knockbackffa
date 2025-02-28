@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectNone;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.knockbackffa.api.events.ProjectileEffectChangeEvent;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
@@ -15,9 +16,9 @@ import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.Projectil
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffectNote;
 
 public class ProjectileEffectManager {
-    private List<ProjectileEffect> projectileEffects;
+    private final List<ProjectileEffect> projectileEffects;
     private HashMap<String, ProjectileEffect> projectileEffectMap;
-    private KnockBackFFA plugin;
+    private final KnockBackFFA plugin;
 
     /**
      * If you make particle for "Champ", you need modify GuiCosmeticsSelector
@@ -29,6 +30,7 @@ public class ProjectileEffectManager {
         registerProjectileEffect(new ProjectileEffectNote());
         registerProjectileEffect(new ProjectileEffectEgg());
         registerProjectileEffect(new ProjectileEffectChamp());
+        registerProjectileEffect(new ProjectileEffectNone());
         this.plugin = plugin;
         loadProjectileEffects();
     }

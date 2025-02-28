@@ -145,7 +145,7 @@ public class Member {
             String dailyTitle = Lang.of("%lang_kbffa_daily_title%").getString(user.lang);
             String lifetimetitle = Lang.of("%lang_kbffa_lifetime_title%").getString(user.lang);
             String type = Lang.of("%lang_kbffa_holo_switch%").getString(user.lang);
-            String type2 = Lang.of("%lang_kbffa_holo_switch%2").getString(user.lang);
+            String type2 = Lang.of("%lang_kbffa_holo_switch2%").getString(user.lang);
             if (spawn) {
                 EntityList.personal[0].setListener(user.player).setName(displayType ? lifetimetitle : dailyTitle).spawn().setListener();
                 EntityList.personal[1].setListener(user.player).setName(displayType ? type2 : type).spawn().setListener();

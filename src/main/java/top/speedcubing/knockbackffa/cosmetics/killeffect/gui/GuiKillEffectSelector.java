@@ -17,8 +17,8 @@ import top.speedcubing.server.player.User;
 
 public class GuiKillEffectSelector implements Listener {
 
-    private KnockBackFFA plugin;
-    private KillEffectManager killEffectManager;
+    private final KnockBackFFA plugin;
+    private final KillEffectManager killEffectManager;
 
     public GuiKillEffectSelector(KnockBackFFA plugin, KillEffectManager killEffectManager) {
         this.plugin = plugin;
@@ -32,7 +32,7 @@ public class GuiKillEffectSelector implements Listener {
                 "§7Selecting this option",
                 "§7disables your Kill Effect.",
                 "",
-                (killEffectManager.hasSelectedOne(p) ? "§eClick to select!" : "§aSELECTED!"));
+                (!killEffectManager.hasSelected(p, "NONE") ? "§eClick to select!" : "§aSELECTED!"));
         if (p.hasPermission("killeffect.blood_explosion") || user.hasPermission("killeffect.blood_explosion")) {
             ItemStack BLOOD_EXPLOSION = new CustomItem(killEffectManager.getKillEffectById("BLOOD_EXPLOSION").getIcon(), 1,
                     "§aBlood Explosion Kill Effect",
@@ -148,22 +148,22 @@ public class GuiKillEffectSelector implements Listener {
             inventory.setItem(21, LOCKED_TNT);
         }
         if (p.hasPermission("killeffect.champ") || user.hasPermission("killeffect.champ")) {
-            ItemStack CHAMP = new CustomItem(killEffectManager.getKillEffectById("CHAMP").getIcon(),1,
+            ItemStack CHAMP = new CustomItem(killEffectManager.getKillEffectById("CHAMP").getIcon(), 1,
                     "§aChamp Kill Effect",
                     "§7Select the Champ,",
                     "§7Kill Effect.",
                     "§7This change is cosmetic.",
                     "",
-                    (!killEffectManager.hasSelected(p,"CHAMP") ? "§eClick to select!" : "§aSELECTED!"));
+                    (!killEffectManager.hasSelected(p, "CHAMP") ? "§eClick to select!" : "§aSELECTED!"));
             inventory.setItem(22, CHAMP);
         } else {
-            ItemStack LOCKED_CHAMP = new CustomItem(killEffectManager.getKillEffectById("CHAMP").getIcon(),1,
+            ItemStack LOCKED_CHAMP = new CustomItem(killEffectManager.getKillEffectById("CHAMP").getIcon(), 1,
                     "§aChamp Kill Effect",
                     "§7Select the Champ,",
                     "§7Kill Effect.",
                     "§7This change is cosmetic.",
                     "",
-                    (!killEffectManager.hasSelected(p,"CHAMP") ? "§cLocked!" : "§aSELECTED!"));
+                    (!killEffectManager.hasSelected(p, "CHAMP") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(22, LOCKED_CHAMP);
         }
 

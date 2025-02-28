@@ -3,10 +3,12 @@ package top.speedcubing.knockbackffa.cosmetics.killeffect.manager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffectNone;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.knockbackffa.api.events.KillEffectChangeEvent;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
@@ -21,9 +23,9 @@ import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
 
 public class KillEffectManager {
 
-    private List<KillEffect> killEffects;
+    private final List<KillEffect> killEffects;
     private HashMap<String, KillEffect> killEffectMap;
-    private KnockBackFFA plugin;
+    private final KnockBackFFA plugin;
 
     /**
      * If you make particle for "Champ", you need modify GuiCosmeticsSelector
@@ -37,6 +39,7 @@ public class KillEffectManager {
         registerKillEffect(new KillEffectLightning());
         registerKillEffect(new KillEffectTNT());
         registerKillEffect(new KillEffectChamp());
+        registerKillEffect(new KillEffectNone());
         this.plugin = plugin;
         loadKillEffects();
     }
@@ -88,16 +91,6 @@ public class KillEffectManager {
         return null;
     }
 
-    public void setKillEffect(Player p, KillEffect effect) {
-        String uuid = p.getUniqueId().toString();
-        if (killEffectMap.containsKey(uuid)) {
-            killEffectMap.remove(uuid);
-        }
-        if (effect != null) {
-            killEffectMap.put(uuid, effect);
-        }
-    }
-
     public void setKillEffect(Player p, String effectId) {
         String uuid = p.getUniqueId().toString();
         KillEffect effect = getKillEffectById(effectId);
@@ -108,17 +101,9 @@ public class KillEffectManager {
         }
     }
 
-    public boolean hasSelected(Player p, KillEffect effect) {
-        if (hasSelectedOne(p) && effect.equals(getKillEffect(p))) {
-            return true;
-        }
-        return false;
-    }
-
     public boolean hasSelected(Player p, String effectId) {
         return hasSelectedOne(p) && getKillEffect(p).getId().contentEquals(effectId);
     }
-
 
     public boolean isKillSoundEnabled() {
         return ConfigUtil.ENABLE_KILLSOUND;

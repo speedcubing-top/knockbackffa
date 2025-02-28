@@ -39,6 +39,9 @@ public class VoteManager {
             public void run() {
                 int voteCount = getVoteCountByMapName(calculateVoteGetMapName());
                 if (voteCount == 0) {
+                    Bukkit.getOnlinePlayers().forEach(player -> {
+                        player.sendMessage("§bNo one votes and the map will not change.");
+                    });
                     return;
                 }
                 Bukkit.getOnlinePlayers().forEach(player -> {
