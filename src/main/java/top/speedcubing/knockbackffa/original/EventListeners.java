@@ -225,7 +225,6 @@ public class EventListeners implements Listener {
         player.sendMessage(textBuilder.toBungee());
     }
 
-
     //BOW BOOST
     @EventHandler
     public void onShoot(EntityShootBowEvent e) {
@@ -701,7 +700,8 @@ public class EventListeners implements Listener {
             perms.get(player.getUniqueId()).unsetPermission("karhu.recentbans");
             perms.get(player.getUniqueId()).unsetPermission("karhu.hover-debug");
             perms.get(player.getUniqueId()).unsetPermission("karhu.mitigations");
-            perms.remove(e.getPlayer().getUniqueId());
+            perms.get(player.getUniqueId()).unsetPermission("jumppads.use");
+            perms.remove(player.getUniqueId());
         }
     }
 
@@ -735,6 +735,13 @@ public class EventListeners implements Listener {
             pperms.setPermission("karhu.mitigations", true);
 
         }
+
+        //jump pads permission
+        PermissionAttachment attachment = p.addAttachment(speedcubingServer.getInstance());
+        perms.put(user.bGetUniqueId(), attachment);
+        PermissionAttachment pperms = perms.get(user.bGetUniqueId());
+        pperms.setPermission("jumppads.use", true);
+
         if (!isChampOrStaff(p)) {
             KillEffect killEffect = killEffectManager.getKillEffect(p);
             ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(p);
