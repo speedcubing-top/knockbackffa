@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -70,6 +71,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import top.speedcubing.common.rank.Rank;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
 import top.speedcubing.knockbackffa.api.events.MapSwitchEvent;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
@@ -96,6 +98,8 @@ public class EventListeners implements Listener {
     private final KillEffectManager killEffectManager;
     private final ProjectileEffectManager projectileEffectManager;
     HashMap<UUID, PermissionAttachment> perms = new HashMap<>();
+    HashMap<UUID, Long> hitRegisterMap = new HashMap<>();
+    public static int cpsLimit = 17;
 
     public EventListeners(KillEffectManager killEffectManager, ProjectileEffectManager projectileEffectManager) {
         this.killEffectManager = killEffectManager;
@@ -117,7 +121,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void onPlayerDeath(FFAPlayerDeathEvent e) {
         Member killer = Member.getMember(e.getKiller());
-
+        hitRegisterMap.remove(e.getPlayer().getUniqueId());
         Member.getMember(e.getPlayer()).isUsingTunnel = false;
 
         EntityList.toGreenTunnel.despawn();
@@ -424,59 +428,73 @@ public class EventListeners implements Listener {
     @EventHandler
     public void fireballHit(ProjectileHitEvent e) {
         if (!(e.getEntity() instanceof Fireball)) return;
-        Location location = e.getEntity().getLocation();
+        Location fbLoc = e.getEntity().getLocation();
 
         ProjectileSource projectileSource = e.getEntity().getShooter();
-        if (!(projectileSource instanceof Player)) return;
-        double fireballHorizontal = 1.25 * -1;
+        if (!(projectileSource instanceof Player source)) return;
+
+        // 設定數值
+        double fireballHorizontal = 1.25;
         double fireballVertical = 0.88;
-        double fireballExplosionSize = 3;
+        double fireballExplosionSize = 3.0;
 
-        Vector vector = location.toVector();
+        World world = fbLoc.getWorld();
+        if (world == null) return;
 
-        World world = location.getWorld();
+        Collection<Entity> nearbyEntities = world.getNearbyEntities(fbLoc, fireballExplosionSize, fireballExplosionSize, fireballExplosionSize);
 
-        assert world != null;
-        Collection<Entity> nearbyEntities = world
-                .getNearbyEntities(location, fireballExplosionSize, fireballExplosionSize, fireballExplosionSize);
         for (Entity entity : nearbyEntities) {
-            if (!(entity instanceof Player player))
-                continue;
+            if (!(entity instanceof Player player)) continue;
 
-
+            // 計算 KB 向量：玩家位置 - 火球位置 = 往外推的方向
             Vector playerVector = player.getLocation().toVector();
-            Vector normalizedVector = vector.subtract(playerVector).normalize();
-            Vector horizontalVector = normalizedVector.multiply(fireballHorizontal);
+            Vector fbVector = fbLoc.toVector();
+
+            // 重要：這行決定了推開的方向
+            Vector normalizedVector = playerVector.subtract(fbVector).normalize();
+            Vector horizontalVector = normalizedVector.clone().multiply(fireballHorizontal);
+
             double y = normalizedVector.getY();
             double x = normalizedVector.getX();
             double z = normalizedVector.getZ();
+
+            // 垂直修正
             if (y < 0) y += 1.5;
-            if (y <= 0.5 && x == -0.0 && z == -0.0) { //not moving and not jumping
+
+            // 根據移動與跳躍狀態調整
+            if (y <= 0.5 && x == -0.0 && z == -0.0) { // 站立不動
                 y = fireballVertical * 1.7;
-            } else if (y <= 0.5 && x != 0.0 && z != 0.0) {
-                y = fireballVertical * 1.3;
-                x = horizontalVector.getX() * 0.65;
-                z = horizontalVector.getZ() * 0.65;
-            } else if (y > 0.5 && x == -0.0 && z == -0.0) {
+            } else if (y <= 0.5 && x != 0.0 && z != 0.0) { // 移動中
+                y = fireballVertical * 1.475; // 使用你提供的 1.475
+                x = horizontalVector.getX() * 0.575;
+                z = horizontalVector.getZ() * 0.575;
+            } else if (y > 0.5 && x == -0.0 && z == -0.0) { // 原地跳躍
                 y = y * fireballVertical * 1.5;
-            } else if (y > 0.5 && x != -0.0 && z != -0.0) {
+            } else if (y > 0.5 && x != -0.0 && z != -0.0) { // 移動跳躍 (火球跳關鍵)
                 y = fireballVertical * 1.7;
                 x = horizontalVector.getX() * 0.8;
                 z = horizontalVector.getZ() * 0.8;
             }
-            if (isFireballHigherThanPlayer(location, player.getLocation())) {
+
+            if (isFireballHigherThanPlayer(fbLoc, player.getLocation())) {
                 y *= 0;
                 x *= 2;
                 z *= 2;
-                //跟x y z憶起計算看能不能做出像後kb
             }
-            player.setVelocity(horizontalVector.setX(x).setY(y).setZ(z));
+
+            if (player.equals(source)) {
+                player.setVelocity(new Vector(x, y, z));
+            } else {
+                player.setVelocity(new Vector(x * 0.7, y * 0.6, z * 0.7));
+            }
+
+            player.damage(1.0, source);
         }
     }
 
     @EventHandler
     public void EntityDamageByEntityEvent(EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof Player && e.getCause() != EntityDamageEvent.DamageCause.FALL) {
+        if (e.getEntity() instanceof Player victim && e.getCause() != EntityDamageEvent.DamageCause.FALL) {
             Entity damage = e.getDamager();
             Player damager = null;
             if (damage instanceof EnderPearl) {
@@ -487,11 +505,29 @@ public class EventListeners implements Listener {
                 damager = (Player) damage;
             }
             if (damager != null) {
-                Player victim = (Player) e.getEntity();
-                if (victim.getMaximumNoDamageTicks() == 0 || victim.getNoDamageTicks() > victim.getMaximumNoDamageTicks() / 2) {
+                //cps detect
+                long now = System.currentTimeMillis();
+                Long blockUntil = hitRegisterMap.get(damager.getUniqueId());
+
+                if (blockUntil != null) {
+                    if (now < blockUntil) {
+                        e.setCancelled(true);
+                        return;
+                    } else {
+                        hitRegisterMap.remove(damager.getUniqueId());
+                    }
+                }
+                User user = User.getUser(damager);
+                int currentCPS = user.leftCPS;
+                if (currentCPS > cpsLimit && damager.getItemInHand().getType() != Material.STICK && !Rank.isStaff(user.displayRank)) {
+                    hitRegisterMap.put(damager.getUniqueId(), now + 800);
+                }
+
+                if (victim.getNoDamageTicks() > victim.getMaximumNoDamageTicks() / 2) {
                     e.setCancelled(true);
                     return;
                 }
+
                 Member victimMember = Member.getMember(victim);
                 Member Damager = Member.getMember(damager);
                 if (victimMember.isFighting && Damager.isFighting) {
@@ -676,6 +712,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void PlayerQuitEvent(PlayerQuitEvent e) {
         Player player = e.getPlayer();
+        hitRegisterMap.remove(player.getUniqueId());
         PlayerUtils.removeArrows(player);
         Member member = Member.getMember(player);
         member.death(true);

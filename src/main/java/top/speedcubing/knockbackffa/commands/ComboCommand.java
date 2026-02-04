@@ -39,13 +39,14 @@ public class ComboCommand implements CommandExecutor, Listener {
     public void onPlayerQuit(PlayerQuitEvent e) {
         comboSet.remove(e.getPlayer());
     }
+
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent e) {
         if (e.getDamager() instanceof Player damager && e.getEntity() instanceof Player target) {
             if (comboSet.contains(damager)) {
                 target.setMaximumNoDamageTicks(0);
             } else {
-                target.setMaximumNoDamageTicks(20);
+                target.setMaximumNoDamageTicks(18);
             }
         }
     }

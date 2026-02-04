@@ -48,4 +48,6 @@ commands:
     usage: /setarmorcolor
   myworld:
     usage: /myworld
+  damagetick:
+    usage: /damagetick
 

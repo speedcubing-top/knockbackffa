@@ -130,6 +130,8 @@ public class Member {
         personal = new Hologram("", false, false).world("kbffa").setLocation(Configuration.holoX, 148.9, Configuration.holoZ, 0, 0).setClickEvent(KnockBackFFA.clickEvent).setListener(player);
         setDisplayType(true);
         users.put(user.id, this);
+
+        player.setMaximumNoDamageTicks(18);
     }
 
     public void setHotbarDefault() {

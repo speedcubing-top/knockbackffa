@@ -13,10 +13,10 @@ public class ItemList {
     public static LangItem cosmetics = new LangItem(Material.EMERALD).name("§aCosmetics");
 
     public static void init() {
-        itemStacks[0] = new ItemBuilder(Material.LEATHER_HELMET).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
-        itemStacks[1] = new ItemBuilder(Material.LEATHER_CHESTPLATE).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
-        itemStacks[2] = new ItemBuilder(Material.LEATHER_LEGGINGS).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
-        itemStacks[3] = new ItemBuilder(Material.LEATHER_BOOTS).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 2).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
+        itemStacks[0] = new ItemBuilder(Material.LEATHER_HELMET).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 3).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
+        itemStacks[1] = new ItemBuilder(Material.LEATHER_CHESTPLATE).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 3).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
+        itemStacks[2] = new ItemBuilder(Material.LEATHER_LEGGINGS).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 3).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
+        itemStacks[3] = new ItemBuilder(Material.LEATHER_BOOTS).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 3).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
         itemStacks[4] = new ItemBuilder(Material.GOLD_SWORD).unBreak().ench(Enchantment.DAMAGE_ALL, 1).build();
         itemStacks[5] = new ItemBuilder(Material.STICK).ench(Enchantment.KNOCKBACK, 1).build();
         itemStacks[6] = new ItemBuilder(Material.ENDER_PEARL).build();

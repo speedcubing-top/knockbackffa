@@ -28,6 +28,7 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.knockbackffa.api.events.MapSwitchEvent;
 import top.speedcubing.knockbackffa.commands.ChangeMapCommand;
 import top.speedcubing.knockbackffa.commands.ComboCommand;
+import top.speedcubing.knockbackffa.commands.DamageTick;
 import top.speedcubing.knockbackffa.commands.DebugFFACommand;
 import top.speedcubing.knockbackffa.commands.InvSeeCommand;
 import top.speedcubing.knockbackffa.commands.KillMyselfCommand;
@@ -226,6 +227,7 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("combo").setExecutor(new ComboCommand());
         getCommand("setarmorcolor").setExecutor(new SetArmorColor());
         getCommand("myworld").setExecutor(new MyWorldCommand());
+        getCommand("damagetick").setExecutor(new DamageTick());
 
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
             if (strings[6] == null) strings[6] = "150";
