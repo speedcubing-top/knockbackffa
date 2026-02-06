@@ -71,6 +71,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.github.paperspigot.PaperSpigotConfig;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
 import top.speedcubing.knockbackffa.api.events.MapSwitchEvent;

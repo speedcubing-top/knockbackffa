@@ -48,6 +48,8 @@ commands:
     usage: /setarmorcolor
   myworld:
     usage: /myworld
-  damagetick:
-    usage: /damagetick
+  cpslimit:
+    usage: /cpslimit
+  nerfhighping:
+    usage: /nerfhighping
 

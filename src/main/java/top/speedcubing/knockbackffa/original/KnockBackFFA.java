@@ -24,16 +24,21 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
+import top.nontage.jniil.JNIIL;
+import top.nontage.jniil.agent.JNIILBootstrap;
+import top.nontage.jniil.injector.ClassInjector;
+import top.nontage.jniil.injector.StandardMethodInjector;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.knockbackffa.api.events.MapSwitchEvent;
 import top.speedcubing.knockbackffa.commands.ChangeMapCommand;
 import top.speedcubing.knockbackffa.commands.ComboCommand;
-import top.speedcubing.knockbackffa.commands.DamageTick;
+import top.speedcubing.knockbackffa.commands.CPSLimit;
 import top.speedcubing.knockbackffa.commands.DebugFFACommand;
 import top.speedcubing.knockbackffa.commands.InvSeeCommand;
 import top.speedcubing.knockbackffa.commands.KillMyselfCommand;
 import top.speedcubing.knockbackffa.commands.MapViewCommand;
 import top.speedcubing.knockbackffa.commands.MyWorldCommand;
+import top.speedcubing.knockbackffa.commands.NerfHighPingCommand;
 import top.speedcubing.knockbackffa.commands.ProfileCommand;
 import top.speedcubing.knockbackffa.commands.StatsCommand;
 import top.speedcubing.knockbackffa.commands.SendMessageCommand;
@@ -58,6 +63,8 @@ import top.speedcubing.knockbackffa.managers.VoteManager;
 import top.speedcubing.knockbackffa.original.configuration.Configuration;
 import top.speedcubing.knockbackffa.original.list.EntityList;
 import top.speedcubing.knockbackffa.original.list.ItemList;
+import top.speedcubing.knockbackffa.top.nontage.patchs.KnockbackPatch;
+import top.speedcubing.knockbackffa.top.nontage.patchs.NerfKnockback;
 import top.speedcubing.knockbackffa.trollutillisteners.Darts;
 import top.speedcubing.knockbackffa.trollutillisteners.Fireball;
 import top.speedcubing.knockbackffa.trollutillisteners.OceanBow;
@@ -144,6 +151,19 @@ public class KnockBackFFA extends JavaPlugin {
                 guiCosmeticsSelector = new GuiCosmeticsSelector(this, killEffectManager, projectileEffectManager)
         );
 
+
+        JNIILBootstrap.install(JNIILBootstrap.MODE.NATIVE);
+        JNIIL.setBytecodeVerifying(false);
+        ClassInjector.injectClass(NerfKnockback.class);
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            try {
+                new StandardMethodInjector().inject(new KnockbackPatch());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }, 1L);
+
+
         try {
             MapManager.install("map_kbffa", "kbffa", Difficulty.EASY, 6000, false);
         } catch (Exception e) {
@@ -227,7 +247,8 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("combo").setExecutor(new ComboCommand());
         getCommand("setarmorcolor").setExecutor(new SetArmorColor());
         getCommand("myworld").setExecutor(new MyWorldCommand());
-        getCommand("damagetick").setExecutor(new DamageTick());
+        getCommand("cpslimit").setExecutor(new CPSLimit());
+        getCommand("nerfhighping").setExecutor(new NerfHighPingCommand());
 
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
             if (strings[6] == null) strings[6] = "150";
