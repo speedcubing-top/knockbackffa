@@ -39,6 +39,10 @@
             <id>speedcubing-public</id>
             <url>https://repo.speedcubing.top/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>speedcubing-private</id>
+            <url>https://repo.speedcubing.top/repository/maven-private/</url>
+        </repository>
     </repositories>
 
     <distributionManagement>
