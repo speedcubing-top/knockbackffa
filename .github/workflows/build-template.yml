@@ -29,17 +29,6 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Run build.sh
-      run: |
-        chmod +x ./build.sh
-        ./build.sh
-
-    - name: build-output
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-output
-        path: ./target/KnockbackFFA-1.0-SNAPSHOT.jar
-
     - name: Setup Maven Settings
       if: ${{ !inputs.build_only }}
       run: |
@@ -48,6 +37,11 @@ jobs:
         <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
           <servers>
+            <server>
+              <id>speedcubing-private</id>
+              <username>${{ secrets.NEXUS_USERNAME }}</username>
+              <password>${{ secrets.NEXUS_PASSWORD }}</password>
+            </server>
             <server>
               <id>speedcubing-private-projects-release</id>
               <username>${{ secrets.NEXUS_USERNAME }}</username>
@@ -61,6 +55,17 @@ jobs:
           </servers>
         </settings>
         EOF
+
+    - name: Run build.sh
+      run: |
+        chmod +x ./build.sh
+        ./build.sh
+
+    - name: build-output
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-output
+        path: ./target/KnockbackFFA-1.0-SNAPSHOT.jar
 
     - name: Deploy to Nexus
       if: ${{ !inputs.build_only }}
