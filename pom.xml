@@ -77,11 +77,13 @@
             <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!-- JNIIL removed — dependency unavailable (404 on repo)
         <dependency>
             <groupId>top.nontage</groupId>
             <artifactId>JNIIL</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        -->
     </dependencies>
 </project>

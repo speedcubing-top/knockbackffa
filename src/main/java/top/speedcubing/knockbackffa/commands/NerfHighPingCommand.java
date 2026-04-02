@@ -1,42 +1,41 @@
 package top.speedcubing.knockbackffa.commands;
 
-import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-
-import java.lang.reflect.Field;
+import top.speedcubing.cubingpaper.CubingPaperConfig;
 
 public class NerfHighPingCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        ClassLoader loader = EntityLiving.class.getClassLoader();
-        try {
-            Class<?> coreNerfKnockback = Class.forName("top.speedcubing.knockbackffa.top.nontage.patchs.NerfKnockback", false, loader);
-            Field nerfFrictionField = coreNerfKnockback.getDeclaredField("nerfFriction");
-            Field nerfPingField = coreNerfKnockback.getDeclaredField("nerfPing");
+        if (args.length == 0) {
+            sender.sendMessage("Enabled: " + CubingPaperConfig.nerfHighPingKnockback
+                    + ", Friction: " + CubingPaperConfig.nerfHighPingKnockbackFriction
+                    + ", MinPing: " + CubingPaperConfig.nerfHighPingKnockbackMinPing);
+            return true;
+        }
 
-            nerfFrictionField.setAccessible(true);
-            nerfPingField.setAccessible(true);
-
-            double nerfFriction = nerfFrictionField.getDouble(null);
-            int nerfPing = nerfPingField.getInt(null);
-
-            if (args.length != 2) {
-                sender.sendMessage("Friction: " + nerfFriction + ", Ping: " + nerfPing);
-            } else {
-                if (args[0].equalsIgnoreCase("f")) {
-                    double value = Double.parseDouble(args[1]);
-                    nerfFrictionField.setDouble(null, value);
-                    sender.sendMessage("Set Friction to " + value);
-                } else if (args[0].equalsIgnoreCase("p")) {
-                    int value = Integer.parseInt(args[1]);
-                    nerfPingField.setInt(null, value);
-                    sender.sendMessage("Set Ping to " + value);
-                }
-            }
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+        switch (args[0].toLowerCase()) {
+            case "enable":
+                CubingPaperConfig.nerfHighPingKnockback = true;
+                sender.sendMessage("High-ping knockback nerf enabled.");
+                break;
+            case "disable":
+                CubingPaperConfig.nerfHighPingKnockback = false;
+                sender.sendMessage("High-ping knockback nerf disabled.");
+                break;
+            case "f":
+                if (args.length < 2) { sender.sendMessage("Usage: /nerfhighping f <value>"); return true; }
+                CubingPaperConfig.nerfHighPingKnockbackFriction = Double.parseDouble(args[1]);
+                sender.sendMessage("Set friction to " + CubingPaperConfig.nerfHighPingKnockbackFriction);
+                break;
+            case "p":
+                if (args.length < 2) { sender.sendMessage("Usage: /nerfhighping p <value>"); return true; }
+                CubingPaperConfig.nerfHighPingKnockbackMinPing = Integer.parseInt(args[1]);
+                sender.sendMessage("Set min-ping to " + CubingPaperConfig.nerfHighPingKnockbackMinPing);
+                break;
+            default:
+                sender.sendMessage("Usage: /nerfhighping [enable|disable|f <val>|p <val>]");
         }
         return true;
     }

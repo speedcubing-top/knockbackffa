@@ -24,10 +24,11 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
-import top.nontage.jniil.JNIIL;
-import top.nontage.jniil.agent.JNIILBootstrap;
-import top.nontage.jniil.injector.ClassInjector;
-import top.nontage.jniil.injector.StandardMethodInjector;
+// JNIIL removed — dependency unavailable
+//import top.nontage.jniil.JNIIL;
+//import top.nontage.jniil.agent.JNIILBootstrap;
+//import top.nontage.jniil.injector.ClassInjector;
+//import top.nontage.jniil.injector.StandardMethodInjector;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.knockbackffa.api.events.MapSwitchEvent;
 import top.speedcubing.knockbackffa.commands.ChangeMapCommand;
@@ -63,8 +64,8 @@ import top.speedcubing.knockbackffa.managers.VoteManager;
 import top.speedcubing.knockbackffa.original.configuration.Configuration;
 import top.speedcubing.knockbackffa.original.list.EntityList;
 import top.speedcubing.knockbackffa.original.list.ItemList;
-import top.speedcubing.knockbackffa.top.nontage.patchs.KnockbackPatch;
-import top.speedcubing.knockbackffa.top.nontage.patchs.NerfKnockback;
+//import top.speedcubing.knockbackffa.top.nontage.patchs.KnockbackPatch; // JNIIL removed
+//import top.speedcubing.knockbackffa.top.nontage.patchs.NerfKnockback;  // JNIIL removed
 import top.speedcubing.knockbackffa.trollutillisteners.Darts;
 import top.speedcubing.knockbackffa.trollutillisteners.Fireball;
 import top.speedcubing.knockbackffa.trollutillisteners.OceanBow;
@@ -152,16 +153,17 @@ public class KnockBackFFA extends JavaPlugin {
         );
 
 
-        JNIILBootstrap.install(JNIILBootstrap.MODE.NATIVE);
-        JNIIL.setBytecodeVerifying(false);
-        ClassInjector.injectClass(NerfKnockback.class);
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            try {
-                new StandardMethodInjector().inject(new KnockbackPatch());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }, 1L);
+        // JNIIL removed — high-ping knockback nerf patch disabled
+//        JNIILBootstrap.install(JNIILBootstrap.MODE.NATIVE);
+//        JNIIL.setBytecodeVerifying(false);
+//        ClassInjector.injectClass(NerfKnockback.class);
+//        Bukkit.getScheduler().runTaskLater(this, () -> {
+//            try {
+//                new StandardMethodInjector().inject(new KnockbackPatch());
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//        }, 1L);
 
 
         try {
