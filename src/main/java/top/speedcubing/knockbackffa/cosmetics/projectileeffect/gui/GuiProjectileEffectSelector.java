@@ -51,7 +51,7 @@ public class GuiProjectileEffectSelector implements Listener {
                     (!projectileEffectManager.hasSelected(p, "HEART_PARTICLE") ? "§cLocked!" : "§aSELECTED!"));
             inventory.setItem(12, LOCKED_HEART);
         }
-        if (p.hasPermission("projectiileeffect.note") || user.hasPermission("projectileeffect.note")) {
+        if (p.hasPermission("projectileeffect.note") || user.hasPermission("projectileeffect.note")) {
             ItemStack NOTE = new CustomItem(projectileEffectManager.getProjectileEffectById("NOTE_PARTICLE").getIcon(), 1,
                     "§aNote Projectile Effect",
                     "§7Select the Note Particle",
