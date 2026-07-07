@@ -29,6 +29,11 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
+    - name: Run build.sh
+      run: |
+        chmod +x ./build.sh
+        ./build.sh
+
     - name: Setup Maven Settings
       if: ${{ !inputs.build_only }}
       run: |
@@ -56,18 +61,7 @@ jobs:
         </settings>
         EOF
 
-    - name: Run build.sh
-      run: |
-        chmod +x ./build.sh
-        ./build.sh
-
-    - name: build-output
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-output
-        path: ./target/KnockbackFFA-1.0-SNAPSHOT.jar
-
     - name: Deploy to Nexus
       if: ${{ !inputs.build_only }}
       run: |
-        mvn deploy -DskipTests
+        mvn -B --no-transfer-progress -DskipTests deploy
