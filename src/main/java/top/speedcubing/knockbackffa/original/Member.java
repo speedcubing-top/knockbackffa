@@ -89,7 +89,7 @@ public class Member {
         dailyKill = r.getInt(4);
         armorColor = r.getString(5) == null ? "null" : r.getString(5);
         weaponId = user.dbSelect("kbffa_weapon").getInt(0);
-        player.teleport(new Location(player.getWorld(), Configuration.centerX + 0.5, Configuration.centerY, Configuration.centerZ + 0.5, Configuration.yaw, 0));
+        player.teleport(new Location(Bukkit.getWorld("map_kbffa"), Configuration.centerX + 0.5, Configuration.centerY, Configuration.centerZ + 0.5, Configuration.yaw, 0));
         player.setLevel(0);
         player.setHealth(20);
         player.setGameMode(GameMode.SURVIVAL);
@@ -125,9 +125,9 @@ public class Member {
                 connection.sendPacket(a.maxHealPacket);
         });
         for (int i = 0; i < killBoard.length; i++) {
-            killBoard[i] = new Hologram("", false, false).setLocation(Configuration.holoX, 152 - i * 0.3, Configuration.holoZ, 0, 0).world("kbffa").setClickEvent(KnockBackFFA.clickEvent).setListener(player).spawn();
+            killBoard[i] = new Hologram("", false, false).setLocation(Configuration.holoX, 152 - i * 0.3, Configuration.holoZ, 0, 0).world("map_kbffa").setClickEvent(KnockBackFFA.clickEvent).setListener(player).spawn();
         }
-        personal = new Hologram("", false, false).world("kbffa").setLocation(Configuration.holoX, 148.9, Configuration.holoZ, 0, 0).setClickEvent(KnockBackFFA.clickEvent).setListener(player);
+        personal = new Hologram("", false, false).world("map_kbffa").setLocation(Configuration.holoX, 148.9, Configuration.holoZ, 0, 0).setClickEvent(KnockBackFFA.clickEvent).setListener(player);
         setDisplayType(true);
         users.put(user.id, this);
 

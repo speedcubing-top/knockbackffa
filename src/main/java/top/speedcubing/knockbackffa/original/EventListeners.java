@@ -801,7 +801,7 @@ public class EventListeners implements Listener {
         EntityList.clickToggle.despawn();
         EntityList.clickToggle
                 .setLocation(Configuration.holoX, 148.5, Configuration.holoZ, 0, 0)
-                .world("world")
+                .world("map_kbffa")
                 .spawn();
     }
 

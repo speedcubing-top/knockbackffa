@@ -167,7 +167,7 @@ public class KnockBackFFA extends JavaPlugin {
 
 
         try {
-            MapManager.install("map_kbffa", "kbffa", Difficulty.EASY, 6000, false);
+            MapManager.install("map_kbffa", "map_kbffa", Difficulty.EASY, 6000, false);
         } catch (Exception e) {
             Bukkit.getServer().shutdown();
         }
