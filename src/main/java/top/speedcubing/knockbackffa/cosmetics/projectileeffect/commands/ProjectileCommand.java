@@ -39,7 +39,7 @@ public class ProjectileCommand implements CommandExecutor {
                 }
             }
             player.sendMessage("/projectileeffect gui <player> - Open Projectile Effect selector.");
-            player.sendMessage("/projectileeffect reload - Realod config.yml");
+            player.sendMessage("/projectileeffect reload - Reload config.yml");
         }
         return true;
     }

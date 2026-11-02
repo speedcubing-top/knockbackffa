@@ -1096,7 +1096,7 @@ public enum ParticleEffect {
 		 * @param center
 		 *            Center location of the effect
 		 * @throws PacketInstantiationException
-		 *             If instantion fails due to an unknown error */
+		 *             If instantiation fails due to an unknown error */
 		private void initializePacket(Location center) throws PacketInstantiationException {
 			if (packet != null) {
 				return;
@@ -1137,7 +1137,7 @@ public enum ParticleEffect {
 		 * @param player
 		 *            Receiver of the packet
 		 * @throws PacketInstantiationException
-		 *             If instantion fails due to an unknown error
+		 *             If instantiation fails due to an unknown error
 		 * @throws PacketSendingException
 		 *             If sending fails due to an unknown error
 		 * @see #initializePacket(Location) */

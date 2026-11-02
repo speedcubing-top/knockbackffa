@@ -1,4 +1,4 @@
-package top.speedcubing.knockbackffa.top.nontage.patchs;
+package top.speedcubing.knockbackffa.top.nontage.patches;
 
 // JNIIL removed — dependency unavailable
 //import net.minecraft.server.v1_8_R3.Entity;
@@ -24,8 +24,8 @@ public class KnockbackPatch /* implements Injectable */ {
 //        builder.extractExistingLocals(ctMethod);
 //        LocalValue<Double> friction = builder.local(9, "friction", Double.class);
 //        builder.codeBlock(block -> {
-//            block.ifThen("top.speedcubing.knockbackffa.top.nontage.patchs.NerfKnockback.shouldNerfKnockback($0)", () -> {
-//                block.addLine(friction.setExpr("top.speedcubing.knockbackffa.top.nontage.patchs.NerfKnockback.nerfFriction"));
+//            block.ifThen("top.speedcubing.knockbackffa.top.nontage.patches.NerfKnockback.shouldNerfKnockback($0)", () -> {
+//                block.addLine(friction.setExpr("top.speedcubing.knockbackffa.top.nontage.patches.NerfKnockback.nerfFriction"));
 //            });
 //        });
 //        return builder.compile();

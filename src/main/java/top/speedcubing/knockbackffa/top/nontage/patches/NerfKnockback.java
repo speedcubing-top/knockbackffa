@@ -1,4 +1,4 @@
-package top.speedcubing.knockbackffa.top.nontage.patchs;
+package top.speedcubing.knockbackffa.top.nontage.patches;
 
 import net.minecraft.server.v1_8_R3.Entity;
 import net.minecraft.server.v1_8_R3.EntityLiving;

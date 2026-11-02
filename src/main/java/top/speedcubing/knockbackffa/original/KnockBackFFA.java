@@ -64,8 +64,8 @@ import top.speedcubing.knockbackffa.managers.VoteManager;
 import top.speedcubing.knockbackffa.original.configuration.Configuration;
 import top.speedcubing.knockbackffa.original.list.EntityList;
 import top.speedcubing.knockbackffa.original.list.ItemList;
-//import top.speedcubing.knockbackffa.top.nontage.patchs.KnockbackPatch; // JNIIL removed
-//import top.speedcubing.knockbackffa.top.nontage.patchs.NerfKnockback;  // JNIIL removed
+//import top.speedcubing.knockbackffa.top.nontage.patches.KnockbackPatch; // JNIIL removed
+//import top.speedcubing.knockbackffa.top.nontage.patches.NerfKnockback;  // JNIIL removed
 import top.speedcubing.knockbackffa.trollutillisteners.Darts;
 import top.speedcubing.knockbackffa.trollutillisteners.Fireball;
 import top.speedcubing.knockbackffa.trollutillisteners.OceanBow;
