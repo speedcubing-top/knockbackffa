@@ -9,9 +9,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MapView;
+import top.speedcubing.server.lang.Lang;
+import top.speedcubing.server.player.User;
 
 public class MapManager {
     //Add other map you need modify getMapCommandByMapName
@@ -111,8 +114,17 @@ public class MapManager {
         }
     }
 
+    /** Marks the map vote menu so clicks are recognised regardless of the (translated) title. */
+    public static final class VoteMenuHolder implements InventoryHolder {
+        @Override
+        public Inventory getInventory() {
+            return null;
+        }
+    }
+
     public static void open(Player player) {
-        Inventory mapInv = Bukkit.createInventory(null, 36, "Map Vote");
+        int lang = User.getUser(player).lang;
+        Inventory mapInv = Bukkit.createInventory(new VoteMenuHolder(), 36, Lang.of("%lang_kbffa_vote_menu_title%").getString(lang));
         AtomicInteger count = new AtomicInteger(0);
 
         getAllMapNames().forEach(mapName -> {
@@ -121,10 +133,11 @@ public class MapManager {
             ItemMeta meta = map.getItemMeta();
 
             List<String> lore = new ArrayList<>();
-            lore.add("§eLeft Click to vote!");
-            lore.add("§eRight Click to view!");
-            lore.add("§eVote counts: " + VoteManager.getVoteCountByMapName(mapName));
+            lore.add(Lang.of("%lang_kbffa_vote_lore_vote%").getString(lang));
+            lore.add(Lang.of("%lang_kbffa_vote_lore_view%").getString(lang));
+            lore.add(Lang.of("%lang_kbffa_vote_lore_count%", String.valueOf(VoteManager.getVoteCountByMapName(mapName))).getString(lang));
 
+            // the display name is the map id the click handler votes for; keep it untranslated
             meta.setDisplayName("§b" + mapName);
             meta.setLore(lore);
             map.setItemMeta(meta);

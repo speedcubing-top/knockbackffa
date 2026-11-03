@@ -157,7 +157,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (e.getClickedInventory() == null || !e.getClickedInventory().getTitle().equals("Map Vote")) return;
+        if (e.getClickedInventory() == null || !(e.getClickedInventory().getHolder() instanceof MapManager.VoteMenuHolder)) return;
         e.setCancelled(true);
         ItemStack clickedItem = e.getCurrentItem();
         switch (e.getClick()) {

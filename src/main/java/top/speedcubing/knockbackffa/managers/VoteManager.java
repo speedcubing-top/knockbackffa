@@ -34,17 +34,20 @@ public class VoteManager {
         new BukkitRunnable() {
             @Override
             public void run() {
-                int voteCount = getVoteCountByMapName(calculateVoteGetMapName());
-                if (voteCount == 0) {
+                String winner = calculateVoteGetMapName();
+                Integer voteCount = winner == null ? null : getVoteCountByMapName(winner);
+                if (voteCount == null || voteCount == 0) {
                     Bukkit.getOnlinePlayers().forEach(player -> {
                         User.getUser(player).sendMessage("%lang_kbffa_vote_no_votes%");
                     });
+                    // without this the vote stayed open forever after a round with no votes
+                    endVote();
                     return;
                 }
                 Bukkit.getOnlinePlayers().forEach(player -> {
-                    User.getUser(player).sendMessage("%lang_kbffa_vote_result%", calculateVoteGetMapName(), Integer.toString(voteCount));
+                    User.getUser(player).sendMessage("%lang_kbffa_vote_result%", winner, Integer.toString(voteCount));
                 });
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), MapManager.getMapCommandByMapName(calculateVoteGetMapName()) + " " + calculateVoteGetMapName());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), MapManager.getMapCommandByMapName(winner) + " " + winner);
                 endVote();
             }
         }.runTaskLater(speedcubingServer.getInstance(), 20 * 60);
