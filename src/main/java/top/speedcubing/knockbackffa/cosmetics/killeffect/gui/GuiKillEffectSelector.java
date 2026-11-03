@@ -1,5 +1,7 @@
 package top.speedcubing.knockbackffa.cosmetics.killeffect.gui;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -8,14 +10,36 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.InventoryHolder;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
 import top.speedcubing.knockbackffa.cosmetics.main.CosmeticFeedback;
+import top.speedcubing.knockbackffa.utils.LangText;
 import top.speedcubing.server.player.User;
 
 public class GuiKillEffectSelector implements Listener {
+
+    /** Marks the kill effect menu so clicks are recognised regardless of the (translated) title. */
+    public static final class MenuHolder implements InventoryHolder {
+        @Override
+        public Inventory getInventory() {
+            return null;
+        }
+    }
+
+    private record Entry(int slot, String id, String permission) {
+    }
+
+    private static final Entry[] EFFECTS = {
+            new Entry(12, "BLOOD_EXPLOSION", "killeffect.blood_explosion"),
+            new Entry(13, "HEART_EXPLOSION", "killeffect.heart_explosion"),
+            new Entry(14, "HEAD_ROCKET", "killeffect.head_rocket"),
+            new Entry(15, "FINAL_SMASH", "killeffect.final_smash"),
+            new Entry(20, "LIGHTNING", "killeffect.lightning"),
+            new Entry(21, "TNT", "killeffect.tnt"),
+            new Entry(22, "CHAMP", "killeffect.champ")
+    };
 
     private final KnockBackFFA plugin;
     private final KillEffectManager killEffectManager;
@@ -25,154 +49,35 @@ public class GuiKillEffectSelector implements Listener {
         this.killEffectManager = killEffectManager;
     }
 
+    /** translated display name of a kill effect id, e.g. "BLOOD_EXPLOSION" */
+    public static String effectName(int lang, String id) {
+        return LangText.str(lang, "%lang_kbffa_killeffect_" + id.toLowerCase() + "%");
+    }
+
     public void open(Player p) {
         User user = User.getUser(p);
-        Inventory inventory = Bukkit.createInventory(null, 54, "Kill Effects");
-        ItemStack NONE = new CustomItem(Material.BARRIER, 1, "§aNONE",
-                "§7Selecting this option",
-                "§7disables your Kill Effect.",
-                "",
-                (!killEffectManager.hasSelected(p, "NONE") ? "§eClick to select!" : "§aSELECTED!"));
-        if (p.hasPermission("killeffect.blood_explosion") || user.hasPermission("killeffect.blood_explosion")) {
-            ItemStack BLOOD_EXPLOSION = new CustomItem(killEffectManager.getKillEffectById("BLOOD_EXPLOSION").getIcon(), 1,
-                    "§aBlood Explosion Kill Effect",
-                    "§7Select the Blood Explosion",
-                    "§7Kill Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "BLOOD_EXPLOSION") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(12, BLOOD_EXPLOSION);
-        } else {
-            ItemStack LOCKED_BLOOD_EXPLOSION = new CustomItem(killEffectManager.getKillEffectById("BLOOD_EXPLOSION").getIcon(), 1,
-                    "§aBlood Explosion Kill Effect",
-                    "§7Select the Blood Explosion",
-                    "§7Kill Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "BLOOD_EXPLOSION") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(12, LOCKED_BLOOD_EXPLOSION);
-        }
-        if (p.hasPermission("killeffect.heart_explosion") || user.hasPermission("killeffect.heart_explosion")) {
-            ItemStack HEART_EXPLOSION = new CustomItem(killEffectManager.getKillEffectById("HEART_EXPLOSION").getIcon(), 1,
-                    "§aHeart Explosion Kill Effect",
-                    "§7Select the Heart Explosion",
-                    "§7Kill Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "HEART_EXPLOSION") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(13, HEART_EXPLOSION);
-        } else {
-            ItemStack LOCKED_HEART_EXPLOSION = new CustomItem(killEffectManager.getKillEffectById("HEART_EXPLOSION").getIcon(), 1,
-                    "§aHeart Explosion Kill Effect",
-                    "§7Select the Heart Explosion",
-                    "§7Kill Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "HEART_EXPLOSION") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(13, LOCKED_HEART_EXPLOSION);
-        }
-        if (p.hasPermission("killeffect.head_rocket") || user.hasPermission("killeffect.head_rocket")) {
-            ItemStack HEAD_ROCKET = new CustomItem(killEffectManager.getKillEffectById("HEAD_ROCKET").getIcon(), 1,
-                    "§aHead Rocket Kill Effect",
-                    "§7Select the Head Rocket",
-                    "§7Kill Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "HEAD_ROCKET") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(14, HEAD_ROCKET);
-        } else {
-            ItemStack LOCKED_HEAD_ROCKET = new CustomItem(killEffectManager.getKillEffectById("HEAD_ROCKET").getIcon(), 1,
-                    "§aHead Rocket Kill Effect",
-                    "§7Select the Head Rocket",
-                    "§7Kill Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "HEAD_ROCKET") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(14, LOCKED_HEAD_ROCKET);
-        }
-        if (p.hasPermission("killeffect.final_smash") || user.hasPermission("killeffect.final_smash")) {
-            ItemStack FINAL_SMASH = new CustomItem(killEffectManager.getKillEffectById("FINAL_SMASH").getIcon(), 1,
-                    "§aFinal Smash Kill Effect",
-                    "§7Select the Final Smash",
-                    "§7Kill Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "FINAL_SMASH") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(15, FINAL_SMASH);
-        } else {
-            ItemStack LOCKED_FINAL_SMASH = new CustomItem(killEffectManager.getKillEffectById("FINAL_SMASH").getIcon(), 1,
-                    "§aFinal Smash Kill Effect",
-                    "§7Select the Final Smash",
-                    "§7Kill Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "FINAL_SMASH") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(15, LOCKED_FINAL_SMASH);
-        }
-        if (p.hasPermission("killeffect.lightning") || user.hasPermission("killeffect.lightning")) {
-            ItemStack LIGHTNING = new CustomItem(killEffectManager.getKillEffectById("LIGHTNING").getIcon(), 1,
-                    "§aLightning Kill Effect",
-                    "§7Select the Lightning",
-                    "§7Kill Effect.",
-                    "§7This change is cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "LIGHTNING") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(20, LIGHTNING);
-        } else {
-            ItemStack LOCKED_LIGHTNING = new CustomItem(killEffectManager.getKillEffectById("LIGHTNING").getIcon(), 1,
-                    "§aLightning Kill Effect",
-                    "§7Select the Lightning",
-                    "§7Kill Effect.",
-                    "§7This change is cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "LIGHTNING") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(20, LOCKED_LIGHTNING);
-        }
-        if (p.hasPermission("killeffect.tnt") || user.hasPermission("killeffect.tnt")) {
-            ItemStack TNT = new CustomItem(killEffectManager.getKillEffectById("TNT").getIcon(), 1,
-                    "§aLightning Kill Effect",
-                    "§7Select the TNT",
-                    "§7Kill Effect.",
-                    "§7This change is cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "TNT") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(21, TNT);
-        } else {
-            ItemStack LOCKED_TNT = new CustomItem(killEffectManager.getKillEffectById("TNT").getIcon(), 1,
-                    "§aLightning Kill Effect",
-                    "§7Select the TNT",
-                    "§7Kill Effect.",
-                    "§7This change is cosmetic",
-                    "",
-                    (!killEffectManager.hasSelected(p, "TNT") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(21, LOCKED_TNT);
-        }
-        if (p.hasPermission("killeffect.champ") || user.hasPermission("killeffect.champ")) {
-            ItemStack CHAMP = new CustomItem(killEffectManager.getKillEffectById("CHAMP").getIcon(), 1,
-                    "§aChamp Kill Effect",
-                    "§7Select the Champ,",
-                    "§7Kill Effect.",
-                    "§7This change is cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "CHAMP") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(22, CHAMP);
-        } else {
-            ItemStack LOCKED_CHAMP = new CustomItem(killEffectManager.getKillEffectById("CHAMP").getIcon(), 1,
-                    "§aChamp Kill Effect",
-                    "§7Select the Champ,",
-                    "§7Kill Effect.",
-                    "§7This change is cosmetic.",
-                    "",
-                    (!killEffectManager.hasSelected(p, "CHAMP") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(22, LOCKED_CHAMP);
+        int lang = user.lang;
+        Inventory inventory = Bukkit.createInventory(new MenuHolder(), 54, LangText.str(lang, "%lang_kbffa_killeffect_menu_title%"));
+
+        List<String> noneLore = new ArrayList<>(LangText.lines(lang, "%lang_kbffa_killeffect_none_lore%"));
+        noneLore.add("");
+        noneLore.add(LangText.str(lang, !killEffectManager.hasSelected(p, "NONE") ? "%lang_server_status_click_select%" : "%lang_kbffa_cosmetic_selected_lore%"));
+        inventory.setItem(11, new CustomItem(Material.BARRIER, 1, "§a" + effectName(lang, "NONE"), noneLore));
+
+        for (Entry entry : EFFECTS) {
+            boolean unlocked = p.hasPermission(entry.permission()) || user.hasPermission(entry.permission());
+            String name = effectName(lang, entry.id());
+            List<String> lore = new ArrayList<>(LangText.lines(lang, "%lang_kbffa_killeffect_item_lore%", name));
+            lore.add("");
+            lore.add(LangText.str(lang, killEffectManager.hasSelected(p, entry.id()) ? "%lang_kbffa_cosmetic_selected_lore%"
+                    : unlocked ? "%lang_server_status_click_select%" : "%lang_server_status_locked%"));
+            inventory.setItem(entry.slot(), new CustomItem(killEffectManager.getKillEffectById(entry.id()).getIcon(), 1,
+                    LangText.str(lang, "%lang_kbffa_killeffect_item_name%", name), lore));
         }
 
-        ItemStack close = new CustomItem(Material.BARRIER, 1, "§cClose");
-        ItemStack back = new CustomItem(Material.ARROW, 1, "§aGo Back",
-                "§7Back to Cosmetics Menu");
-        inventory.setItem(45, back);
-        inventory.setItem(11, NONE);
-        inventory.setItem(49, close);
+        inventory.setItem(45, new CustomItem(Material.ARROW, 1, LangText.str(lang, "%lang_kbffa_menu_back%"),
+                LangText.str(lang, "%lang_kbffa_menu_back_lore%")));
+        inventory.setItem(49, new CustomItem(Material.BARRIER, 1, LangText.str(lang, "%lang_kbffa_menu_close%")));
         p.openInventory(inventory);
     }
 
@@ -180,121 +85,47 @@ public class GuiKillEffectSelector implements Listener {
     public void onClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         User user = User.getUser(p);
-        if (p.getOpenInventory().getTopInventory() != null) {
-            if (p.getOpenInventory().getTopInventory().getName().equalsIgnoreCase("Kill Effects")) {
-                e.setCancelled(true);
-                if (e.getSlotType().equals(SlotType.OUTSIDE) || e.getCurrentItem().getType().equals(Material.AIR)) {
-                    return;
+        Inventory top = p.getOpenInventory().getTopInventory();
+        if (top == null || !(top.getHolder() instanceof MenuHolder)) {
+            return;
+        }
+        e.setCancelled(true);
+        if (e.getSlotType().equals(SlotType.OUTSIDE) || e.getCurrentItem().getType().equals(Material.AIR)) {
+            return;
+        }
+        if (!e.getClickedInventory().equals(top)) {
+            return;
+        }
+        int slot = e.getSlot();
+        if (slot == 49) {
+            p.closeInventory();
+        }
+        if (slot == 45) {
+            plugin.getGuiCosmeticsSelector().open(p);
+        }
+        if (slot == 11) {
+            if (killEffectManager.hasSelectedOne(p)) {
+                killEffectManager.setKillEffect(p, "NONE");
+                open(p);
+                CosmeticFeedback.selected(p, effectName(user.lang, "NONE"));
+            } else {
+                CosmeticFeedback.alreadySelected(p);
+            }
+        }
+        for (Entry entry : EFFECTS) {
+            if (slot != entry.slot()) {
+                continue;
+            }
+            if (p.hasPermission(entry.permission()) || user.hasPermission(entry.permission())) {
+                if (!killEffectManager.hasSelected(p, entry.id())) {
+                    killEffectManager.setKillEffect(p, entry.id());
+                    open(p);
+                    CosmeticFeedback.selected(p, LangText.str(user.lang, "%lang_kbffa_killeffect_item_name%", effectName(user.lang, entry.id())));
+                } else {
+                    CosmeticFeedback.alreadySelected(p);
                 }
-                if (e.getClickedInventory().equals(p.getOpenInventory().getTopInventory())) {
-                    e.setCancelled(true);
-                    if (e.getSlot() == 49) {
-                        p.closeInventory();
-                    }
-                    if (e.getSlot() == 45) {
-                        plugin.getGuiCosmeticsSelector().open(p);
-                    }
-                    if (e.getSlot() == 11) {
-                        if (killEffectManager.hasSelectedOne(p)) {
-                            killEffectManager.setKillEffect(p, "NONE");
-                            open(p);
-                            CosmeticFeedback.selected(p, "NONE");
-                        } else {
-                            CosmeticFeedback.alreadySelected(p);
-                        }
-                    }
-                    if (e.getSlot() == 12) {
-                        if (p.hasPermission("killeffect.blood_explosion") || user.hasPermission("killeffect.blood_explosion")) {
-                            if (!killEffectManager.hasSelected(p, "BLOOD_EXPLOSION")) {
-                                killEffectManager.setKillEffect(p, "BLOOD_EXPLOSION");
-                                open(p);
-                                CosmeticFeedback.selected(p, "Blood Explosion Kill Effect");
-                            } else {
-                                CosmeticFeedback.alreadySelected(p);
-                            }
-                        } else {
-                            CosmeticFeedback.locked(p);
-                        }
-                    }
-                    if (e.getSlot() == 13) {
-                        if (p.hasPermission("killeffect.heart_explosion") || user.hasPermission("killeffect.heart_explosion")) {
-                            if (!killEffectManager.hasSelected(p, "HEART_EXPLOSION")) {
-                                killEffectManager.setKillEffect(p, "HEART_EXPLOSION");
-                                open(p);
-                                CosmeticFeedback.selected(p, "Heart Explosion Kill Effect");
-                            } else {
-                                CosmeticFeedback.alreadySelected(p);
-                            }
-                        } else {
-                            CosmeticFeedback.locked(p);
-                        }
-                    }
-                    if (e.getSlot() == 14) {
-                        if (p.hasPermission("killeffect.head_rocket") || user.hasPermission("killeffect.head_rocket")) {
-                            if (!killEffectManager.hasSelected(p, "HEAD_ROCKET")) {
-                                killEffectManager.setKillEffect(p, "HEAD_ROCKET");
-                                open(p);
-                                CosmeticFeedback.selected(p, "Head Rocket Kill Effect");
-                            } else {
-                                CosmeticFeedback.alreadySelected(p);
-                            }
-                        } else {
-                            CosmeticFeedback.locked(p);
-                        }
-                    }
-                    if (e.getSlot() == 15) {
-                        if (p.hasPermission("killeffect.final_smash") || user.hasPermission("killeffect.final_smash")) {
-                            if (!killEffectManager.hasSelected(p, "FINAL_SMASH")) {
-                                killEffectManager.setKillEffect(p, "FINAL_SMASH");
-                                open(p);
-                                CosmeticFeedback.selected(p, "Final Smash Kill Effect");
-                            } else {
-                                CosmeticFeedback.alreadySelected(p);
-                            }
-                        } else {
-                            CosmeticFeedback.locked(p);
-                        }
-                    }
-                    if (e.getSlot() == 20) {
-                        if (p.hasPermission("killeffect.lightning") || user.hasPermission("killeffect.lightning")) {
-                            if (!killEffectManager.hasSelected(p, "LIGHTNING")) {
-                                killEffectManager.setKillEffect(p, "LIGHTNING");
-                                open(p);
-                                CosmeticFeedback.selected(p, "Lightning Kill Effect");
-                            } else {
-                                CosmeticFeedback.alreadySelected(p);
-                            }
-                        } else {
-                            CosmeticFeedback.locked(p);
-                        }
-                    }
-                    if (e.getSlot() == 21) {
-                        if (p.hasPermission("killeffect.tnt") || user.hasPermission("killeffect.tnt")) {
-                            if (!killEffectManager.hasSelected(p, "TNT")) {
-                                killEffectManager.setKillEffect(p, "TNT");
-                                open(p);
-                                CosmeticFeedback.selected(p, "TNT Kill Effect");
-                            } else {
-                                CosmeticFeedback.alreadySelected(p);
-                            }
-                        } else {
-                            CosmeticFeedback.locked(p);
-                        }
-                    }
-                    if (e.getSlot() == 22) {
-                        if (p.hasPermission("killeffect.champ") || user.hasPermission("killeffect.champ")) {
-                            if (!killEffectManager.hasSelected(p, "CHAMP")) {
-                                killEffectManager.setKillEffect(p, "CHAMP");
-                                open(p);
-                                CosmeticFeedback.selected(p, "Champ Kill Effect");
-                            } else {
-                                CosmeticFeedback.alreadySelected(p);
-                            }
-                        } else {
-                            CosmeticFeedback.locked(p);
-                        }
-                    }
-                }
+            } else {
+                CosmeticFeedback.locked(p);
             }
         }
     }

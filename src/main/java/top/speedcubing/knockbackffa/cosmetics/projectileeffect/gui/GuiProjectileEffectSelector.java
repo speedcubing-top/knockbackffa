@@ -1,5 +1,7 @@
 package top.speedcubing.knockbackffa.cosmetics.projectileeffect.gui;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -8,14 +10,34 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.InventoryHolder;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
 import top.speedcubing.knockbackffa.cosmetics.main.CosmeticFeedback;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
+import top.speedcubing.knockbackffa.utils.LangText;
 import top.speedcubing.server.player.User;
 
 public class GuiProjectileEffectSelector implements Listener {
+
+    /** Marks the projectile effect menu so clicks are recognised regardless of the (translated) title. */
+    public static final class MenuHolder implements InventoryHolder {
+        @Override
+        public Inventory getInventory() {
+            return null;
+        }
+    }
+
+    private record Entry(int slot, String id, String permission) {
+    }
+
+    private static final Entry[] EFFECTS = {
+            new Entry(12, "HEART_PARTICLE", "projectileeffect.heart"),
+            new Entry(13, "NOTE_PARTICLE", "projectileeffect.note"),
+            new Entry(14, "EGG_PARTICLE", "projectileeffect.egg"),
+            new Entry(15, "CHAMP", "projectileeffect.champ")
+    };
+
     private final KnockBackFFA plugin;
     private final ProjectileEffectManager projectileEffectManager;
 
@@ -24,95 +46,35 @@ public class GuiProjectileEffectSelector implements Listener {
         this.projectileEffectManager = projectileEffectManager;
     }
 
+    /** translated display name of a projectile effect id, e.g. "HEART_PARTICLE" */
+    public static String effectName(int lang, String id) {
+        return LangText.str(lang, "%lang_kbffa_projectileeffect_" + id.toLowerCase() + "%");
+    }
+
     public void open(Player p) {
         User user = User.getUser(p);
-        Inventory inventory = Bukkit.createInventory(null, 54, "Projectile Effects");
-        ItemStack NONE = new CustomItem(Material.BARRIER, 1, "§aNONE", "§7Selecting this option",
-                "§7disables your Kill Effect.",
-                "",
-                    (!projectileEffectManager.hasSelected(p, "NONE") ? "§eClick to select!" : "§aSELECTED!"));
-        inventory.setItem(11, NONE);
-        if (p.hasPermission("projectileeffect.heart") || user.hasPermission("projectileeffect.heart")) {
-            ItemStack HEART = new CustomItem(projectileEffectManager.getProjectileEffectById("HEART_PARTICLE").getIcon(), 1,
-                    "§aHeart Projectile Effect",
-                    "§7Select the Heart Particle",
-                    "§7Projectile Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!projectileEffectManager.hasSelected(p, "HEART_PARTICLE") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(12, HEART);
-        } else {
-            ItemStack LOCKED_HEART = new CustomItem(projectileEffectManager.getProjectileEffectById("HEART_PARTICLE").getIcon(), 1,
-                    "§aHeart Projectile Effect",
-                    "§7Select the Heart Particle",
-                    "§7Projectile Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!projectileEffectManager.hasSelected(p, "HEART_PARTICLE") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(12, LOCKED_HEART);
+        int lang = user.lang;
+        Inventory inventory = Bukkit.createInventory(new MenuHolder(), 54, LangText.str(lang, "%lang_kbffa_projectileeffect_menu_title%"));
+
+        List<String> noneLore = new ArrayList<>(LangText.lines(lang, "%lang_kbffa_projectileeffect_none_lore%"));
+        noneLore.add("");
+        noneLore.add(LangText.str(lang, !projectileEffectManager.hasSelected(p, "NONE") ? "%lang_server_status_click_select%" : "%lang_kbffa_cosmetic_selected_lore%"));
+        inventory.setItem(11, new CustomItem(Material.BARRIER, 1, "§a" + effectName(lang, "NONE"), noneLore));
+
+        for (Entry entry : EFFECTS) {
+            boolean unlocked = p.hasPermission(entry.permission()) || user.hasPermission(entry.permission());
+            String name = effectName(lang, entry.id());
+            List<String> lore = new ArrayList<>(LangText.lines(lang, "%lang_kbffa_projectileeffect_item_lore%", name));
+            lore.add("");
+            lore.add(LangText.str(lang, projectileEffectManager.hasSelected(p, entry.id()) ? "%lang_kbffa_cosmetic_selected_lore%"
+                    : unlocked ? "%lang_server_status_click_select%" : "%lang_server_status_locked%"));
+            inventory.setItem(entry.slot(), new CustomItem(projectileEffectManager.getProjectileEffectById(entry.id()).getIcon(), 1,
+                    LangText.str(lang, "%lang_kbffa_projectileeffect_item_name%", name), lore));
         }
-        if (p.hasPermission("projectileeffect.note") || user.hasPermission("projectileeffect.note")) {
-            ItemStack NOTE = new CustomItem(projectileEffectManager.getProjectileEffectById("NOTE_PARTICLE").getIcon(), 1,
-                    "§aNote Projectile Effect",
-                    "§7Select the Note Particle",
-                    "§7Projectile Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!projectileEffectManager.hasSelected(p, "NOTE_PARTICLE") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(13, NOTE);
-        } else {
-            ItemStack LOCKED_NOTE = new CustomItem(projectileEffectManager.getProjectileEffectById("NOTE_PARTICLE").getIcon(), 1,
-                    "§aNote Projectile Effect",
-                    "§7Select the Note Particle",
-                    "§7Projectile Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!projectileEffectManager.hasSelected(p, "NOTE_PARTICLE") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(13, LOCKED_NOTE);
-        }
-        if (p.hasPermission("projectileeffect.egg") || user.hasPermission("projectileeffect.egg")) {
-            ItemStack EGG = new CustomItem(projectileEffectManager.getProjectileEffectById("EGG_PARTICLE").getIcon(), 1,
-                    "§aEgg Projectile Effect",
-                    "§7Select the Egg Particle",
-                    "§7Projectile Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!projectileEffectManager.hasSelected(p, "EGG_PARTICLE") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(14, EGG);
-        } else {
-            ItemStack LOCKED_EGG = new CustomItem(projectileEffectManager.getProjectileEffectById("EGG_PARTICLE").getIcon(), 1,
-                    "§aEgg Projectile Effect",
-                    "§7Select the Egg Particle",
-                    "§7Projectile Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!projectileEffectManager.hasSelected(p, "EGG_PARTICLE") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(14, LOCKED_EGG);
-        }
-        if (p.hasPermission("projectileeffect.champ") || user.hasPermission("projectileeffect.champ")) {
-            ItemStack CHAMP = new CustomItem(projectileEffectManager.getProjectileEffectById("CHAMP").getIcon(), 1,
-                    "§aChamp Projectile Effect",
-                    "§7Select the Champ Particle",
-                    "§7projectile Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!projectileEffectManager.hasSelected(p, "CHAMP") ? "§eClick to select!" : "§aSELECTED!"));
-            inventory.setItem(15, CHAMP);
-        } else {
-            ItemStack LOCKED_CHAMP = new CustomItem(projectileEffectManager.getProjectileEffectById("CHAMP").getIcon(), 1,
-                    "§aChamp Projectile Effect",
-                    "§7Select the Champ Particle",
-                    "§7projectile Effect. This change is",
-                    "§7cosmetic.",
-                    "",
-                    (!projectileEffectManager.hasSelected(p, "CHAMP") ? "§cLocked!" : "§aSELECTED!"));
-            inventory.setItem(15, LOCKED_CHAMP);
-        }
-        ItemStack close = new CustomItem(Material.BARRIER, 1, "§cClose");
-        ItemStack back = new CustomItem(Material.ARROW, 1, "§aGo Back",
-                "§7Back to Cosmetics Menu");
-        inventory.setItem(45, back);
-        inventory.setItem(49, close);
+
+        inventory.setItem(45, new CustomItem(Material.ARROW, 1, LangText.str(lang, "%lang_kbffa_menu_back%"),
+                LangText.str(lang, "%lang_kbffa_menu_back_lore%")));
+        inventory.setItem(49, new CustomItem(Material.BARRIER, 1, LangText.str(lang, "%lang_kbffa_menu_close%")));
         p.openInventory(inventory);
     }
 
@@ -120,82 +82,47 @@ public class GuiProjectileEffectSelector implements Listener {
     public void onClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         User user = User.getUser(p);
-        if (p.getOpenInventory().getTopInventory() != null) {
-            if (p.getOpenInventory().getTopInventory().getName().equalsIgnoreCase("Projectile Effects")) {
-                e.setCancelled(true);
-                if (e.getSlotType().equals(InventoryType.SlotType.OUTSIDE) || e.getCurrentItem().getType().equals(Material.AIR)) {
-                    return;
+        Inventory top = p.getOpenInventory().getTopInventory();
+        if (top == null || !(top.getHolder() instanceof MenuHolder)) {
+            return;
+        }
+        e.setCancelled(true);
+        if (e.getSlotType().equals(InventoryType.SlotType.OUTSIDE) || e.getCurrentItem().getType().equals(Material.AIR)) {
+            return;
+        }
+        if (!e.getClickedInventory().equals(top)) {
+            return;
+        }
+        int slot = e.getSlot();
+        if (slot == 49) {
+            p.closeInventory();
+        }
+        if (slot == 45) {
+            plugin.getGuiCosmeticsSelector().open(p);
+        }
+        if (slot == 11) {
+            if (projectileEffectManager.hasSelectedOne(p)) {
+                projectileEffectManager.setProjectileEffect(p, "NONE");
+                open(p);
+                CosmeticFeedback.selected(p, effectName(user.lang, "NONE"));
+            } else {
+                CosmeticFeedback.alreadySelected(p);
+            }
+        }
+        for (Entry entry : EFFECTS) {
+            if (slot != entry.slot()) {
+                continue;
+            }
+            if (p.hasPermission(entry.permission()) || user.hasPermission(entry.permission())) {
+                if (!projectileEffectManager.hasSelected(p, entry.id())) {
+                    projectileEffectManager.setProjectileEffect(p, entry.id());
+                    open(p);
+                    CosmeticFeedback.selected(p, LangText.str(user.lang, "%lang_kbffa_projectileeffect_item_name%", effectName(user.lang, entry.id())));
+                } else {
+                    CosmeticFeedback.alreadySelected(p);
                 }
-                if (e.getClickedInventory().equals(p.getOpenInventory().getTopInventory())) {
-                    e.setCancelled(true);
-                    if (e.getSlot() == 49) {
-                        p.closeInventory();
-                    }
-                    if (e.getSlot() == 45) {
-                        plugin.getGuiCosmeticsSelector().open(p);
-                    }
-                    if (e.getSlot() == 11) {
-                        if (projectileEffectManager.hasSelectedOne(p)) {
-                            projectileEffectManager.setProjectileEffect(p, "NONE");
-                            open(p);
-                            CosmeticFeedback.selected(p, "NONE");
-                        } else {
-                            CosmeticFeedback.alreadySelected(p);
-                        }
-                    }
-                    if (e.getSlot() == 12) {
-                        if (p.hasPermission("projectileeffect.heart") || user.hasPermission("projectileeffect.heart")) {
-                            if (!projectileEffectManager.hasSelected(p, "HEART_PARTICLE")) {
-                                projectileEffectManager.setProjectileEffect(p, "HEART_PARTICLE");
-                                open(p);
-                                CosmeticFeedback.selected(p, "Heart Projectile Effect");
-                            } else {
-                                CosmeticFeedback.alreadySelected(p);
-                            }
-                        } else {
-                            CosmeticFeedback.locked(p);
-                        }
-                    }
-                    if (e.getSlot() == 13) {
-                        if (p.hasPermission("projectileeffect.note") || user.hasPermission("projectileeffect.note")) {
-                            if (!projectileEffectManager.hasSelected(p, "NOTE_PARTICLE")) {
-                                projectileEffectManager.setProjectileEffect(p, "NOTE_PARTICLE");
-                                open(p);
-                                CosmeticFeedback.selected(p, "Note Projectile Effect");
-                            } else {
-                                CosmeticFeedback.alreadySelected(p);
-                            }
-                        } else {
-                            CosmeticFeedback.locked(p);
-                        }
-                    }
-                    if (e.getSlot() == 14) {
-                        if (p.hasPermission("projectileeffect.egg") || user.hasPermission("projectileeffect.egg")) {
-                            if (!projectileEffectManager.hasSelected(p, "EGG_PARTICLE")) {
-                                projectileEffectManager.setProjectileEffect(p, "EGG_PARTICLE");
-                                open(p);
-                                CosmeticFeedback.selected(p, "Egg Projectile Effect");
-                            } else {
-                                CosmeticFeedback.alreadySelected(p);
-                            }
-                        } else {
-                            CosmeticFeedback.locked(p);
-                        }
-                    }
-                    if (e.getSlot() == 15) {
-                        if (p.hasPermission("projectileeffect.champ") || user.hasPermission("projectileeffect.champ")) {
-                            if (!projectileEffectManager.hasSelected(p, "CHAMP")) {
-                                projectileEffectManager.setProjectileEffect(p, "CHAMP");
-                                open(p);
-                                CosmeticFeedback.selected(p, "Champ Projectile Effect");
-                            } else {
-                                CosmeticFeedback.alreadySelected(p);
-                            }
-                        } else {
-                            CosmeticFeedback.locked(p);
-                        }
-                    }
-                }
+            } else {
+                CosmeticFeedback.locked(p);
             }
         }
     }

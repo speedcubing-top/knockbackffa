@@ -4,7 +4,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import top.speedcubing.common.text.Msg;
 import top.speedcubing.knockbackffa.managers.MapManager;
 import top.speedcubing.knockbackffa.managers.VoteManager;
 import top.speedcubing.server.player.User;
@@ -27,7 +26,7 @@ public class VoteCommand implements CommandExecutor {
             switch (args[0]) {
                 case "start":
                     if (VoteManager.getVoteStatus()) {
-                        player.sendMessage(Msg.KNOCKBACKFFA + Msg.ERROR + "A vote is already in progress.");
+                        User.getUser(player).sendMessage("%lang_kbffa_vote_already_in_progress%");
                     } else {
                         VoteManager.startVote();
                     }

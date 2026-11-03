@@ -77,6 +77,9 @@ import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.knockbackffa.utils.LangText;
+import top.speedcubing.server.lang.Lang;
+import top.speedcubing.server.lang.LanguageSystem;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.MapManager;
@@ -106,7 +109,7 @@ public class KnockBackFFA extends JavaPlugin {
     public static final String[] dailyBoard = new String[10];
     public static final String[] boardName = new String[10];
     public static final String[] dailyBoardName = new String[10];
-    public static final Inventory[] KitEditor = new Inventory[4];
+    public static final Inventory[] KitEditor = new Inventory[LanguageSystem.langCount];
     public static final InventoryHolder KitEditorHolder = () -> null;
     public static int id = 0;
     public static final Map<BlockPosition, Integer[]> BlockPlaced = new HashMap<>();
@@ -195,14 +198,11 @@ public class KnockBackFFA extends JavaPlugin {
         }, 0, 10);
 
 
-        String[] title = {"§cKnockBack FFA Inventar", "§cKnockBack FFA Inventory", "§cKnockBack FFA 物品欄", "§cKnockBack FFA 物品栏"};
-        String[] save = {"§aÄnderungen speichern", "§aSave Changes", "§a儲存設定", "§a储存设置"};
-        String[] unsave = {"§cnicht gespeicherte Änderungen", "§cUnSave Changes", "§c不儲存設定", "§c不储存设置"};
-        for (int i = 0; i < 4; i++) {
-            KitEditor[i] = Bukkit.createInventory(KitEditorHolder, 9, title[i]);
+        for (int i = 0; i < KitEditor.length; i++) {
+            KitEditor[i] = Bukkit.createInventory(KitEditorHolder, 9, LangText.str(i, "%lang_kbffa_kit_editor_title%"));
             InventoryUtils.fillItem(KitEditor[i], 0, 9, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name("§a").build());
-            KitEditor[i].setItem(3, new ItemBuilder(Material.INK_SACK).durability(10).name(save[i]).build());
-            KitEditor[i].setItem(5, new ItemBuilder(Material.INK_SACK).durability(1).name(unsave[i]).build());
+            KitEditor[i].setItem(3, new ItemBuilder(Material.INK_SACK).durability(10).name(LangText.str(i, "%lang_kbffa_kit_editor_save%")).build());
+            KitEditor[i].setItem(5, new ItemBuilder(Material.INK_SACK).durability(1).name(LangText.str(i, "%lang_kbffa_kit_editor_discard%")).build());
         }
 
         EntityList.init();
@@ -256,7 +256,7 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
             if (strings[6] == null) strings[6] = "150";
             KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]), Double.parseDouble(strings[4]), Double.parseDouble(strings[5]), Double.parseDouble(strings[6]), strings[7]);
-            commandSender.sendMessage(Msg.KNOCKBACKFFA + Msg.SUCCESS + "Switched map to " + Msg.VALUE + strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
+            commandSender.sendMessage(Lang.of("%lang_kbffa_map_switched%", strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]).get(commandSender).toLegacyText());
             return true;
         });
     }

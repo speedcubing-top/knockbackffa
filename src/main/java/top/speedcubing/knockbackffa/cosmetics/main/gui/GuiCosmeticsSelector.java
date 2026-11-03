@@ -1,7 +1,8 @@
 package top.speedcubing.knockbackffa.cosmetics.main.gui;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -11,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -18,11 +20,14 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.knockbackffa.original.Member;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
+import top.speedcubing.knockbackffa.cosmetics.killeffect.gui.GuiKillEffectSelector;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
 import top.speedcubing.knockbackffa.cosmetics.main.CosmeticFeedback;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
+import top.speedcubing.knockbackffa.cosmetics.projectileeffect.gui.GuiProjectileEffectSelector;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
+import top.speedcubing.knockbackffa.utils.LangText;
 import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.minecraft.text.ComponentText;
@@ -32,6 +37,36 @@ import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.player.User;
 
 public class GuiCosmeticsSelector implements Listener {
+
+    /** Marks the cosmetics menu so clicks are recognised regardless of the (translated) title. */
+    public static final class MenuHolder implements InventoryHolder {
+        @Override
+        public Inventory getInventory() {
+            return null;
+        }
+    }
+
+    private record Weapon(Material material, String key, int slot) {
+    }
+
+    private static final Weapon[] WEAPONS = {
+            new Weapon(Material.WOOD_SWORD, "%lang_kbffa_weapon_wood_sword%", 10),
+            new Weapon(Material.STONE_SWORD, "%lang_kbffa_weapon_stone_sword%", 11),
+            new Weapon(Material.IRON_SWORD, "%lang_kbffa_weapon_iron_sword%", 12),
+            new Weapon(Material.GOLD_SWORD, "%lang_kbffa_weapon_gold_sword%", 13),
+            new Weapon(Material.DIAMOND_SWORD, "%lang_kbffa_weapon_diamond_sword%", 14),
+            new Weapon(Material.APPLE, "%lang_kbffa_weapon_apple%", 15),
+            new Weapon(Material.GOLDEN_APPLE, "%lang_kbffa_weapon_golden_apple%", 16),
+            new Weapon(Material.WOOD_AXE, "%lang_kbffa_weapon_wood_axe%", 19),
+            new Weapon(Material.STONE_AXE, "%lang_kbffa_weapon_stone_axe%", 20),
+            new Weapon(Material.IRON_AXE, "%lang_kbffa_weapon_iron_axe%", 21),
+            new Weapon(Material.GOLD_AXE, "%lang_kbffa_weapon_gold_axe%", 22),
+            new Weapon(Material.DIAMOND_AXE, "%lang_kbffa_weapon_diamond_axe%", 23)
+    };
+
+    private static final Material[] ARMOR_PIECES = {Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE, Material.LEATHER_LEGGINGS, Material.LEATHER_BOOTS};
+    private static final String[] ARMOR_LORE_KEYS = {"%lang_kbffa_armor_lore_helmet%", "%lang_kbffa_armor_lore_chestplate%", "%lang_kbffa_armor_lore_leggings%", "%lang_kbffa_armor_lore_boots%"};
+
     private final KnockBackFFA plugin;
     private final KillEffectManager killEffectManager;
     private final ProjectileEffectManager projectileEffectManager;
@@ -43,79 +78,54 @@ public class GuiCosmeticsSelector implements Listener {
     }
 
     public void open(Player p) {
-        Inventory inventory = Bukkit.createInventory(null, 54, "Cosmetics");
-        ItemStack AXE = new CustomItem(Material.DIAMOND_AXE, 1, "§aWeapon Selector",
-                "§7Click this option",
-                "§7change to Weapon Selector.");
+        int lang = User.getUser(p).lang;
+        Inventory inventory = Bukkit.createInventory(new MenuHolder(), 54, LangText.str(lang, "%lang_kbffa_cosmetic_menu_title%"));
+        ItemStack AXE = new CustomItem(Material.DIAMOND_AXE, 1, LangText.str(lang, "%lang_kbffa_cosmetic_weapon_selector%"),
+                LangText.lines(lang, "%lang_kbffa_cosmetic_weapon_selector_lore%"));
         ItemMeta meta1 = AXE.getItemMeta();
         meta1.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         AXE.setItemMeta(meta1);
         inventory.setItem(13, AXE);
         KillEffect killEffect = killEffectManager.getKillEffect(p);
-        String killEffectName;
-        if (killEffect != null) {
-            killEffectName = killEffect.getName();
-        } else {
-            killEffectName = "NONE";
-        }
+        String killEffectId = killEffect != null ? killEffect.getId() : "NONE";
         if (isChampOrStaff(p)) {
             if (killEffect != null) {
                 if (killEffect.getId().equals("CHAMP")) {
                     killEffectManager.setKillEffect(p, "NONE");
-                    killEffectName = "NONE";
+                    killEffectId = "NONE";
                 }
             }
         }
 
-
-        ItemStack KILL_SELECTOR = new CustomItem(Material.IRON_SWORD, 1, "§aKill Effects",
-                "§7Click this option",
-                "§7change to Kill Effects Selector.",
-                "",
-                "§7Current Selected:",
-                "§a" + killEffectName,
-                "",
-                "§eClick to view!");
+        ItemStack KILL_SELECTOR = new CustomItem(Material.IRON_SWORD, 1, LangText.str(lang, "%lang_kbffa_cosmetic_kill_effects%"),
+                LangText.lines(lang, "%lang_kbffa_cosmetic_kill_effects_lore%", GuiKillEffectSelector.effectName(lang, killEffectId)));
         ItemMeta meta = KILL_SELECTOR.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         KILL_SELECTOR.setItemMeta(meta);
         inventory.setItem(21, KILL_SELECTOR);
 
-        ItemStack ARMOR = new CustomItem(Material.LEATHER_CHESTPLATE, 1, "§aArmor Color Selector",
-                "§7Click this option",
-                "§7change to Armor Selector.");
+        ItemStack ARMOR = new CustomItem(Material.LEATHER_CHESTPLATE, 1, LangText.str(lang, "%lang_kbffa_cosmetic_armor_selector%"),
+                LangText.lines(lang, "%lang_kbffa_cosmetic_armor_selector_lore%"));
         ItemMeta meta2 = ARMOR.getItemMeta();
         meta2.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         ARMOR.setItemMeta(meta2);
         inventory.setItem(22, ARMOR);
 
         ProjectileEffect projectileEffect = projectileEffectManager.getProjectileEffect(p);
-        String projectileEffectName;
-        if (projectileEffect != null) {
-            projectileEffectName = projectileEffect.getName();
-        } else {
-            projectileEffectName = "NONE";
-        }
+        String projectileEffectId = projectileEffect != null ? projectileEffect.getId() : "NONE";
         if (isChampOrStaff(p)) {
             if (projectileEffect != null) {
                 if (projectileEffect.getId().equals("CHAMP")) {
                     projectileEffectManager.setProjectileEffect(p, "NONE");
-                    projectileEffectName = "NONE";
+                    projectileEffectId = "NONE";
                 }
             }
         }
-        ItemStack PROJECTILE_SELECTOR = new CustomItem(Material.ARROW, 1, "§aProjectile Effects",
-                "§7Click this option",
-                "§7change to Projectile Effects",
-                "§7Selector.",
-                "",
-                "§7Current Selected:",
-                "§a" + projectileEffectName,
-                "",
-                "§eClick to view!");
+        ItemStack PROJECTILE_SELECTOR = new CustomItem(Material.ARROW, 1, LangText.str(lang, "%lang_kbffa_cosmetic_projectile_effects%"),
+                LangText.lines(lang, "%lang_kbffa_cosmetic_projectile_effects_lore%", GuiProjectileEffectSelector.effectName(lang, projectileEffectId)));
         inventory.setItem(23, PROJECTILE_SELECTOR);
 
-        ItemStack close = new CustomItem(Material.BARRIER, 1, "§cClose");
+        ItemStack close = new CustomItem(Material.BARRIER, 1, LangText.str(lang, "%lang_kbffa_menu_close%"));
         inventory.setItem(49, close);
         p.openInventory(inventory);
     }
@@ -123,76 +133,42 @@ public class GuiCosmeticsSelector implements Listener {
     @EventHandler
     public void onClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (p.getOpenInventory().getTopInventory() != null) {
-            if (p.getOpenInventory().getTopInventory().getName().equalsIgnoreCase("Cosmetics")) {
-                e.setCancelled(true);
-                if (e.getSlotType().equals(InventoryType.SlotType.OUTSIDE) || e.getCurrentItem().getType().equals(Material.AIR)) {
-                    return;
-                }
-                if (e.getClickedInventory().equals(p.getOpenInventory().getTopInventory())) {
-                    e.setCancelled(true);
-                    if (e.getSlot() == 49) {
-                        p.closeInventory();
-                    }
-                    if (e.getSlot() == 13) {
-                        openWeaponSelector(p);
-                    }
-                    if (e.getSlot() == 21) {
-                        plugin.getGuiKillEffectSelector().open(p);
-                    }
-                    if (e.getSlot() == 22) {
-                        openArmorSelector(p);
-                    }
-                    if (e.getSlot() == 23) {
-                        plugin.getGuiProjectileEffectSelector().open(p);
-                    }
-                }
+        Inventory top = p.getOpenInventory().getTopInventory();
+        if (top == null || !(top.getHolder() instanceof MenuHolder)) {
+            return;
+        }
+        e.setCancelled(true);
+        if (e.getSlotType().equals(InventoryType.SlotType.OUTSIDE) || e.getCurrentItem().getType().equals(Material.AIR)) {
+            return;
+        }
+        if (e.getClickedInventory().equals(top)) {
+            if (e.getSlot() == 49) {
+                p.closeInventory();
+            }
+            if (e.getSlot() == 13) {
+                openWeaponSelector(p);
+            }
+            if (e.getSlot() == 21) {
+                plugin.getGuiKillEffectSelector().open(p);
+            }
+            if (e.getSlot() == 22) {
+                openArmorSelector(p);
+            }
+            if (e.getSlot() == 23) {
+                plugin.getGuiProjectileEffectSelector().open(p);
             }
         }
     }
 
     private void openWeaponSelector(Player p) {
-        InventoryBuilder inv = new InventoryBuilder(54, "Weapon Selector");
+        int lang = User.getUser(p).lang;
+        InventoryBuilder inv = new InventoryBuilder(54, LangText.str(lang, "%lang_kbffa_weapon_menu_title%"));
         ItemStack grayGlass = new ItemBuilder(Material.STAINED_GLASS_PANE).name(" ").durability(7).build();
         int id = Member.getMember(p).weaponId;
-        ItemStack woodSword = weaponGenerator(id, Material.WOOD_SWORD, "§fWood Sword");
-        ItemStack stoneSword = weaponGenerator(id, Material.STONE_SWORD, "§fStone Sword");
-        ItemStack ironSword = weaponGenerator(id, Material.IRON_SWORD, "§fIron Sword");
-        ItemStack goldenSword = weaponGenerator(id, Material.GOLD_SWORD, "§fGolden Sword");
-        ItemStack diamondSword = weaponGenerator(id, Material.DIAMOND_SWORD, "§fDiamond Sword");
-        ItemStack apple = weaponGenerator(id, Material.APPLE, "§fApple Sword");
-        ItemStack goldenApple = weaponGenerator(id, Material.GOLDEN_APPLE, "§fGolden Apple Sword");
-        ItemStack woodAxe = weaponGenerator(id, Material.WOOD_AXE, "§fWood Axe");
-        ItemStack stoneAxe = weaponGenerator(id, Material.STONE_AXE, "§fStone Axe");
-        ItemStack ironAxe = weaponGenerator(id, Material.IRON_AXE, "§fIron Axe");
-        ItemStack goldenAxel = weaponGenerator(id, Material.GOLD_AXE, "§fGolden Axe");
-        ItemStack diamondAxel = weaponGenerator(id, Material.DIAMOND_AXE, "§fDiamond Axe");
-
-
-        inv.setItem(woodSword, (ex) -> selectWeapon(p, Material.WOOD_SWORD, "Wood Sword"), 10);
-
-        inv.setItem(stoneSword, (ex) -> selectWeapon(p, Material.STONE_SWORD, "Stone Sword"), 11);
-
-        inv.setItem(ironSword, (ex) -> selectWeapon(p, Material.IRON_SWORD, "Iron Sword"), 12);
-
-        inv.setItem(goldenSword, (ex) -> selectWeapon(p, Material.GOLD_SWORD, "Golden Sword"), 13);
-
-        inv.setItem(diamondSword, (ex) -> selectWeapon(p, Material.DIAMOND_SWORD, "Diamond Sword"), 14);
-
-        inv.setItem(apple, (ex) -> selectWeapon(p, Material.APPLE, "Apple Sword"), 15);
-
-        inv.setItem(goldenApple, (ex) -> selectWeapon(p, Material.GOLDEN_APPLE, "Golden Apple Sword"), 16);
-
-        inv.setItem(woodAxe, (ex) -> selectWeapon(p, Material.WOOD_AXE, "Wood Axe"), 19);
-
-        inv.setItem(stoneAxe, (ex) -> selectWeapon(p, Material.STONE_AXE, "Stone Axe"), 20);
-
-        inv.setItem(ironAxe, (ex) -> selectWeapon(p, Material.IRON_AXE, "Iron Axe"), 21);
-
-        inv.setItem(goldenAxel, (ex) -> selectWeapon(p, Material.GOLD_AXE, "Golden Axe"), 22);
-
-        inv.setItem(diamondAxel, (ex) -> selectWeapon(p, Material.DIAMOND_AXE, "Diamond Axe"), 23);
-
+        for (Weapon weapon : WEAPONS) {
+            String name = LangText.str(lang, weapon.key());
+            inv.setItem(weaponGenerator(lang, id, weapon.material(), name), (ex) -> selectWeapon(p, weapon.material(), name), weapon.slot());
+        }
 
         for (int i = 0; i < 9; i++) {
             inv.setItem(grayGlass, i);
@@ -202,143 +178,47 @@ public class GuiCosmeticsSelector implements Listener {
             inv.setItem(grayGlass, i * 9);
             inv.setItem(grayGlass, i * 9 + 8);
         }
-        inv.setItem(new ItemBuilder(Material.ARROW).name("§aGo Back").lore("§7Back to Cosmetics Menu").build(), (ex) -> open(p), 45);
-        inv.setItem(new ItemBuilder(Material.BARRIER).name("§cClose").build(), (ex) -> p.closeInventory(), 49);
+        inv.setItem(new ItemBuilder(Material.ARROW).name(LangText.str(lang, "%lang_kbffa_menu_back%")).lore(LangText.str(lang, "%lang_kbffa_menu_back_lore%")).build(), (ex) -> open(p), 45);
+        inv.setItem(new ItemBuilder(Material.BARRIER).name(LangText.str(lang, "%lang_kbffa_menu_close%")).build(), (ex) -> p.closeInventory(), 49);
         inv.setClickable(false);
         p.openInventory(inv.getInventory());
     }
 
     private void openArmorSelector(Player p) {
+        int lang = User.getUser(p).lang;
         String armorColor = Member.getMember(p).armorColor.equals("null") ? "default" : Member.getMember(p).armorColor;
         boolean hasColor = !armorColor.equals("default") && !armorColor.isEmpty();
-        InventoryBuilder builder = new InventoryBuilder(9, "Armor Color Selector");
-        ItemStack helmet;
-        ItemStack chestplate;
-        ItemStack leggings;
-        ItemStack boots;
-        ItemStack back = new ItemBuilder(Material.ARROW).name("§aGo Back").lore("§7Back to Cosmetics Menu").build();
-        ItemStack close = new ItemBuilder(Material.BARRIER).name("§cClose").build();
-        if (hasColor) {
-            String[] colors = armorColor.split("\\|");
-            helmet = new ItemBuilder(Material.LEATHER_HELMET).addLore("§7Left Click to change your helmet color."
-                    , "§7Current Color: §a" + colors[0],
-                    "§7Right Click to reset this armor").build();
-            ItemMeta helmetMeta = helmet.getItemMeta();
-            String[] helmetColor = colors[0].split(",");
-            int red1 = Integer.parseInt(helmetColor[0]);
-            int green1 = Integer.parseInt(helmetColor[1]);
-            int blue1 = Integer.parseInt(helmetColor[2]);
-            ((LeatherArmorMeta) helmetMeta).setColor(Color.fromRGB(red1, green1, blue1));
-            helmet.setItemMeta(helmetMeta);
-
-            chestplate = new ItemBuilder(Material.LEATHER_CHESTPLATE).addLore("§7Left Click to change your chestplate color."
-                    , "§7Current Color: §a" + colors[1],
-                    "§7Right Click to reset this armor").build();
-            ItemMeta chestplateMeta = chestplate.getItemMeta();
-            String[] chestplateColor = colors[1].split(",");
-            int red2 = Integer.parseInt(chestplateColor[0]);
-            int green2 = Integer.parseInt(chestplateColor[1]);
-            int blue2 = Integer.parseInt(chestplateColor[2]);
-            ((LeatherArmorMeta) chestplateMeta).setColor(Color.fromRGB(red2, green2, blue2));
-            chestplate.setItemMeta(chestplateMeta);
-
-            leggings = new ItemBuilder(Material.LEATHER_LEGGINGS).addLore("§7Left Click to change your leggings color."
-                    , "§7Current Color: §a" + colors[2],
-                    "§7Right Click to reset this armor").build();
-            ItemMeta leggingsMeta = leggings.getItemMeta();
-            String[] leggingsColor = colors[2].split(",");
-            int red3 = Integer.parseInt(leggingsColor[0]);
-            int green3 = Integer.parseInt(leggingsColor[1]);
-            int blue3 = Integer.parseInt(leggingsColor[2]);
-            ((LeatherArmorMeta) leggingsMeta).setColor(Color.fromRGB(red3, green3, blue3));
-            leggings.setItemMeta(leggingsMeta);
-
-            boots = new ItemBuilder(Material.LEATHER_BOOTS).addLore("§7Left Click to change your boots color."
-                    , "§7Current Color: §a" + colors[3],
-                    "§7Right Click to reset this armor").build();
-            ItemMeta bootsMeta = boots.getItemMeta();
-            String[] bootsColor = colors[3].split(",");
-            int red4 = Integer.parseInt(bootsColor[0]);
-            int green4 = Integer.parseInt(bootsColor[1]);
-            int blue4 = Integer.parseInt(bootsColor[2]);
-            ((LeatherArmorMeta) bootsMeta).setColor(Color.fromRGB(red4, green4, blue4));
-            boots.setItemMeta(bootsMeta);
-
-        } else {
-            helmet = new ItemBuilder(Material.LEATHER_HELMET).addLore("§7Left Click to change your helmet color."
-                    , "§7Current Color: §a" + armorColor,
-                    "§7Right Click to reset this armor").build();
-            chestplate = new ItemBuilder(Material.LEATHER_CHESTPLATE).addLore("§7Left Click to change your chestplate color."
-                    , "§7Current Color: §a" + armorColor,
-                    "§7Right Click to reset this armor").build();
-            leggings = new ItemBuilder(Material.LEATHER_LEGGINGS).addLore("§7Left Click to change your leggings color."
-                    , "§7Current Color: §a" + armorColor,
-                    "§7Right Click to reset this armor").build();
-            boots = new ItemBuilder(Material.LEATHER_BOOTS).addLore("§7Left Click to change your boots color."
-                    , "§7Current Color: §a" + armorColor,
-                    "§7Right Click to reset this armor").build();
+        String[] colors = hasColor ? armorColor.split("\\|") : null;
+        InventoryBuilder builder = new InventoryBuilder(9, LangText.str(lang, "%lang_kbffa_armor_menu_title%"));
+        for (int i = 0; i < ARMOR_PIECES.length; i++) {
+            String shownColor = hasColor ? colors[i] : LangText.str(lang, "%lang_kbffa_armor_color_default%");
+            ItemStack piece = new ItemBuilder(ARMOR_PIECES[i]).addLore(LangText.lines(lang, ARMOR_LORE_KEYS[i], shownColor)).build();
+            if (hasColor) {
+                ItemMeta pieceMeta = piece.getItemMeta();
+                String[] rgb = colors[i].split(",");
+                ((LeatherArmorMeta) pieceMeta).setColor(Color.fromRGB(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])));
+                piece.setItemMeta(pieceMeta);
+            }
+            int armorSlot = i + 1;
+            builder.setItem(piece, (ex) -> {
+                if (!User.getUser(p).hasPermission("cmd.setarmorcolor")) {
+                    CosmeticFeedback.needRank(p, "§dVIP+");
+                    return;
+                }
+                if (ex.getEvent().isLeftClick()) {
+                    sendArmorColorHint(p, armorSlot);
+                    p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+                    p.closeInventory();
+                } else if (ex.getEvent().isRightClick()) {
+                    p.performCommand("setarmorcolor " + armorSlot + " 160,101,64");
+                    p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
+                    openArmorSelector(p);
+                }
+            }, i);
         }
-        builder.setItem(helmet, (ex) -> {
-            if (!User.getUser(p).hasPermission("cmd.setarmorcolor")) {
-                CosmeticFeedback.needRank(p, "§dVIP+");
-                return;
-            }
-            if (ex.getEvent().isLeftClick()) {
-                sendArmorColorHint(p, 1);
-                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                p.closeInventory();
-            } else if (ex.getEvent().isRightClick()) {
-                p.performCommand("setarmorcolor 1 160,101,64");
-                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                openArmorSelector(p);
-            }
-        }, 0);
-        builder.setItem(chestplate, (ex) -> {
-            if (!User.getUser(p).hasPermission("cmd.setarmorcolor")) {
-                CosmeticFeedback.needRank(p, "§dVIP+");
-                return;
-            }
-            if (ex.getEvent().isLeftClick()) {
-                sendArmorColorHint(p, 2);
-                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                p.closeInventory();
-            } else if (ex.getEvent().isRightClick()) {
-                p.performCommand("setarmorcolor 2 160,101,64");
-                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                openArmorSelector(p);
-            }
-        }, 1);
-        builder.setItem(leggings, (ex) -> {
-            if (!User.getUser(p).hasPermission("cmd.setarmorcolor")) {
-                CosmeticFeedback.needRank(p, "§dVIP+");
-                return;
-            }
-            if (ex.getEvent().isLeftClick()) {
-                sendArmorColorHint(p, 3);
-                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                p.closeInventory();
-            } else if (ex.getEvent().isRightClick()) {
-                p.performCommand("setarmorcolor 3 160,101,64");
-                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                openArmorSelector(p);
-            }
-        }, 2);
-        builder.setItem(boots, (ex) -> {
-            if (!User.getUser(p).hasPermission("cmd.setarmorcolor")) {
-                CosmeticFeedback.needRank(p, "§dVIP+");
-                return;
-            }
-            if (ex.getEvent().isLeftClick()) {
-                sendArmorColorHint(p, 4);
-                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                p.closeInventory();
-            } else if (ex.getEvent().isRightClick()) {
-                p.performCommand("setarmorcolor 4 160,101,64");
-                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                openArmorSelector(p);
-            }
-        }, 3);
 
+        ItemStack back = new ItemBuilder(Material.ARROW).name(LangText.str(lang, "%lang_kbffa_menu_back%")).lore(LangText.str(lang, "%lang_kbffa_menu_back_lore%")).build();
+        ItemStack close = new ItemBuilder(Material.BARRIER).name(LangText.str(lang, "%lang_kbffa_menu_close%")).build();
         builder.setItem(back, (ex) -> plugin.getGuiCosmeticsSelector().open(p), 7);
         builder.setItem(close, (ex) -> p.closeInventory(), 8);
         builder.setClickable(false);
@@ -366,11 +246,17 @@ public class GuiCosmeticsSelector implements Listener {
         return !user.isStaff && !"champ".equals(user.displayRank) && !"champ".equals(user.realRank);
     }
 
-    private static ItemStack weaponGenerator(int weaponId, Material weapon, String name) {
-        return weaponId == weapon.getId() ? new ItemBuilder(weapon).name(name).glow().lore(
-                "§7Select the " + ChatColor.stripColor(name), "§7Weapon.", "§7This change is cosmetic.", ""
-                , "§aSELECTED!").hideAttr().build() : new ItemBuilder(weapon).name(name).lore(
-                "§7Select the " + ChatColor.stripColor(name), "§7Weapon.", "§7This change is cosmetic.", "", "§eClick to select!").hideAttr().build();
+    /** name: translated weapon name without colour */
+    private static ItemStack weaponGenerator(int lang, int weaponId, Material weapon, String name) {
+        boolean selected = weaponId == weapon.getId();
+        List<String> lore = new ArrayList<>(LangText.lines(lang, "%lang_kbffa_weapon_lore%", "§f" + name));
+        lore.add("");
+        lore.add(LangText.str(lang, selected ? "%lang_kbffa_cosmetic_selected_lore%" : "%lang_server_status_click_select%"));
+        ItemBuilder builder = new ItemBuilder(weapon).name("§f" + name).lore(lore);
+        if (selected) {
+            builder.glow();
+        }
+        return builder.hideAttr().build();
     }
 
 }

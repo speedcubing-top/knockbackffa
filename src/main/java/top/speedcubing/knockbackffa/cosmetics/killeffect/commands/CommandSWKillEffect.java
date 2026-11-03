@@ -5,7 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import top.speedcubing.common.text.Msg;
+import top.speedcubing.server.lang.Lang;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
 
@@ -32,7 +32,7 @@ public class CommandSWKillEffect implements CommandExecutor {
 				plugin.getKillEffectManager().saveKillEffects();
 				plugin.reloadConfig();
 				ConfigUtil.init(plugin);
-				sender.sendMessage(Msg.KILL_EFFECTS + Msg.SUCCESS + "config.yml reloaded!");
+				sender.sendMessage(Lang.of("%lang_kbffa_killeffect_reloaded%").get(sender).toLegacyText());
 				return true;
 			}
 		}
@@ -45,8 +45,7 @@ public class CommandSWKillEffect implements CommandExecutor {
 				return true;
 			}
 		}
-		sender.sendMessage(Msg.KILL_EFFECTS + Msg.VALUE + "/ke gui [player] §8- " + Msg.INFO + "Open Kill Effect selector");
-		sender.sendMessage(Msg.KILL_EFFECTS + Msg.VALUE + "/ke reload §8- " + Msg.INFO + "Reloads config.yml");
+		sender.sendMessage(Lang.of("%lang_kbffa_killeffect_help%").get(sender).toLegacyText());
 		return true;
 	}
 

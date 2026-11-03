@@ -52,6 +52,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -89,6 +90,8 @@ import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.server.authenticator.ImageRenderer;
+import top.speedcubing.knockbackffa.utils.LangText;
+import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
@@ -123,15 +126,13 @@ public class EventListeners implements Listener {
         hitRegisterMap.remove(e.getPlayer().getUniqueId());
         Member.getMember(e.getPlayer()).isUsingTunnel = false;
 
-        EntityList.toGreenTunnel.despawn();
-        EntityList.toGreenTunnel.spawn();
-        EntityList.toBlueTunnel.despawn();
-        EntityList.toBlueTunnel.spawn();
+        EntityList.respawn(EntityList.toGreenTunnel);
+        EntityList.respawn(EntityList.toBlueTunnel);
         int newKillstreak = e.getKiller().getLevel() + 1;
         if (isRbwMap(KnockBackFFA.currentMapName)) {
             e.getKiller().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
             if (newKillstreak % 10 == 0) {
-                ItemBuilder jump = new ItemBuilder(Material.POTION).name("§aJump Boost").potion(PotionEffectType.JUMP, 200, 4);
+                ItemBuilder jump = new ItemBuilder(Material.POTION).name(LangText.str(User.getUser(e.getKiller()).lang, "%lang_kbffa_item_jump_boost%")).potion(PotionEffectType.JUMP, 200, 4);
                 e.getKiller().getInventory().addItem(jump.build());
             }
         }
@@ -641,7 +642,7 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void InventoryCloseEvent(InventoryCloseEvent e) {
-        if (e.getInventory().getName().contains("KnockBack FFA")) {
+        if (e.getInventory().getHolder() == KnockBackFFA.KitEditorHolder) {
             Player player = (Player) e.getPlayer();
             player.setItemOnCursor(new ItemStack(Material.AIR));
             Member member = Member.getMember(player);
@@ -670,7 +671,7 @@ public class EventListeners implements Listener {
 
             player.getInventory().remove(Material.EMERALD);
 
-            InventoryUtils.fillItem(player.getInventory(), 9, 36, ItemList.invalid.get(1));
+            InventoryUtils.fillItem(player.getInventory(), 9, 36, ItemList.invalid.get(member.user.lang));
         } else if (player.getItemInHand().getType().equals(Material.EMERALD)) {
             KnockBackFFA.getPlugin(KnockBackFFA.class).getGuiCosmeticsSelector().open(player);
             e.setCancelled(true);
@@ -741,6 +742,7 @@ public class EventListeners implements Listener {
     @EventHandler
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         new Member(e.getPlayer());
+        EntityList.addListener(e.getPlayer());
         Player p = e.getPlayer();
         User user = User.getUser(p);
         //add bypass anticheat
@@ -793,11 +795,19 @@ public class EventListeners implements Listener {
 
     @EventHandler
     public void MapSwitchEvent(MapSwitchEvent e) {
-        EntityList.clickToggle.despawn();
-        EntityList.clickToggle
-                .setLocation(Configuration.holoX, 148.5, Configuration.holoZ, 0, 0)
-                .world("map_kbffa")
-                .spawn();
+        for (Hologram hologram : EntityList.clickToggle) {
+            hologram.despawn();
+            hologram
+                    .setLocation(Configuration.holoX, 148.5, Configuration.holoZ, 0, 0)
+                    .world("map_kbffa")
+                    .spawn();
+        }
+    }
+
+    @EventHandler
+    public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
+        if (e.getPlayer().getWorld().getName().equals("map_kbffa"))
+            EntityList.addListener(e.getPlayer());
     }
 
     @EventHandler

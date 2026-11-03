@@ -4,7 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import top.speedcubing.common.text.Msg;
+import top.speedcubing.server.player.User;
 import top.speedcubing.knockbackffa.original.Member;
 
 
@@ -18,11 +18,11 @@ public class DebugFFACommand implements CommandExecutor {
                 return false;
             }
             if (args.length == 1 && args[0].equalsIgnoreCase("invlength")) {
-                player.sendMessage(Msg.KNOCKBACKFFA + Msg.INFO + "Inventory length: " + Msg.VALUE + member.inventory.length());
+                User.getUser(player).sendMessage("%lang_kbffa_debug_inventory_length%", Integer.toString(member.inventory.length()));
                 return true;
             }
             if (args.length == 1 && args[0].equalsIgnoreCase("invlist")) {
-                player.sendMessage(Msg.KNOCKBACKFFA + Msg.INFO + "Inventory list: " + Msg.VALUE + member.inventory);
+                User.getUser(player).sendMessage("%lang_kbffa_debug_inventory_list%", member.inventory);
                 return true;
             }
             if (args.length == 2 && args[0].equalsIgnoreCase("ks")) {

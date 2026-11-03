@@ -10,7 +10,7 @@ public class ItemList {
     public static final ItemStack[] itemStacks = new ItemStack[14];
     public static LangItem invalid = new LangItem(Material.STAINED_GLASS_PANE).name("%lang_inv_cant_set_item%").durability(8);
     public static LangItem inventory = new LangItem(Material.CHEST).name("%lang_inv_inventory%");
-    public static LangItem cosmetics = new LangItem(Material.EMERALD).name("§aCosmetics");
+    public static LangItem cosmetics = new LangItem(Material.EMERALD).name("%lang_kbffa_item_cosmetics%");
 
     public static void init() {
         itemStacks[0] = new ItemBuilder(Material.LEATHER_HELMET).unBreak().ench(Enchantment.PROTECTION_ENVIRONMENTAL, 3).ench(Enchantment.PROTECTION_PROJECTILE, 4).build();
