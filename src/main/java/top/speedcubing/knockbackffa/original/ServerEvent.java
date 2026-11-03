@@ -13,12 +13,15 @@ import top.speedcubing.common.profiler.Profiler;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.knockbackffa.original.configuration.Configuration;
+import top.speedcubing.knockbackffa.original.list.EntityList;
 import top.speedcubing.knockbackffa.original.list.StringList;
+import top.speedcubing.lib.bukkit.SideBar;
 import top.speedcubing.lib.bukkit.events.packet.PlayInEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SQL.SQLResult;
 import top.speedcubing.lib.utils.SQL.SQLRow;
+import top.speedcubing.server.events.player.LanguageChangeEvent;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.events.player.ToggleFlyEvent;
@@ -142,5 +145,15 @@ public class ServerEvent {
     public void toggleFlyEvent(ToggleFlyEvent e) {
         e.setCancelled(true);
         Member.getMember(e.getPlayer()).user.sendMessage(Msg.KNOCKBACKFFA + "%lang_general_lobby_only%");
+    }
+
+    @CubingEventHandler
+    public void languageChangeEvent(LanguageChangeEvent e) {
+        EntityList.switchLanguage(e.getPlayer(), e.getOldLang(), e.getNewLang());
+        SideBar bar = SideBar.getSidebar(e.getPlayer());
+        if (bar != null) {
+            String[] sidebar = StringList.sidebar[e.getNewLang()];
+            bar.setLineByScore(sidebar[3], 10).setLineByScore(sidebar[6], 7).setLineByScore(sidebar[9], 4).setLineByScore(sidebar[12], 1);
+        }
     }
 }

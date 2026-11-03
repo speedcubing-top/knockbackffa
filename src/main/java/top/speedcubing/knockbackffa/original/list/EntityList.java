@@ -58,6 +58,19 @@ public class EntityList {
         toBlueTunnel[lang].addListener(player);
     }
 
+    /** Replaces the player's shared holograms with the ones in their new language. */
+    public static void switchLanguage(Player player, int oldLang, int newLang) {
+        boolean visible = player.getWorld().getName().equals("map_kbffa");
+        for (Hologram[] holograms : new Hologram[][]{clickToggle, toGreenTunnel, toBlueTunnel}) {
+            if (visible)
+                holograms[oldLang].setListener(player).despawn().undoSetListener();
+            holograms[oldLang].removeListener(player);
+            holograms[newLang].addListener(player);
+            if (visible)
+                holograms[newLang].setListener(player).spawn().undoSetListener();
+        }
+    }
+
     public static void respawn(Hologram[] holograms) {
         for (Hologram hologram : holograms) {
             hologram.despawn();
