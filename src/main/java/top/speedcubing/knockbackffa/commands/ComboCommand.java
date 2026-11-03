@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import top.speedcubing.server.player.User;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,21 +18,22 @@ public class ComboCommand implements CommandExecutor, Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player p)) return true;
+        User user = User.getUser(p);
         if (args.length == 0) {
-            p.sendMessage("§cUsage: /combo <player>");
+            user.sendMessage("%lang_kbffa_usage%", "/combo <player>");
             return true;
         }
         Player target = p.getServer().getPlayerExact(args[0]);
         if (target == null) {
-            p.sendMessage("§cPlayer not found.");
+            user.sendMessage("%lang_kbffa_player_not_found%");
             return true;
         }
         if (comboSet.contains(target)) {
             comboSet.remove(target);
-            p.sendMessage("§a" + target.getName() + " §7is no longer in combo mode.");
+            user.sendMessage("%lang_kbffa_combo_disabled%", target.getName());
         } else {
             comboSet.add(target);
-            p.sendMessage("§a" + target.getName() + " §7is now in combo mode.");
+            user.sendMessage("%lang_kbffa_combo_enabled%", target.getName());
         }
         return true;
     }

@@ -4,6 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.common.text.Msg;
 import top.speedcubing.knockbackffa.managers.MapManager;
 import top.speedcubing.knockbackffa.managers.VoteManager;
 import top.speedcubing.server.player.User;
@@ -18,7 +19,7 @@ public class VoteCommand implements CommandExecutor {
             MapManager.open(player);
             return true;
         } else if (args.length == 0 && !VoteManager.getVoteStatus()) {
-            player.sendMessage("§cVoting is not in progress.");
+            User.getUser(player).sendMessage("%lang_kbffa_vote_not_in_progress%");
             return true;
         }
         if (args.length == 1) {
@@ -26,18 +27,18 @@ public class VoteCommand implements CommandExecutor {
             switch (args[0]) {
                 case "start":
                     if (VoteManager.getVoteStatus()) {
-                        player.sendMessage("§cVoting is in progress.");
+                        player.sendMessage(Msg.KNOCKBACKFFA + Msg.ERROR + "A vote is already in progress.");
                     } else {
                         VoteManager.startVote();
                     }
                 break;
                 case "end":
 //                    if (!VoteManager.getVoteStatus()) {
-//                        player.sendMessage("§cVoting is not in progress.");
+//                        User.getUser(player).sendMessage("%lang_kbffa_vote_not_in_progress%");
 //                    } else {
 //                        VoteManager.endVote();
 //                    }
-                    player.sendMessage("§a我懶得做end command LOL等60秒吧笑死");
+                    User.getUser(player).sendMessage("%lang_kbffa_vote_ends_automatically%");
                     break;
                 default:
 

@@ -6,22 +6,24 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import top.speedcubing.server.player.User;
 
 public class InvSeeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player player)) return true;
+        User user = User.getUser(player);
         if (args.length != 1) {
-            player.sendMessage("§cUsage: /invsee <player>");
+            user.sendMessage("%lang_kbffa_usage%", "/invsee <player>");
             return true;
         }
         Player target = Bukkit.getPlayerExact(args[0]);
         if (target == null) {
-            player.sendMessage("§cPlayer not found.");
+            user.sendMessage("%lang_kbffa_player_not_found%");
             return true;
         }
         if (target == player) {
-            player.sendMessage("§cYou can't open yourself inventory.");
+            user.sendMessage("%lang_kbffa_invsee_self%");
             return true;
         }
         Inventory targetInv = target.getInventory();

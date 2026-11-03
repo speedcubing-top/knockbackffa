@@ -10,6 +10,8 @@ import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
+import top.speedcubing.server.lang.Lang;
+import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
 public class VoteManager {
@@ -28,24 +30,19 @@ public class VoteManager {
 
     public static void startVote() {
         setVoteStatus(true);
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            ComponentText textBuilder = new ComponentText()
-                    .str("§eMap Vote in 60s")
-                    .both("\n§dClick to vote!", TextClickEvent.runCommand("/vote"), TextHoverEvent.showText("§dCLICK ME!"));
-            player.sendMessage(textBuilder.toBungee());
-        });
+        Bukkit.getOnlinePlayers().forEach(player -> sendVoteInvite(player, "%lang_kbffa_vote_started%"));
         new BukkitRunnable() {
             @Override
             public void run() {
                 int voteCount = getVoteCountByMapName(calculateVoteGetMapName());
                 if (voteCount == 0) {
                     Bukkit.getOnlinePlayers().forEach(player -> {
-                        player.sendMessage("§bNo one votes and the map will not change.");
+                        User.getUser(player).sendMessage("%lang_kbffa_vote_no_votes%");
                     });
                     return;
                 }
                 Bukkit.getOnlinePlayers().forEach(player -> {
-                    player.sendMessage("§6Voting ends §b" + calculateVoteGetMapName() + ": " + voteCount);
+                    User.getUser(player).sendMessage("%lang_kbffa_vote_result%", calculateVoteGetMapName(), Integer.toString(voteCount));
                 });
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), MapManager.getMapCommandByMapName(calculateVoteGetMapName()) + " " + calculateVoteGetMapName());
                 endVote();
@@ -55,6 +52,13 @@ public class VoteManager {
         MapManager.getAllMapNames().forEach(map -> {
             votesCast.put(map, 0);
         });
+    }
+
+    /** header: language key of the first line, followed by a clickable "/vote" line */
+    public static void sendVoteInvite(Player player, String header) {
+        User.getUser(player).sendMessage(Lang.of(new ComponentText()
+                .str(header)
+                .both("\n%lang_kbffa_vote_click%", TextClickEvent.runCommand("/vote"), TextHoverEvent.showText("%lang_kbffa_vote_click_hover%"))));
     }
 
     public static void endVote() {

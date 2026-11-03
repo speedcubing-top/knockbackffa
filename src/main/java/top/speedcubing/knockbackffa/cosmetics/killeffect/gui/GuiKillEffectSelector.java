@@ -2,7 +2,6 @@ package top.speedcubing.knockbackffa.cosmetics.killeffect.gui;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
+import top.speedcubing.knockbackffa.cosmetics.main.CosmeticFeedback;
 import top.speedcubing.server.player.User;
 
 public class GuiKillEffectSelector implements Listener {
@@ -198,11 +198,9 @@ public class GuiKillEffectSelector implements Listener {
                         if (killEffectManager.hasSelectedOne(p)) {
                             killEffectManager.setKillEffect(p, "NONE");
                             open(p);
-                            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                            p.sendMessage("§6You selected §aNONE§6!");
+                            CosmeticFeedback.selected(p, "NONE");
                         } else {
-                            p.sendMessage("§cYou have already selected this item!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.alreadySelected(p);
                         }
                     }
                     if (e.getSlot() == 12) {
@@ -210,15 +208,12 @@ public class GuiKillEffectSelector implements Listener {
                             if (!killEffectManager.hasSelected(p, "BLOOD_EXPLOSION")) {
                                 killEffectManager.setKillEffect(p, "BLOOD_EXPLOSION");
                                 open(p);
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                                p.sendMessage("§6You selected §aBlood Explosion Kill Effect§6!");
+                                CosmeticFeedback.selected(p, "Blood Explosion Kill Effect");
                             } else {
-                                p.sendMessage("§cYou have already selected this item!");
-                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                                CosmeticFeedback.alreadySelected(p);
                             }
                         } else {
-                            p.sendMessage("§cYou haven't unlocked this yet!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.locked(p);
                         }
                     }
                     if (e.getSlot() == 13) {
@@ -226,15 +221,12 @@ public class GuiKillEffectSelector implements Listener {
                             if (!killEffectManager.hasSelected(p, "HEART_EXPLOSION")) {
                                 killEffectManager.setKillEffect(p, "HEART_EXPLOSION");
                                 open(p);
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                                p.sendMessage("§6You selected §aHeart Explosion Kill Effect§6!");
+                                CosmeticFeedback.selected(p, "Heart Explosion Kill Effect");
                             } else {
-                                p.sendMessage("§cYou have already selected this item!");
-                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                                CosmeticFeedback.alreadySelected(p);
                             }
                         } else {
-                            p.sendMessage("§cYou haven't unlocked this yet!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.locked(p);
                         }
                     }
                     if (e.getSlot() == 14) {
@@ -242,15 +234,12 @@ public class GuiKillEffectSelector implements Listener {
                             if (!killEffectManager.hasSelected(p, "HEAD_ROCKET")) {
                                 killEffectManager.setKillEffect(p, "HEAD_ROCKET");
                                 open(p);
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                                p.sendMessage("§6You selected §aHead Rocket Kill Effect§6!");
+                                CosmeticFeedback.selected(p, "Head Rocket Kill Effect");
                             } else {
-                                p.sendMessage("§cYou have already selected this item!");
-                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                                CosmeticFeedback.alreadySelected(p);
                             }
                         } else {
-                            p.sendMessage("§cYou haven't unlocked this yet!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.locked(p);
                         }
                     }
                     if (e.getSlot() == 15) {
@@ -258,15 +247,12 @@ public class GuiKillEffectSelector implements Listener {
                             if (!killEffectManager.hasSelected(p, "FINAL_SMASH")) {
                                 killEffectManager.setKillEffect(p, "FINAL_SMASH");
                                 open(p);
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                                p.sendMessage("§6You selected §aFinal Smash Kill Effect§6!");
+                                CosmeticFeedback.selected(p, "Final Smash Kill Effect");
                             } else {
-                                p.sendMessage("§cYou have already selected this item!");
-                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                                CosmeticFeedback.alreadySelected(p);
                             }
                         } else {
-                            p.sendMessage("§cYou haven't unlocked this yet!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.locked(p);
                         }
                     }
                     if (e.getSlot() == 20) {
@@ -274,15 +260,12 @@ public class GuiKillEffectSelector implements Listener {
                             if (!killEffectManager.hasSelected(p, "LIGHTNING")) {
                                 killEffectManager.setKillEffect(p, "LIGHTNING");
                                 open(p);
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                                p.sendMessage("§6You selected §aLightning Kill Effect§6!");
+                                CosmeticFeedback.selected(p, "Lightning Kill Effect");
                             } else {
-                                p.sendMessage("§cYou have already selected this item!");
-                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                                CosmeticFeedback.alreadySelected(p);
                             }
                         } else {
-                            p.sendMessage("§cYou haven't unlocked this yet!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.locked(p);
                         }
                     }
                     if (e.getSlot() == 21) {
@@ -290,15 +273,12 @@ public class GuiKillEffectSelector implements Listener {
                             if (!killEffectManager.hasSelected(p, "TNT")) {
                                 killEffectManager.setKillEffect(p, "TNT");
                                 open(p);
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                                p.sendMessage("§6You selected §aTNT Kill Effect§6!");
+                                CosmeticFeedback.selected(p, "TNT Kill Effect");
                             } else {
-                                p.sendMessage("§cYou have already selected this item!");
-                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                                CosmeticFeedback.alreadySelected(p);
                             }
                         } else {
-                            p.sendMessage("§cYou haven't unlocked this yet!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.locked(p);
                         }
                     }
                     if (e.getSlot() == 22) {
@@ -306,15 +286,12 @@ public class GuiKillEffectSelector implements Listener {
                             if (!killEffectManager.hasSelected(p, "CHAMP")) {
                                 killEffectManager.setKillEffect(p, "CHAMP");
                                 open(p);
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                                p.sendMessage("§6You selected §aChamp Kill Effect§6!");
+                                CosmeticFeedback.selected(p, "Champ Kill Effect");
                             } else {
-                                p.sendMessage("§cYou have already selected this item!");
-                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                                CosmeticFeedback.alreadySelected(p);
                             }
                         } else {
-                            p.sendMessage("§cYou haven't unlocked this yet!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.locked(p);
                         }
                     }
                 }

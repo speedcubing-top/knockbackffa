@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.net.URL;
 import javax.imageio.ImageIO;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+import top.speedcubing.server.player.User;
 
 public class ImageRenderer extends MapRenderer {
     private SoftReference<BufferedImage> cacheImage;
@@ -32,7 +32,7 @@ public class ImageRenderer extends MapRenderer {
             canvas.drawImage(0, 0, this.cacheImage.get());
             this.hasRendered = true;
         } else {
-            player.sendMessage(ChatColor.RED + "Attempted to render the image, but the cached image was null!");
+            User.getUser(player).sendMessage("%lang_kbffa_map_preview_failed%");
             this.hasRendered = true;
         }
     }

@@ -15,6 +15,8 @@ import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyDisbandEvent;
 import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyJoinEvent;
 import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyKickEvent;
 import top.speedcubing.knockbackffa.games.tag.events.TagGameStartEvent;
+import top.speedcubing.common.text.Msg;
+import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
 public class TagGameCommand implements CommandExecutor {
@@ -26,6 +28,7 @@ public class TagGameCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             UUID playerUuid = player.getUniqueId();
+            User user = User.getUser(player);
             if (args.length == 0) {
                 usage(player);
             } else if (args.length == 1) {
@@ -33,20 +36,20 @@ public class TagGameCommand implements CommandExecutor {
                     case "create":
                         if (!isInParty(playerUuid)) {
                             createParty(playerUuid);
-                            player.sendMessage("§6[Tag Game] §aSuccessfully created tag game party!");
+                            user.sendMessage("%lang_kbffa_tag_party_created%");
                         } else {
-                            player.sendMessage("§6[Tag Game] §cYou already have a party, please use /taggame disable to disable party");
+                            user.sendMessage("%lang_kbffa_tag_already_have_party%");
                         }
                         break;
                     case "disband":
                         if (isInParty(playerUuid)) {
                             disbandParty();
-                            player.sendMessage("§6[Tag Game] §aSuccessfully disband tag game party");
+                            user.sendMessage("%lang_kbffa_tag_party_disbanded_self%");
                             if (isGameRunning()) {
                                 endGame();
                             }
                         } else {
-                            player.sendMessage("§6[Tag Game] §cYou are not in party, please use /taggame create to create party");
+                            user.sendMessage("%lang_kbffa_tag_not_in_party_create%");
                         }
                         break;
                     case "end":
@@ -54,63 +57,63 @@ public class TagGameCommand implements CommandExecutor {
                             if (isGameRunning()) {
                                 endGame();
                             } else {
-                                player.sendMessage("§[Tag Game] §cGame is not running");
+                                user.sendMessage("%lang_kbffa_tag_game_not_running%");
                             }
                         } else {
-                            player.sendMessage("§6[Tag Game] §cYou are not in party");
+                            user.sendMessage("%lang_kbffa_tag_not_in_party%");
                         }
                         break;
                     case "list":
-                        player.sendMessage("§6[Tag Game] §bParty List");
+                        user.sendMessage("%lang_kbffa_tag_party_list%");
                         int index = 1;
                         for (Player players : getPartyPlayers(partyList)) {
-                            player.sendMessage(index + ". " + players.getName());
+                            player.sendMessage(Msg.INFO + index + ". " + Msg.VALUE + players.getName());
                             index++;
                         }
                         break;
                     case "forcejoin":
                         if (isInParty(playerUuid)) {
-                            player.sendMessage("§6[Tag Game] §cYou already in party");
+                            user.sendMessage("%lang_kbffa_tag_already_in_party%");
                             return true;
                         }
                         if (!partyList.isEmpty()) {
                             joinPlayerToParty(playerUuid);
-                            player.sendMessage("§6[Tag Game] §aSuccessfully forced join party");
+                            user.sendMessage("%lang_kbffa_tag_party_joined%");
                         } else {
-                            player.sendMessage("§6[Tag Game] §cParty is null, please use /taggame create to create party");
+                            user.sendMessage("%lang_kbffa_tag_no_party%");
                         }
                         break;
                     case "leave":
                         if (!isInParty(playerUuid)) {
-                            player.sendMessage("§6[Tag Game] §cYou are not in the party");
+                            user.sendMessage("%lang_kbffa_tag_not_in_party%");
                             return true;
                         }
                         kickPlayerFromParty(playerUuid);
-                        player.sendMessage("§6[Tag Game] §aYou successfully left the party!");
+                        user.sendMessage("%lang_kbffa_tag_party_left%");
                         break;
                     case "join":
                         if (isInParty(playerUuid)) {
-                            player.sendMessage("§6[Tag Game] §cYou are already in a party!");
+                            user.sendMessage("%lang_kbffa_tag_already_in_party%");
                             return true;
                         }
                         if (!partyStatus) {
-                            player.sendMessage("§6[Tag Game] §cParty is not open!");
+                            user.sendMessage("%lang_kbffa_tag_party_not_open%");
                             return true;
                         }
                         if (!partyList.isEmpty()) {
                             joinPlayerToParty(playerUuid);
-                            player.sendMessage("§6[Tag Game] §aSuccessfully forced join party");
+                            user.sendMessage("%lang_kbffa_tag_party_joined%");
                         } else {
-                            player.sendMessage("§6[Tag Game] §cParty is null, please use /taggame create to create party");
+                            user.sendMessage("%lang_kbffa_tag_no_party%");
                         }
                         break;
                     case "open":
                         if (!isInParty(playerUuid)) {
-                            player.sendMessage("§6[Tag Game] §cYou are not in the party");
+                            user.sendMessage("%lang_kbffa_tag_not_in_party%");
                             return true;
                         }
                         partyStatus = !partyStatus;
-                        player.sendMessage("§6[Tag Game] §bParty is now " + (partyStatus ? "§aOpen" : "§cClose"));
+                        user.sendMessage(partyStatus ? "%lang_kbffa_tag_party_opened%" : "%lang_kbffa_tag_party_closed%");
                         break;
                     default:
                         usage(player);
@@ -120,67 +123,67 @@ public class TagGameCommand implements CommandExecutor {
                     String gameTime = args[1];
 
                     if (!isInt(gameTime)) {
-                        player.sendMessage("§6[Tag Game] §cUsage: /taggame start <GameTime(Integer)>");
+                        user.sendMessage("%lang_kbffa_tag_usage%", "/taggame start <seconds>");
                         return true;
                     }
                     if (!isInParty(playerUuid)) {
-                        player.sendMessage("§6[Tag Game] §cYou are not in party");
+                        user.sendMessage("%lang_kbffa_tag_not_in_party%");
                         return true;
                     }
 
                     if (isGameRunning()) {
-                        player.sendMessage("§6[Tag Game] §cTag Game is running, please use /taggame end to end game");
+                        user.sendMessage("%lang_kbffa_tag_game_already_running%");
                         return true;
                     }
 
                     if (Integer.parseInt(gameTime) < 60 || Integer.parseInt(gameTime) > 1800) {
-                        player.sendMessage("§6[Tag Game] §cGame time must be between 60 and 1800");
+                        user.sendMessage("%lang_kbffa_tag_invalid_game_time%", "60", "1800");
                         return true;
                     }
 
                     startGame(Integer.parseInt(gameTime));
-                    player.sendMessage("§6[Tag Game] §aStarting Game");
+                    user.sendMessage("%lang_kbffa_tag_game_starting%");
                 } else if (args[0].equalsIgnoreCase("add")) {
                     String targetName = args[1];
                     Player target = Bukkit.getPlayer(targetName);
 
                     if (target == null) {
-                        player.sendMessage("§6[Tag Game] §cPlayer not found!");
+                        user.sendMessage("%lang_kbffa_tag_player_not_found%");
                         return true;
                     }
                     if (target == player) {
-                        player.sendMessage("§6[Tag Game] §cYou cannot add yourself");
+                        user.sendMessage("%lang_kbffa_tag_cannot_add_self%");
                         return true;
                     }
 
                     UUID targetUuid = target.getUniqueId();
                     if (isInParty(targetUuid)) {
-                        player.sendMessage("§6[Tag Game] §cPlayer is in party");
+                        user.sendMessage("%lang_kbffa_tag_target_already_in_party%", target.getName());
                         return true;
                     }
 
                     joinPlayerToParty(targetUuid);
-                    player.sendMessage("§6[Tag Game] §aSuccessfully added " + target.getName() + "to the party");
+                    user.sendMessage("%lang_kbffa_tag_target_added%", target.getName());
                 } else if (args[0].equalsIgnoreCase("kick")) {
                     String targetName = args[1];
                     Player target = Bukkit.getPlayer(targetName);
 
                     if (target == null) {
-                        player.sendMessage("§6[Tag Game] §cPlayer not found!");
+                        user.sendMessage("%lang_kbffa_tag_player_not_found%");
                         return true;
                     }
                     if (target == player) {
-                        player.sendMessage("§6[Tag Game] §cYou cannot kick yourself");
+                        user.sendMessage("%lang_kbffa_tag_cannot_kick_self%");
                         return true;
                     }
 
                     UUID targetUuid = target.getUniqueId();
                     if (!isInParty(targetUuid)) {
-                        player.sendMessage("§6[Tag Game] §c" + target.getName() + " is not in party");
+                        user.sendMessage("%lang_kbffa_tag_target_not_in_party%", target.getName());
                         return true;
                     }
                     kickPlayerFromParty(targetUuid);
-                    player.sendMessage("§6[Tag Game] §aSuccessfully kicked " + target.getName() + "from party");
+                    user.sendMessage("%lang_kbffa_tag_target_kicked%", target.getName());
                 }
             }
         }
@@ -216,7 +219,7 @@ public class TagGameCommand implements CommandExecutor {
                     if (timeLeft < 20) {
                         List<Player> players = getPartyPlayers(partyList);
                         for (Player player : players) {
-                            player.sendMessage("§6[Tag Game] §9Countdown: " + timeLeft);
+                            User.getUser(player).sendMessage("%lang_kbffa_tag_countdown%", Integer.toString(timeLeft));
                         }
                     }
                 } else {
@@ -264,14 +267,13 @@ public class TagGameCommand implements CommandExecutor {
         return players;
     }
     private void usage(Player player) {
-        player.sendMessage("§6[Tag Game]\n" +
-                "/taggame create\n" +
-                "/taggame disband\n" +
-                "/taggame end\n" +
-                "/taggame list\n" +
-                "/taggame forcejoin\n" +
-                "/taggame start <second>\n" +
-                "/taggame add <player>\n" +
-                "/taggame kick <player>");
+        User.getUser(player).sendMessage("%lang_kbffa_tag_help%", Msg.VALUE + "/taggame create\n" +
+                Msg.VALUE + "/taggame disband\n" +
+                Msg.VALUE + "/taggame end\n" +
+                Msg.VALUE + "/taggame list\n" +
+                Msg.VALUE + "/taggame forcejoin\n" +
+                Msg.VALUE + "/taggame start <second>\n" +
+                Msg.VALUE + "/taggame add <player>\n" +
+                Msg.VALUE + "/taggame kick <player>");
     }
 }

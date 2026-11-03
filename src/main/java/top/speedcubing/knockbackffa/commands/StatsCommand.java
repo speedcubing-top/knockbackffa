@@ -27,7 +27,7 @@ public class StatsCommand implements CommandExecutor {
                 } else {
                     User user = User.getUser(target);
                     if (user.nicked()) {
-                        player.sendMessage("§cThis player disabled their stats api.");
+                        User.getUser(player).sendMessage("%lang_kbffa_stats_hidden%");
                     } else {
                         sendFFADataByName(player, target.getName());
                     }
@@ -55,16 +55,9 @@ public class StatsCommand implements CommandExecutor {
                 double kdr = (double) killsInt / deathsInt;
                 DecimalFormat df = new DecimalFormat("#.##");
                 String formattedKDR = df.format(kdr);
-                String equalsLine = "=".repeat(name.length());
-                sender.sendMessage("======== §b" + name + " §r========\n" +
-                        "Rank: " + rank +
-                        "\nKills: " + kills + "\nDeaths: " + deaths + "\nKDR: " + formattedKDR
-                        + "\nDaily Kills: " + dailyKills + "\nBest Kill Streak: " + killStreak
-                        + "\nBlock Placed: " + blockPlaces +
-                        "\nBlock Breaks: " + blockBreaks +
-                        "\n========" + equalsLine + "========");
+                User.getUser(sender).sendMessage("%lang_kbffa_stats%", name, rank, kills, deaths, formattedKDR, dailyKills, killStreak, blockPlaces, blockBreaks);
             } else {
-                sender.sendMessage("This player profile cannot be found");
+                User.getUser(sender).sendMessage("%lang_kbffa_stats_not_found%");
             }
         }
     }

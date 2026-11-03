@@ -4,6 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.server.player.User;
 
 public class ProfileCommand implements CommandExecutor {
     @Override
@@ -11,7 +12,7 @@ public class ProfileCommand implements CommandExecutor {
         if (!(sender instanceof Player player)) {
             return true;
         }
-        player.sendMessage("§cThis command is deprecated, please use /stats instead.");
+        User.getUser(player).sendMessage("%lang_kbffa_profile_deprecated%");
         return true;
     }
 }

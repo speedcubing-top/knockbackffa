@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.common.text.Msg;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
 
 public class ProjectileCommand implements CommandExecutor {
@@ -23,7 +24,7 @@ public class ProjectileCommand implements CommandExecutor {
                 }
                 if (args[0].equalsIgnoreCase("reload")) {
                     plugin.getProjectileEffectManager().saveProjectileEffects();
-                    player.sendMessage( "§aconfig.yml reloaded!");
+                    player.sendMessage(Msg.KNOCKBACKFFA + Msg.SUCCESS + "config.yml reloaded!");
                     return true;
                 }
             } else if (args.length == 2) {
@@ -33,13 +34,13 @@ public class ProjectileCommand implements CommandExecutor {
                         plugin.getGuiProjectileEffectSelector().open(target);
                         return true;
                     } else {
-                        player.sendMessage("Player not found!");
+                        player.sendMessage(Msg.KNOCKBACKFFA + Msg.PLAYER_NOT_FOUND);
                         return true;
                     }
                 }
             }
-            player.sendMessage("/projectileeffect gui <player> - Open Projectile Effect selector.");
-            player.sendMessage("/projectileeffect reload - Reload config.yml");
+            player.sendMessage(Msg.KNOCKBACKFFA + Msg.VALUE + "/projectileeffect gui <player> §8- " + Msg.INFO + "Open Projectile Effect selector");
+            player.sendMessage(Msg.KNOCKBACKFFA + Msg.VALUE + "/projectileeffect reload §8- " + Msg.INFO + "Reload config.yml");
         }
         return true;
     }

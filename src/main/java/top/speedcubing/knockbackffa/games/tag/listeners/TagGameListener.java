@@ -18,6 +18,7 @@ import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyDisbandEvent;
 import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyJoinEvent;
 import top.speedcubing.knockbackffa.games.tag.events.TagGamePartyKickEvent;
 import top.speedcubing.knockbackffa.games.tag.events.TagGameStartEvent;
+import top.speedcubing.server.player.User;
 
 public class TagGameListener implements Listener {
     public static List<UUID> tagPlayer = new ArrayList<>();
@@ -26,24 +27,24 @@ public class TagGameListener implements Listener {
     public void onPartyJoinParty(TagGamePartyJoinEvent e) {
         UUID uuid = e.getUuid();
         Player player = Bukkit.getPlayer(uuid);
-        sendMessageToParty(TagGameCommand.partyList,"§6[Tag Game] §9Player §6" + player.getName() + " §9joined the party");
+        sendMessageToParty(TagGameCommand.partyList, "%lang_kbffa_tag_member_joined%", player.getName());
     }
     @EventHandler
     public void onPartyKickParty(TagGamePartyKickEvent e) {
         UUID uuid = e.getUuid();
         Player player = Bukkit.getPlayer(uuid);
-        sendMessageToParty(TagGameCommand.partyList,"§6[Tag Game] §9Player §6" + player.getName() + " §9was kicked from party");
+        sendMessageToParty(TagGameCommand.partyList, "%lang_kbffa_tag_member_kicked%", player.getName());
         if (tagPlayer.contains(uuid)) {
             tagPlayer.remove(uuid);
             Player newTag = getRandomPlayer(TagGameCommand.partyList);
             tagPlayer.add(newTag.getUniqueId());
-            sendMessageToParty(TagGameCommand.partyList,"§6[Tag Game] §9Tag §6" + player.getName() + " §9was kicked from party, new tag is §6" + newTag.getName());
+            sendMessageToParty(TagGameCommand.partyList, "%lang_kbffa_tag_tagger_kicked%", player.getName(), newTag.getName());
         }
         lastTag.remove(uuid);
     }
     @EventHandler
     public void onPartyDisband(TagGamePartyDisbandEvent e) {
-        sendMessageToParty(e.getPartyList(),"§6[Tag Game] §9Party disbanded");
+        sendMessageToParty(e.getPartyList(), "%lang_kbffa_tag_party_disbanded%");
         lastTag.clear();
         tagPlayer.clear();
         if (TagGameCommand.isGameRunning()) {
@@ -53,12 +54,11 @@ public class TagGameListener implements Listener {
     @EventHandler
     public void onGameStart(TagGameStartEvent e) {
         int gameLeft = e.getGameLeft();
-        sendMessageToParty(e.getPartyList(),"§6[Tag Game] §9Game Start! CountDown: " + gameLeft + "s\n" +
-                "Rules: 鬼抓人\n遊戲開始時，鬼會有10秒無法移動");
+        sendMessageToParty(e.getPartyList(), "%lang_kbffa_tag_game_started%", Integer.toString(gameLeft));
         Player ghost = getRandomPlayer(e.getPartyList());
         ghost.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,200,255,true));
         ghost.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS,200,255,true));
-        sendMessageToParty(e.getPartyList(),"§6[Tag Game] §9Player " + ghost.getName() + " is tag!");
+        sendMessageToParty(e.getPartyList(), "%lang_kbffa_tag_first_tagger%", ghost.getName());
         tagPlayer.add(ghost.getUniqueId());
     }
     @EventHandler
@@ -72,7 +72,7 @@ public class TagGameListener implements Listener {
         Player player = (Player) e.getEntity();
         Player tag = (Player) e.getDamager();
         if (!TagGameCommand.partyList.contains(player.getUniqueId())) {
-            tag.sendMessage("§6[Tag Game] §6" + player.getName() +  " §9is not in game");
+            User.getUser(tag).sendMessage("%lang_kbffa_tag_target_not_in_game%", player.getName());
             return;
         }
         if (tagPlayer.contains(tag.getUniqueId())) {
@@ -84,20 +84,20 @@ public class TagGameListener implements Listener {
                         lastTag.clear();
                     }
                     lastTag.add(tag.getUniqueId());
-                    sendMessageToParty(TagGameCommand.partyList,"§6[Tag Game] §6" + player.getName() + " §9is tag now!");
-                    player.sendMessage("§6[Tag Game] §9You are tag now, hit other player!");
+                    sendMessageToParty(TagGameCommand.partyList, "%lang_kbffa_tag_new_tagger%", player.getName());
+                    User.getUser(player).sendMessage("%lang_kbffa_tag_you_are_tagger%");
                 } else {
-                    tag.sendMessage("§6[Tag Game] " + player.getName() + " §9is last tag, you can't hit him");
+                    User.getUser(tag).sendMessage("%lang_kbffa_tag_no_tag_back%", player.getName());
                 }
             }
         }
     }
     @EventHandler
     public void onGameEnd(TagGameEndEvent e) {
-        sendMessageToParty(e.getPartyList(),"§6[Tag Game] §9Game Over");
+        sendMessageToParty(e.getPartyList(), "%lang_kbffa_tag_game_over%");
         UUID uuid = tagPlayer.get(0);
         Player loser = Bukkit.getPlayer(uuid);
-        sendMessageToParty(e.getPartyList(),"§6[Tag Game] " + loser.getName() + " §9Lose");
+        sendMessageToParty(e.getPartyList(), "%lang_kbffa_tag_loser%", loser.getName());
         loser.setHealth(0);
         tagPlayer.clear();
         lastTag.clear();
@@ -109,7 +109,7 @@ public class TagGameListener implements Listener {
             return;
         }
         TagGameCommand.partyList.remove(p.getUniqueId());
-        sendMessageToParty(TagGameCommand.partyList,"§6[Tag Game] §9Player §6" + p.getName() + " §9quit!");
+        sendMessageToParty(TagGameCommand.partyList, "%lang_kbffa_tag_member_quit%", p.getName());
         if (!tagPlayer.contains(p.getUniqueId())) {
             return;
         }
@@ -119,14 +119,14 @@ public class TagGameListener implements Listener {
         }
         Player newTag = getRandomPlayer(TagGameCommand.partyList);
         tagPlayer.add(newTag.getUniqueId());
-        sendMessageToParty(TagGameCommand.partyList,"§6[Tag Game] §9Tag §6" + p.getName() + " §9quit, new tag is §6" + newTag.getName());
+        sendMessageToParty(TagGameCommand.partyList, "%lang_kbffa_tag_tagger_quit%", p.getName(), newTag.getName());
 
     }
-    public static void sendMessageToParty(List<UUID> party, String message) {
+    public static void sendMessageToParty(List<UUID> party, String message, String... param) {
         party.forEach(uuid -> {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
-                player.sendMessage(message);
+                User.getUser(player).sendMessage(message, param);
             }
         });
     }

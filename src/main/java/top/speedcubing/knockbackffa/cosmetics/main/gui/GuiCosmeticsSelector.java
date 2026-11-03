@@ -20,6 +20,7 @@ import top.speedcubing.knockbackffa.original.Member;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManager;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
+import top.speedcubing.knockbackffa.cosmetics.main.CosmeticFeedback;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.effects.ProjectileEffect;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
@@ -27,6 +28,7 @@ import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
+import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.player.User;
 
 public class GuiCosmeticsSelector implements Listener {
@@ -167,149 +169,29 @@ public class GuiCosmeticsSelector implements Listener {
         ItemStack diamondAxel = weaponGenerator(id, Material.DIAMOND_AXE, "§fDiamond Axe");
 
 
-        inv.setItem(woodSword, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.WOOD_SWORD.getId();
-            p.sendMessage("§aSelected Wood Sword!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 10);
+        inv.setItem(woodSword, (ex) -> selectWeapon(p, Material.WOOD_SWORD, "Wood Sword"), 10);
 
-        inv.setItem(stoneSword, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.STONE_SWORD.getId();
-            p.sendMessage("§aSelected Stone Sword!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 11);
+        inv.setItem(stoneSword, (ex) -> selectWeapon(p, Material.STONE_SWORD, "Stone Sword"), 11);
 
-        inv.setItem(ironSword, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.IRON_SWORD.getId();
-            p.sendMessage("§aSelected Iron Sword!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 12);
+        inv.setItem(ironSword, (ex) -> selectWeapon(p, Material.IRON_SWORD, "Iron Sword"), 12);
 
-        inv.setItem(goldenSword, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.GOLD_SWORD.getId();
-            p.sendMessage("§aSelected Golden Sword!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 13);
+        inv.setItem(goldenSword, (ex) -> selectWeapon(p, Material.GOLD_SWORD, "Golden Sword"), 13);
 
-        inv.setItem(diamondSword, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.DIAMOND_SWORD.getId();
-            p.sendMessage("§aSelected Diamond Sword!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 14);
+        inv.setItem(diamondSword, (ex) -> selectWeapon(p, Material.DIAMOND_SWORD, "Diamond Sword"), 14);
 
-        inv.setItem(apple, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.APPLE.getId();
-            p.sendMessage("§aSelected Apple Sword!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 15);
+        inv.setItem(apple, (ex) -> selectWeapon(p, Material.APPLE, "Apple Sword"), 15);
 
-        inv.setItem(goldenApple, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.GOLDEN_APPLE.getId();
-            p.sendMessage("§aSelected Golden Apple Sword!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 16);
+        inv.setItem(goldenApple, (ex) -> selectWeapon(p, Material.GOLDEN_APPLE, "Golden Apple Sword"), 16);
 
-        inv.setItem(woodAxe, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.WOOD_AXE.getId();
-            p.sendMessage("§aSelected Wood Axe!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 19);
+        inv.setItem(woodAxe, (ex) -> selectWeapon(p, Material.WOOD_AXE, "Wood Axe"), 19);
 
-        inv.setItem(stoneAxe, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.STONE_AXE.getId();
-            p.sendMessage("§aSelected Stone Axe!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 20);
+        inv.setItem(stoneAxe, (ex) -> selectWeapon(p, Material.STONE_AXE, "Stone Axe"), 20);
 
-        inv.setItem(ironAxe, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.IRON_AXE.getId();
-            p.sendMessage("§aSelected Iron Axe!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 21);
+        inv.setItem(ironAxe, (ex) -> selectWeapon(p, Material.IRON_AXE, "Iron Axe"), 21);
 
-        inv.setItem(goldenAxel, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.GOLD_AXE.getId();
-            p.sendMessage("§aSelected Golden Axe!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 22);
+        inv.setItem(goldenAxel, (ex) -> selectWeapon(p, Material.GOLD_AXE, "Golden Axe"), 22);
 
-        inv.setItem(diamondAxel, (ex) -> {
-            if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §6PREMIUM §cor higher rank to use this");
-                return;
-            }
-            Member.getMember(p).weaponId = Material.DIAMOND_AXE.getId();
-            p.sendMessage("§aSelected Diamond Axe!");
-            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-            openWeaponSelector(p);
-        }, 23);
+        inv.setItem(diamondAxel, (ex) -> selectWeapon(p, Material.DIAMOND_AXE, "Diamond Axe"), 23);
 
 
         for (int i = 0; i < 9; i++) {
@@ -398,14 +280,11 @@ public class GuiCosmeticsSelector implements Listener {
         }
         builder.setItem(helmet, (ex) -> {
             if (!User.getUser(p).hasPermission("cmd.setarmorcolor")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §dVIP+ §cor higher rank to use this");
+                CosmeticFeedback.needRank(p, "§dVIP+");
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
-                        , TextClickEvent.suggestCommand("/setarmorcolor 1 <R>,<G>,<B>")
-                        , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
+                sendArmorColorHint(p, 1);
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
                 p.closeInventory();
             } else if (ex.getEvent().isRightClick()) {
@@ -416,14 +295,11 @@ public class GuiCosmeticsSelector implements Listener {
         }, 0);
         builder.setItem(chestplate, (ex) -> {
             if (!User.getUser(p).hasPermission("cmd.setarmorcolor")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §dVIP+ §cor higher rank to use this");
+                CosmeticFeedback.needRank(p, "§dVIP+");
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
-                        , TextClickEvent.suggestCommand("/setarmorcolor 2 <R>,<G>,<B>")
-                        , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
+                sendArmorColorHint(p, 2);
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
                 p.closeInventory();
             } else if (ex.getEvent().isRightClick()) {
@@ -434,14 +310,11 @@ public class GuiCosmeticsSelector implements Listener {
         }, 1);
         builder.setItem(leggings, (ex) -> {
             if (!User.getUser(p).hasPermission("cmd.setarmorcolor")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §dVIP+ §cor higher rank to use this");
+                CosmeticFeedback.needRank(p, "§dVIP+");
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
-                        , TextClickEvent.suggestCommand("/setarmorcolor 3 <R>,<G>,<B>")
-                        , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
+                sendArmorColorHint(p, 3);
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
                 p.closeInventory();
             } else if (ex.getEvent().isRightClick()) {
@@ -452,14 +325,11 @@ public class GuiCosmeticsSelector implements Listener {
         }, 2);
         builder.setItem(boots, (ex) -> {
             if (!User.getUser(p).hasPermission("cmd.setarmorcolor")) {
-                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-                p.sendMessage("§cYou need §dVIP+ §cor higher rank to use this");
+                CosmeticFeedback.needRank(p, "§dVIP+");
                 return;
             }
             if (ex.getEvent().isLeftClick()) {
-                p.sendMessage(new ComponentText().both("§eClick here to set your armor color."
-                        , TextClickEvent.suggestCommand("/setarmorcolor 4 <R>,<G>,<B>")
-                        , TextHoverEvent.showText("§eClick here to set your armor color.")).toBungee());
+                sendArmorColorHint(p, 4);
                 p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
                 p.closeInventory();
             } else if (ex.getEvent().isRightClick()) {
@@ -473,6 +343,22 @@ public class GuiCosmeticsSelector implements Listener {
         builder.setItem(close, (ex) -> p.closeInventory(), 8);
         builder.setClickable(false);
         p.openInventory(builder.getInventory());
+    }
+
+    private void selectWeapon(Player p, Material weapon, String name) {
+        if (!User.getUser(p).hasPermission("knockbackffa.setweapon") && !User.getUser(p).isStaff && !User.getUser(p).hasPermission("perms.*")) {
+            CosmeticFeedback.needRank(p, "§6PREMIUM");
+            return;
+        }
+        Member.getMember(p).weaponId = weapon.getId();
+        CosmeticFeedback.selected(p, name);
+        openWeaponSelector(p);
+    }
+
+    private static void sendArmorColorHint(Player p, int armorSlot) {
+        User.getUser(p).sendMessage(Lang.of(new ComponentText().both("%lang_kbffa_armor_color_hint%"
+                , TextClickEvent.suggestCommand("/setarmorcolor " + armorSlot + " <R>,<G>,<B>")
+                , TextHoverEvent.showText("%lang_kbffa_armor_color_hint_hover%"))));
     }
 
     private static boolean isChampOrStaff(Player p) {

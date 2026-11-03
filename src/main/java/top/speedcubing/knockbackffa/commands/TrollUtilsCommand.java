@@ -4,6 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.common.text.Msg;
 import top.speedcubing.knockbackffa.Item.TrollUtilsItemList;
 import top.speedcubing.server.player.User;
 
@@ -14,7 +15,7 @@ public class TrollUtilsCommand implements CommandExecutor {
             User user = User.getUser(sender);
             if (user.hasPermission("cmd.trollutils") || user.hasPermission("cmd.*")) {
                 if (args.length == 0) {
-                    user.player.sendMessage("Usage: /trollutils <item>");
+                    user.player.sendMessage(Msg.KNOCKBACKFFA + Msg.usage("/trollutils <item>"));
                 } else if (args.length == 1) {
                     if (args[0].equalsIgnoreCase("oceanbow") || args[0].equalsIgnoreCase("ob")) {
                         user.bGetInventory().addItem(TrollUtilsItemList.oceanBow());

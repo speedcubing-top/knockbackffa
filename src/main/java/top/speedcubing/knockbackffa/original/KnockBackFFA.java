@@ -30,6 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 //import top.nontage.jniil.injector.ClassInjector;
 //import top.nontage.jniil.injector.StandardMethodInjector;
 import top.speedcubing.common.database.Database;
+import top.speedcubing.common.text.Msg;
 import top.speedcubing.knockbackffa.api.events.MapSwitchEvent;
 import top.speedcubing.knockbackffa.commands.ChangeMapCommand;
 import top.speedcubing.knockbackffa.commands.ComboCommand;
@@ -255,7 +256,7 @@ public class KnockBackFFA extends JavaPlugin {
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
             if (strings[6] == null) strings[6] = "150";
             KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]), Double.parseDouble(strings[4]), Double.parseDouble(strings[5]), Double.parseDouble(strings[6]), strings[7]);
-            commandSender.sendMessage(strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
+            commandSender.sendMessage(Msg.KNOCKBACKFFA + Msg.SUCCESS + "Switched map to " + Msg.VALUE + strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]);
             return true;
         });
     }
@@ -355,7 +356,7 @@ public class KnockBackFFA extends JavaPlugin {
     }
 
     public static void log(String text) {
-        Bukkit.getConsoleSender().sendMessage(text);
+        Bukkit.getConsoleSender().sendMessage(Msg.KNOCKBACKFFA + text);
     }
 
     public KillEffectManager getKillEffectManager() {

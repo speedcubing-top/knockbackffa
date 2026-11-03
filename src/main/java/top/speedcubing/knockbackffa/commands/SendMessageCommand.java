@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.common.text.Msg;
 
 public class SendMessageCommand implements CommandExecutor {
 
@@ -26,16 +27,16 @@ public class SendMessageCommand implements CommandExecutor {
                     Bukkit.getOnlinePlayers().forEach(p -> {
                         p.sendMessage(cl(message));
                     });
-                    player.sendMessage("Send Message!");
+                    player.sendMessage(Msg.KNOCKBACKFFA + Msg.SUCCESS + "Message sent to all players.");
                     return true;
                 } else {
                     Player target = Bukkit.getPlayer(args[0]);
                     if (target != null) {
                         target.sendMessage(cl(message));
-                        player.sendMessage("Send Message!");
+                        player.sendMessage(Msg.KNOCKBACKFFA + Msg.SUCCESS + "Message sent to " + Msg.VALUE + target.getName() + Msg.SUCCESS + ".");
                         return true;
                     } else {
-                        player.sendMessage("Player not found!");
+                        player.sendMessage(Msg.KNOCKBACKFFA + Msg.PLAYER_NOT_FOUND);
                         return true;
                     }
                 }

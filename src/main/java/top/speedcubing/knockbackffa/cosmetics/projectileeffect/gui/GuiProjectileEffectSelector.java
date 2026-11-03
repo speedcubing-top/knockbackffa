@@ -2,7 +2,6 @@ package top.speedcubing.knockbackffa.cosmetics.projectileeffect.gui;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,6 +10,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.CustomItem;
+import top.speedcubing.knockbackffa.cosmetics.main.CosmeticFeedback;
 import top.speedcubing.knockbackffa.cosmetics.projectileeffect.manager.ProjectileEffectManager;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.server.player.User;
@@ -138,11 +138,9 @@ public class GuiProjectileEffectSelector implements Listener {
                         if (projectileEffectManager.hasSelectedOne(p)) {
                             projectileEffectManager.setProjectileEffect(p, "NONE");
                             open(p);
-                            p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                            p.sendMessage("§6You selected §aNONE§6!");
+                            CosmeticFeedback.selected(p, "NONE");
                         } else {
-                            p.sendMessage("§cYou have already selected this item!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.alreadySelected(p);
                         }
                     }
                     if (e.getSlot() == 12) {
@@ -150,15 +148,12 @@ public class GuiProjectileEffectSelector implements Listener {
                             if (!projectileEffectManager.hasSelected(p, "HEART_PARTICLE")) {
                                 projectileEffectManager.setProjectileEffect(p, "HEART_PARTICLE");
                                 open(p);
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                                p.sendMessage("§6You selected §aHeart Projectile Effect§6!");
+                                CosmeticFeedback.selected(p, "Heart Projectile Effect");
                             } else {
-                                p.sendMessage("§cYou have already selected this item!");
-                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                                CosmeticFeedback.alreadySelected(p);
                             }
                         } else {
-                            p.sendMessage("§cYou haven't unlocked this yet!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.locked(p);
                         }
                     }
                     if (e.getSlot() == 13) {
@@ -166,15 +161,12 @@ public class GuiProjectileEffectSelector implements Listener {
                             if (!projectileEffectManager.hasSelected(p, "NOTE_PARTICLE")) {
                                 projectileEffectManager.setProjectileEffect(p, "NOTE_PARTICLE");
                                 open(p);
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                                p.sendMessage("§6You selected §aNote Projectile Effect§6!");
+                                CosmeticFeedback.selected(p, "Note Projectile Effect");
                             } else {
-                                p.sendMessage("§cYou have already selected this item!");
-                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                                CosmeticFeedback.alreadySelected(p);
                             }
                         } else {
-                            p.sendMessage("§cYou haven't unlocked this yet!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.locked(p);
                         }
                     }
                     if (e.getSlot() == 14) {
@@ -182,15 +174,12 @@ public class GuiProjectileEffectSelector implements Listener {
                             if (!projectileEffectManager.hasSelected(p, "EGG_PARTICLE")) {
                                 projectileEffectManager.setProjectileEffect(p, "EGG_PARTICLE");
                                 open(p);
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                                p.sendMessage("§6You selected §aEgg Projectile Effect§6!");
+                                CosmeticFeedback.selected(p, "Egg Projectile Effect");
                             } else {
-                                p.sendMessage("§cYou have already selected this item!");
-                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                                CosmeticFeedback.alreadySelected(p);
                             }
                         } else {
-                            p.sendMessage("§cYou haven't unlocked this yet!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.locked(p);
                         }
                     }
                     if (e.getSlot() == 15) {
@@ -198,15 +187,12 @@ public class GuiProjectileEffectSelector implements Listener {
                             if (!projectileEffectManager.hasSelected(p, "CHAMP")) {
                                 projectileEffectManager.setProjectileEffect(p, "CHAMP");
                                 open(p);
-                                p.playSound(p.getLocation(), Sound.NOTE_PLING, 1f, 2f);
-                                p.sendMessage("§6You selected §aChamp Projectile Effect§6!");
+                                CosmeticFeedback.selected(p, "Champ Projectile Effect");
                             } else {
-                                p.sendMessage("§cYou have already selected this item!");
-                                p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                                CosmeticFeedback.alreadySelected(p);
                             }
                         } else {
-                            p.sendMessage("§cYou haven't unlocked this yet!");
-                            p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
+                            CosmeticFeedback.locked(p);
                         }
                     }
                 }

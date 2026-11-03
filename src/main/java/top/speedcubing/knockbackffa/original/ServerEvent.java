@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import top.speedcubing.common.configuration.ServerConfig;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.events.ConfigReloadEvent;
+import top.speedcubing.common.text.Msg;
 import top.speedcubing.common.events.CubingTickEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -128,18 +129,18 @@ public class ServerEvent {
     @CubingEventHandler
     public void nickEvent(NickEvent e) {
         e.setCancelled(true);
-        Member.getMember(e.getPlayer()).user.sendMessage("%lang_general_lobby_only%");
+        Member.getMember(e.getPlayer()).user.sendMessage(Msg.KNOCKBACKFFA + "%lang_general_lobby_only%");
     }
 
     @CubingEventHandler
     public void skinEvent(SkinEvent e) {
         e.setCancelled(true);
-        Member.getMember(e.getPlayer()).user.sendMessage("%lang_general_lobby_only%");
+        Member.getMember(e.getPlayer()).user.sendMessage(Msg.KNOCKBACKFFA + "%lang_general_lobby_only%");
     }
 
     @CubingEventHandler
     public void toggleFlyEvent(ToggleFlyEvent e) {
         e.setCancelled(true);
-        Member.getMember(e.getPlayer()).user.sendMessage("%lang_general_lobby_only%");
+        Member.getMember(e.getPlayer()).user.sendMessage(Msg.KNOCKBACKFFA + "%lang_general_lobby_only%");
     }
 }

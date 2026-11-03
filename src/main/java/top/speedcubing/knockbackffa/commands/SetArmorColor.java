@@ -4,7 +4,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.common.text.Msg;
 import top.speedcubing.knockbackffa.original.Member;
+import top.speedcubing.server.player.User;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,23 +17,24 @@ public class SetArmorColor implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("Only players can use this command.");
+            sender.sendMessage(Msg.KNOCKBACKFFA + Msg.PLAYERS_ONLY);
             return true;
         }
+        User user = User.getUser(player);
         if (args.length != 2) {
-            player.sendMessage("§cUsage: /setarmorcolor <armor(1~4)> <red>,<green>,<blue>");
+            user.sendMessage("%lang_kbffa_usage%", "/setarmorcolor <armor(1~4)> <red>,<green>,<blue>");
             return true;
         }
 
         String armor = args[0];
         if (!isInt(armor) || Integer.parseInt(armor) < 1 || Integer.parseInt(armor) > 4) {
-            player.sendMessage("§cInvalid armor value. Please use a value between 1 and 4.");
+            user.sendMessage("%lang_kbffa_armor_invalid_slot%");
             return true;
         }
 
         String rgb = args[1];
         if (!isValidRGB(rgb)) {
-            player.sendMessage("§cInvalid RGB value. Please use the format <red>,<green>,<blue> where each value is between 0 and 255.");
+            user.sendMessage("%lang_kbffa_armor_invalid_rgb%");
             return true;
         }
 
@@ -40,7 +43,7 @@ public class SetArmorColor implements CommandExecutor {
         String[] originalColors = originalColor.split("\\|");
         originalColors[armorSlot - 1] = rgb;
         Member.getMember(player).armorColor = String.join("|", originalColors);
-        player.sendMessage("§aArmor color updated.");
+        user.sendMessage("%lang_kbffa_armor_color_updated%");
         return true;
     }
 

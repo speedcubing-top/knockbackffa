@@ -5,6 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.knockbackffa.original.Member;
+import top.speedcubing.server.player.User;
 
 public class KillMyselfCommand implements CommandExecutor {
     @Override
@@ -15,7 +16,7 @@ public class KillMyselfCommand implements CommandExecutor {
                 member.isUsingTunnel = false;
                 member.death(false);
             } else {
-                commandSender.sendMessage("You are not fighting");
+                User.getUser(commandSender).sendMessage("%lang_kbffa_not_fighting%");
             }
         }
         return true;

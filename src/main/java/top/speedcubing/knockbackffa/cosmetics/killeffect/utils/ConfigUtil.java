@@ -4,6 +4,7 @@ package top.speedcubing.knockbackffa.cosmetics.killeffect.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import top.speedcubing.common.text.Msg;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
 
 public class ConfigUtil {
@@ -50,7 +51,7 @@ public class ConfigUtil {
 		} catch (Exception e) {
 			for (Player all : Bukkit.getOnlinePlayers()) {
 				if (all.isOp()) {
-					all.sendMessage("§c§l[KillEffects] §cConfig error, please check your config.yml");
+					all.sendMessage(Msg.KILL_EFFECTS + Msg.ERROR + "Config error, please check your config.yml");
 				}
 			}
 			e.printStackTrace();

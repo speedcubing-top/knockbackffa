@@ -73,6 +73,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.github.paperspigot.PaperSpigotConfig;
 import top.speedcubing.common.rank.Rank;
+import top.speedcubing.common.text.Msg;
 import top.speedcubing.knockbackffa.api.events.FFAPlayerDeathEvent;
 import top.speedcubing.knockbackffa.api.events.MapSwitchEvent;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.effects.KillEffect;
@@ -87,9 +88,6 @@ import top.speedcubing.knockbackffa.original.list.ItemList;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
-import top.speedcubing.lib.minecraft.text.ComponentText;
-import top.speedcubing.lib.minecraft.text.TextClickEvent;
-import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.server.authenticator.ImageRenderer;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
@@ -140,7 +138,7 @@ public class EventListeners implements Listener {
         if (newKillstreak < 10 || newKillstreak % 5 != 0) return;
         String formatKillstreakColor = newKillstreak == 10 ? "§7" : newKillstreak == 15 ? "§f" : newKillstreak == 20 ? "§a" : newKillstreak == 25 ? "§2" : newKillstreak == 30 ? "§e" : newKillstreak == 35 ? "§6" : newKillstreak == 40 ? "§c" : newKillstreak == 45 ? "§4" : "§5";
         Bukkit.getOnlinePlayers().forEach(a -> {
-            a.sendMessage("§8[§bKnockBackFFA§8] " + killer.user.getPrefixName(false) + " §ehas gotten a " + formatKillstreakColor + newKillstreak + " §ekillstreak");
+            User.getUser(a).sendMessage("%lang_kbffa_killstreak%", killer.user.getPrefixName(false), formatKillstreakColor + newKillstreak);
         });
     }
 
@@ -166,26 +164,26 @@ public class EventListeners implements Listener {
             case LEFT:
                 if (clickedItem != null && clickedItem.getType() == Material.MAP) {
                     if (!VoteManager.getVoteStatus()) {
-                        p.sendMessage("§cVoting is not in progress.");
+                        User.getUser(p).sendMessage("%lang_kbffa_vote_not_in_progress%");
                         return;
                     }
                     if (VoteManager.isPlayerVoted(p)) {
-                        p.sendMessage("§cYou have already voted");
+                        User.getUser(p).sendMessage("%lang_kbffa_vote_already_voted%");
                         return;
                     }
                     if (!VoteManager.isOptionsExist(ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName()))) {
-                        p.sendMessage("Occurred Error, options not exist");
+                        User.getUser(p).sendMessage("%lang_kbffa_vote_invalid_option%");
                         return;
                     }
                     VoteManager.vote(p, ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName()));
-                    p.sendMessage("§bYou voted for " + ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName()));
+                    User.getUser(p).sendMessage("%lang_kbffa_vote_voted%", ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName()));
                     p.closeInventory();
                 }
                 break;
             case RIGHT:
                 if (clickedItem != null && clickedItem.getType() == Material.MAP) {
                     if (VoteManager.isPlayerVoted(p)) {
-                        p.sendMessage("§cYou have already voted");
+                        User.getUser(p).sendMessage("%lang_kbffa_vote_already_voted%");
                         return;
                     }
                     p.closeInventory();
@@ -207,7 +205,7 @@ public class EventListeners implements Listener {
                                     p.getInventory().addItem(mapItem);
                                 } catch (IOException ee) {
                                     ee.printStackTrace();
-                                    p.sendMessage(ChatColor.RED + "An error occurred! Is the URL correct?");
+                                    User.getUser(p).sendMessage("%lang_kbffa_map_preview_failed%");
                                 }
                             }
                         }.runTaskAsynchronously(speedcubingServer.instance);
@@ -224,10 +222,7 @@ public class EventListeners implements Listener {
         Player player = e.getPlayer();
         if (!VoteManager.getVoteStatus()) return;
         if (VoteManager.isPlayerVoted(player)) return;
-        ComponentText textBuilder = new ComponentText()
-                .str("§eMap Voting!")
-                .both("\n§dClick to vote!", TextClickEvent.runCommand("/vote"), TextHoverEvent.showText("§dCLICK ME!"));
-        player.sendMessage(textBuilder.toBungee());
+        VoteManager.sendVoteInvite(player, "%lang_kbffa_vote_ongoing%");
     }
 
     //BOW BOOST
@@ -605,7 +600,7 @@ public class EventListeners implements Listener {
                         member.user.sound(Sound.CLICK);
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
-                            member.user.sendMessage("%lang_general_saved_setting%");
+                            member.user.sendMessage(Msg.KNOCKBACKFFA + "%lang_general_saved_setting%");
                             List<Material> t = Arrays.asList(Material.getMaterial(member.weaponId), Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.STONE_PICKAXE);
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
@@ -652,7 +647,7 @@ public class EventListeners implements Listener {
             Member member = Member.getMember(player);
             if (member.iseditingkit) {
                 member.iseditingkit = false;
-                member.user.sendMessage("%lang_inventory_discard%");
+                member.user.sendMessage(Msg.KNOCKBACKFFA + "%lang_inventory_discard%");
                 Inventory inventory = player.getInventory();
                 inventory.clear();
                 member.setHotbarDefault();
@@ -881,7 +876,7 @@ public class EventListeners implements Listener {
     public void onPlayerConsume(PlayerItemConsumeEvent e) {
         if (e.getItem().getItemMeta().getEnchants().containsKey(Enchantment.DAMAGE_ALL)) {
             e.setCancelled(true);
-            e.getPlayer().sendMessage("§cWhy you eating your sowrd??!?");
+            User.getUser(e.getPlayer()).sendMessage("%lang_kbffa_cannot_eat_weapon%");
         }
     }
 

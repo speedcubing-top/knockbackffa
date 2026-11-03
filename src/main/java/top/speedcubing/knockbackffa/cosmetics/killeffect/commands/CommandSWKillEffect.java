@@ -5,13 +5,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.common.text.Msg;
 import top.speedcubing.knockbackffa.original.KnockBackFFA;
 import top.speedcubing.knockbackffa.cosmetics.killeffect.utils.ConfigUtil;
 
 public class CommandSWKillEffect implements CommandExecutor {
 
 	private KnockBackFFA plugin;
-	public String prefix = "§r";
 
 	public CommandSWKillEffect(KnockBackFFA plugin) {
 		this.plugin = plugin;
@@ -32,7 +32,7 @@ public class CommandSWKillEffect implements CommandExecutor {
 				plugin.getKillEffectManager().saveKillEffects();
 				plugin.reloadConfig();
 				ConfigUtil.init(plugin);
-				sender.sendMessage(prefix + "§aconfig.yml reloaded!");
+				sender.sendMessage(Msg.KILL_EFFECTS + Msg.SUCCESS + "config.yml reloaded!");
 				return true;
 			}
 		}
@@ -45,8 +45,8 @@ public class CommandSWKillEffect implements CommandExecutor {
 				return true;
 			}
 		}
-		sender.sendMessage("/ke gui [player] §2--- §bOpen Kill Effect selector");
-		sender.sendMessage("/ke reload §2--- §bReloads config.yml");
+		sender.sendMessage(Msg.KILL_EFFECTS + Msg.VALUE + "/ke gui [player] §8- " + Msg.INFO + "Open Kill Effect selector");
+		sender.sendMessage(Msg.KILL_EFFECTS + Msg.VALUE + "/ke reload §8- " + Msg.INFO + "Reloads config.yml");
 		return true;
 	}
 
