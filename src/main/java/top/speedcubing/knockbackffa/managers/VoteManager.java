@@ -57,11 +57,11 @@ public class VoteManager {
         });
     }
 
-    /** header: language key of the first line, followed by a clickable "/vote" line */
+    /** header: language key of the message, followed on the same line by a clickable "/vote" part */
     public static void sendVoteInvite(Player player, String header) {
         User.getUser(player).sendMessage(Lang.of(new ComponentText()
                 .str(header)
-                .both("\n%lang_kbffa_vote_click%", TextClickEvent.runCommand("/vote"), TextHoverEvent.showText("%lang_kbffa_vote_click_hover%"))));
+                .both(" %lang_kbffa_vote_click%", TextClickEvent.runCommand("/vote"), TextHoverEvent.showText("%lang_kbffa_vote_click_hover%"))));
     }
 
     public static void endVote() {
