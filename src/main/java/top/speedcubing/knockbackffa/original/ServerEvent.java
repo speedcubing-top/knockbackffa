@@ -8,6 +8,7 @@ import top.speedcubing.common.events.ConfigReloadEvent;
 import top.speedcubing.common.events.CubingTickEvent;
 import java.util.HashMap;
 import java.util.Map;
+import top.speedcubing.common.profiler.Profiler;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.knockbackffa.original.configuration.Configuration;
@@ -49,6 +50,12 @@ public class ServerEvent {
     // two top-10 queries + one periodrank query for both boards, every BOARD_REFRESH_TICKS seconds;
     // the champ table is only written when a leader actually changes
     private void refreshBoards(SQLConnection connection) {
+        try (Profiler.Timer t = Profiler.timer("kbffa.leaderboard")) {
+            refreshBoardsUntimed(connection);
+        }
+    }
+
+    private void refreshBoardsUntimed(SQLConnection connection) {
         SQLResult arr = connection.select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).executeResult();
         SQLResult arr2 = connection.select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).executeResult();
         if (arr.isEmpty() || arr2.isEmpty())
