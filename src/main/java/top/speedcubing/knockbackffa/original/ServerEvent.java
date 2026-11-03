@@ -6,6 +6,8 @@ import top.speedcubing.common.configuration.ServerConfig;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.events.ConfigReloadEvent;
 import top.speedcubing.common.events.CubingTickEvent;
+import java.util.HashMap;
+import java.util.Map;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.knockbackffa.original.configuration.Configuration;
@@ -23,39 +25,14 @@ import top.speedcubing.server.share.Chat;
 
 public class ServerEvent {
 
+    private static final int BOARD_REFRESH_TICKS = 5;
+    private Integer lastKillChamp, lastDailyKillChamp;
+
     @CubingEventHandler
     public void cubingTickEvent(CubingTickEvent e) {
         try (SQLConnection connection = Database.getCubing()) {
-            SQLResult arr = connection.select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).executeResult();
-            SQLResult arr2 = connection.select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).executeResult();
-            connection.update("champ", "id=" + arr.get(0).getInt(3), "subject='kbffa_kill'");
-            connection.update("champ", "id=" + arr2.get(0).getInt(3), "subject='kbffa_dailykill'");
-            int lastKill = 0;
-            int index = 0;
-            int i = 0;
-            for (SQLRow r : arr) {
-                int a = r.getInt(2);
-                if (lastKill != a) {
-                    index = i + 1;
-                    lastKill = a;
-                }
-                KnockBackFFA.boardName[i] = r.getString(3);
-                KnockBackFFA.board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(r.getString(0), r.getInt(3)).getPrefix() + r.getString(1)).replace("%k%", r.getString(2));
-                i++;
-            }
-            lastKill = 0;
-            index = 0;
-            i = 0;
-            for (SQLRow r : arr2) {
-                int a = r.getInt(2);
-                if (lastKill != a) {
-                    index = i + 1;
-                    lastKill = a;
-                }
-                KnockBackFFA.dailyBoardName[i] = r.getString(3);
-                KnockBackFFA.dailyBoard[i] = r.getInt(2) == 0 ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", Rank.getFormat(r.getString(0), r.getInt(3)).getPrefix() + r.getString(1)).replace("%k%", r.getString(2));
-                i++;
-            }
+            if (e.getTick() % BOARD_REFRESH_TICKS == 0)
+                refreshBoards(connection);
             for (Member m : Member.users.values()) {
                 m.a();
                 if (m.killedPlayer) {
@@ -67,6 +44,65 @@ public class ServerEvent {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    // two top-10 queries + one periodrank query for both boards, every BOARD_REFRESH_TICKS seconds;
+    // the champ table is only written when a leader actually changes
+    private void refreshBoards(SQLConnection connection) {
+        SQLResult arr = connection.select("priority,name,kbffa_kill,id").from("playersdata").orderBy("kbffa_kill DESC, name ASC").limit(0, 10).executeResult();
+        SQLResult arr2 = connection.select("priority,name,kbffa_dailykill,id").from("playersdata").orderBy("kbffa_dailykill DESC, name ASC").limit(0, 10).executeResult();
+        if (arr.isEmpty() || arr2.isEmpty())
+            return;
+
+        Integer killChamp = arr.get(0).getInt(3);
+        if (!killChamp.equals(lastKillChamp)) {
+            connection.update("champ", "id=" + killChamp, "subject='kbffa_kill'");
+            lastKillChamp = killChamp;
+        }
+        Integer dailyKillChamp = arr2.get(0).getInt(3);
+        if (!dailyKillChamp.equals(lastDailyKillChamp)) {
+            connection.update("champ", "id=" + dailyKillChamp, "subject='kbffa_dailykill'");
+            lastDailyKillChamp = dailyKillChamp;
+        }
+
+        Map<Integer, String> dbRanks = new HashMap<>();
+        for (SQLRow r : arr)
+            dbRanks.put(r.getInt(3), r.getString(0));
+        for (SQLRow r : arr2)
+            dbRanks.put(r.getInt(3), r.getString(0));
+        Map<Integer, String> ranks = Rank.resolveAll(dbRanks);
+
+        int lastKill = 0;
+        int index = 0;
+        int i = 0;
+        for (SQLRow r : arr) {
+            int a = r.getInt(2);
+            if (lastKill != a) {
+                index = i + 1;
+                lastKill = a;
+            }
+            KnockBackFFA.boardName[i] = r.getString(3);
+            KnockBackFFA.board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", prefix(ranks, r.getInt(3)) + r.getString(1)).replace("%k%", r.getString(2));
+            i++;
+        }
+        lastKill = 0;
+        index = 0;
+        i = 0;
+        for (SQLRow r : arr2) {
+            int a = r.getInt(2);
+            if (lastKill != a) {
+                index = i + 1;
+                lastKill = a;
+            }
+            KnockBackFFA.dailyBoardName[i] = r.getString(3);
+            KnockBackFFA.dailyBoard[i] = r.getInt(2) == 0 ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", prefix(ranks, r.getInt(3)) + r.getString(1)).replace("%k%", r.getString(2));
+            i++;
+        }
+    }
+
+    private static String prefix(Map<Integer, String> ranks, int id) {
+        Rank rank = Rank.rankByName.get(ranks.get(id));
+        return rank == null ? "" : rank.getFormat().getPrefix();
     }
 
 
