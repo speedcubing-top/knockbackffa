@@ -88,9 +88,9 @@ public class Darts implements Listener {
                             Member damager = Member.getMember(player);
                             if (victim.isFighting && damager.isFighting) {
                                 victim.Damage = damager;
-                                if (player.getHealth() - 1 <= 0) {
+                                if (target.getHealth() - 1 <= 0) {
                                     victim.death(false);
-                                    player.damage(0);
+                                    target.damage(0);
                                 } else {
                                     target.damage(1);
                                     Vector dir = armorStand.getLocation().getDirection().normalize();

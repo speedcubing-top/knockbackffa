@@ -2,11 +2,14 @@ package top.speedcubing.knockbackffa.managers;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -114,6 +117,24 @@ public class MapManager {
         }
     }
 
+    // Bukkit.createMap allocates a new persistent map id every call; create each one once and reuse it (main thread only)
+    private static final Map<String, Short> menuMapIds = new HashMap<>();
+    private static final Map<String, MapView> previewViews = new HashMap<>();
+
+    /** Map id used for the menu icon of the given map; created once. */
+    public static short getMenuMapId(String mapName, World world) {
+        return menuMapIds.computeIfAbsent(mapName, n -> Bukkit.createMap(world).getId());
+    }
+
+    /** Cached preview MapView for the given map, or null if the preview image hasn't been loaded yet. */
+    public static MapView getPreviewView(String mapName) {
+        return previewViews.get(mapName);
+    }
+
+    public static void putPreviewView(String mapName, MapView view) {
+        previewViews.put(mapName, view);
+    }
+
     /** Marks the map vote menu so clicks are recognised regardless of the (translated) title. */
     public static final class VoteMenuHolder implements InventoryHolder {
         @Override
@@ -128,8 +149,7 @@ public class MapManager {
         AtomicInteger count = new AtomicInteger(0);
 
         getAllMapNames().forEach(mapName -> {
-            MapView mapView = Bukkit.createMap(player.getWorld());
-            ItemStack map = new ItemStack(Material.MAP, 1, mapView.getId());
+            ItemStack map = new ItemStack(Material.MAP, 1, getMenuMapId(mapName, player.getWorld()));
             ItemMeta meta = map.getItemMeta();
 
             List<String> lore = new ArrayList<>();

@@ -13,11 +13,9 @@ import top.speedcubing.knockbackffa.cosmetics.killeffect.manager.KillEffectManag
 public class KillListener implements Listener {
 
     private KnockBackFFA plugin;
-    private String nmsVersion;
 
     public KillListener(KnockBackFFA plugin) {
         this.plugin = plugin;
-        this.nmsVersion = plugin.getNmsVersion();
     }
     @EventHandler
     public void onFFADeath(FFAPlayerDeathEvent e) {
@@ -37,7 +35,8 @@ public class KillListener implements Listener {
             Bukkit.getScheduler().runTask(
                     plugin,
                     () -> {
-                        switch (nmsVersion) {
+                        // read lazily: the listener is constructed before KnockBackFFA.loadVersion() runs
+                        switch (String.valueOf(plugin.getNmsVersion())) {
                             case "v1_8_R3":
                                 ((org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer) p).getHandle().playerConnection
                                         .a(new net.minecraft.server.v1_8_R3.PacketPlayInClientCommand(

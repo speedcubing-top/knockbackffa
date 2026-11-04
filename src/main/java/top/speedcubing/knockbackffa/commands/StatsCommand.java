@@ -41,6 +41,10 @@ public class StatsCommand implements CommandExecutor {
     private void sendFFADataByName(Player sender, String playerName) {
         try (SQLConnection connection = Database.getCubing()) {
             SQLRow r = connection.select("priority,kbffa_kill,kbffa_dailykill,kbffa_blockplace,kbffa_death,kbffa_killstreak,name,kbffa_blockBreak").from("playersdata").where("name=?").setString(1, playerName).executeResult().get(0);
+            if (r == null) { // no player with that name
+                User.getUser(sender).sendMessage("%lang_kbffa_stats_not_found%");
+                return;
+            }
             String rank = r.getString(0);
             String kills = r.getString(1);
             String dailyKills = r.getString(2);

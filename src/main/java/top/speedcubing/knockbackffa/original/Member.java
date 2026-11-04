@@ -1,7 +1,14 @@
 package top.speedcubing.knockbackffa.original;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
@@ -67,6 +74,9 @@ public class Member {
     int death;
     public int killstreak;
     long lastClick;
+    long tunnelLastUse;
+    // 1-based leaderboard positions computed by updatePositions; 0 = not known yet
+    volatile int killPos, dailyKillPos;
     boolean displayType;
     final Hologram personal;
     int placedBlock;
@@ -128,6 +138,11 @@ public class Member {
             killBoard[i] = new Hologram("", false, false).setLocation(Configuration.holoX, 152 - i * 0.3, Configuration.holoZ, 0, 0).world("map_kbffa").setClickEvent(KnockBackFFA.clickEvent).setListener(player).spawn();
         }
         personal = new Hologram("", false, false).world("map_kbffa").setLocation(Configuration.holoX, 148.9, Configuration.holoZ, 0, 0).setClickEvent(KnockBackFFA.clickEvent).setListener(player);
+        try (SQLConnection c = Database.getCubing()) {
+            updatePositions(c, Collections.singletonList(this));
+        } catch (Exception e) {
+            log.warn("Failed to load leaderboard position of {}", user.id, e);
+        }
         setDisplayType(true);
         users.put(user.id, this);
 
@@ -164,6 +179,8 @@ public class Member {
         String[] s = displayType ? KnockBackFFA.board : KnockBackFFA.dailyBoard;
         String[] s2 = displayType ? KnockBackFFA.boardName : KnockBackFFA.dailyBoardName;
         for (int i = 0; i < 10; i++) {
+            if (s[i] == null || s2[i] == null) // boards not loaded yet (or fewer than 10 rows)
+                continue;
             killBoard[i].setName(user.id == Integer.parseInt(s2[i]) ? KnockBackFFA.bold(s[i]) : s[i]);
         }
     }
@@ -238,18 +255,49 @@ public class Member {
         }
     }
 
-    public void updatePlayerPos(boolean spawn) {
-        try (SQLConnection connection = Database.getCubing()) {
-            personal.setName(
-                    (displayType ? kill : dailyKill) == 0 ?
-                            Lang.of("%lang_leaderboard_nodata%").getString(user.lang) :
-                            KnockBackFFA.bold(StringList.leaderboard.replace("%i%", Integer.toString(
-                                            connection.select("COUNT(*)").from("playersdata")
-                                                    .where((displayType ? "kbffa_kill > (SELECT kbffa_kill" : "kbffa_dailykill > (SELECT kbffa_dailykill") + " FROM playersdata where id = " + user.id + ")")
-                                                    .executeResult().getInt() + 1))
-                                    .replace("%j%", user.getPrefixName(false))
-                                    .replace("%k%", Integer.toString(displayType ? kill : dailyKill))));
+    /**
+     * Computes the lifetime and daily leaderboard position (1 + players with more kills) of every given member
+     * with a single scan of playersdata, instead of one ranking query per member.
+     */
+    static void updatePositions(SQLConnection connection, Collection<Member> members) {
+        List<Member> list = new ArrayList<>(members);
+        int[] kills = new int[list.size()];
+        int[] dailyKills = new int[list.size()];
+        Map<String, Integer> columns = new LinkedHashMap<>(); // condition -> result column
+        for (int i = 0; i < list.size(); i++) {
+            kills[i] = list.get(i).kill;
+            dailyKills[i] = list.get(i).dailyKill;
+            // a member with 0 kills shows "no data", so no position is needed
+            if (kills[i] > 0)
+                columns.putIfAbsent("kbffa_kill>" + kills[i], columns.size());
+            if (dailyKills[i] > 0)
+                columns.putIfAbsent("kbffa_dailykill>" + dailyKills[i], columns.size());
         }
+        if (columns.isEmpty())
+            return;
+        StringJoiner select = new StringJoiner(",");
+        for (String condition : columns.keySet())
+            select.add("COUNT(CASE WHEN " + condition + " THEN 1 END)");
+        SQLRow r = connection.select(select.toString()).from("playersdata").executeResult().get(0);
+        for (int i = 0; i < list.size(); i++) {
+            Member m = list.get(i);
+            if (kills[i] > 0)
+                m.killPos = r.getInt(columns.get("kbffa_kill>" + kills[i])) + 1;
+            if (dailyKills[i] > 0)
+                m.dailyKillPos = r.getInt(columns.get("kbffa_dailykill>" + dailyKills[i])) + 1;
+        }
+    }
+
+    /** Updates the personal hologram from the cached positions; never queries the database. */
+    public void updatePlayerPos(boolean spawn) {
+        int value = displayType ? kill : dailyKill;
+        int pos = displayType ? killPos : dailyKillPos;
+        personal.setName(
+                value == 0 || pos == 0 ?
+                        Lang.of("%lang_leaderboard_nodata%").getString(user.lang) :
+                        KnockBackFFA.bold(StringList.leaderboard.replace("%i%", Integer.toString(pos))
+                                .replace("%j%", user.getPrefixName(false))
+                                .replace("%k%", Integer.toString(value))));
         if (spawn)
             personal.spawn();
     }

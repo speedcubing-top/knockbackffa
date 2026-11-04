@@ -13,7 +13,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.map.MapView;
 import top.speedcubing.knockbackffa.managers.MapManager;
 import top.speedcubing.knockbackffa.utils.LangText;
 import top.speedcubing.server.player.User;
@@ -40,9 +39,16 @@ public class ChangeMapCommand implements CommandExecutor, Listener {
     public void onInvClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         if (e.getClickedInventory() == null || !(e.getClickedInventory().getHolder() instanceof MenuHolder)) return;
-        if (!User.getUser(p).isStaff) p.closeInventory();
         e.setCancelled(true);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),MapManager.getMapCommandByMapName(e.getCurrentItem().getItemMeta().getDisplayName()) + " " + e.getCurrentItem().getItemMeta().getDisplayName());
+        ItemStack item = e.getCurrentItem();
+        if (!User.getUser(p).isStaff || item == null || !item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) {
+            p.closeInventory();
+            return;
+        }
+        String mapName = item.getItemMeta().getDisplayName();
+        String mapCommand = MapManager.getMapCommandByMapName(mapName);
+        if (mapCommand != null)
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), mapCommand + " " + mapName);
         p.closeInventory();
     }
     private void open(Player player) {
@@ -50,8 +56,7 @@ public class ChangeMapCommand implements CommandExecutor, Listener {
         Inventory mapInv = Bukkit.createInventory(new MenuHolder(), 36, LangText.str(lang, "%lang_kbffa_changemap_menu_title%"));
         AtomicInteger count = new AtomicInteger(0);
         MapManager.getAllMapNames().forEach(mapName -> {
-            MapView mapView = Bukkit.createMap(player.getWorld());
-            ItemStack map = new ItemStack(Material.MAP, 1, mapView.getId());
+            ItemStack map = new ItemStack(Material.MAP, 1, MapManager.getMenuMapId(mapName, player.getWorld()));
             ItemMeta meta = map.getItemMeta();
 
             // the display name is the map id the click handler switches to; keep it untranslated

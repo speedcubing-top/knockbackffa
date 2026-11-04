@@ -38,14 +38,17 @@ public class ProjectileEffectManager {
         projectileEffectMap = new HashMap<>();
         FileConfiguration dataYml = plugin.getProjectileEffectDataYml();
         for (String uuid : dataYml.getKeys(false)) {
-            String effectId = dataYml.getString(uuid + ".selected-effect");
-            projectileEffectMap.put(uuid, getProjectileEffectById(effectId));
+            ProjectileEffect effect = getProjectileEffectById(dataYml.getString(uuid + ".selected-effect"));
+            if (effect != null) // unknown/removed effect id: leave unselected
+                projectileEffectMap.put(uuid, effect);
         }
     }
     public void saveProjectileEffects() {
         FileConfiguration dataYml = plugin.getProjectileEffectDataYml();
         for (String uuid : projectileEffectMap.keySet()) {
-            dataYml.set(uuid + ".selected-effect", projectileEffectMap.get(uuid).getId());
+            ProjectileEffect effect = projectileEffectMap.get(uuid);
+            if (effect != null)
+                dataYml.set(uuid + ".selected-effect", effect.getId());
         }
         plugin.saveProjectileEffectDataYml();
     }

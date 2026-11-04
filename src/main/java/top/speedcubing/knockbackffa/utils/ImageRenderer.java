@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import org.bukkit.entity.Player;
@@ -14,11 +13,12 @@ import org.bukkit.map.MapView;
 import top.speedcubing.server.player.User;
 
 public class ImageRenderer extends MapRenderer {
-    private SoftReference<BufferedImage> cacheImage;
+    // strong reference until drawn: the MapView is cached and reused, so the image must survive until its first render
+    private BufferedImage image;
     private boolean hasRendered = false;
 
     public ImageRenderer(String url) throws IOException {
-        this.cacheImage = new SoftReference<>(this.getImage(url));
+        this.image = this.getImage(url);
     }
 
     @SuppressWarnings("deprecation")
@@ -28,8 +28,9 @@ public class ImageRenderer extends MapRenderer {
             return;
         }
 
-        if (this.cacheImage.get() != null) {
-            canvas.drawImage(0, 0, this.cacheImage.get());
+        if (this.image != null) {
+            canvas.drawImage(0, 0, this.image);
+            this.image = null; // the shared canvas keeps the pixels
             this.hasRendered = true;
         } else {
             User.getUser(player).sendMessage("%lang_kbffa_map_preview_failed%");
@@ -47,6 +48,7 @@ public class ImageRenderer extends MapRenderer {
 
     private BufferedImage resize(final URL url, final Dimension size) throws IOException {
         final BufferedImage image = ImageIO.read(url);
+        if (image == null) throw new IOException("Not an image: " + url);
         final BufferedImage resized = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = resized.createGraphics();
         g.drawImage(image, 0, 0, size.width, size.height, null);

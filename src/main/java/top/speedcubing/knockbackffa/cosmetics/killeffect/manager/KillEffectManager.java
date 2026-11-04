@@ -48,15 +48,18 @@ public class KillEffectManager {
         killEffectMap = new HashMap<>();
         FileConfiguration dataYml = plugin.getDataYml();
         for (String uuid : dataYml.getKeys(false)) {
-            String effectId = dataYml.getString(uuid + ".selected-effect");
-            killEffectMap.put(uuid, getKillEffectById(effectId));
+            KillEffect effect = getKillEffectById(dataYml.getString(uuid + ".selected-effect"));
+            if (effect != null) // unknown/removed effect id: leave unselected
+                killEffectMap.put(uuid, effect);
         }
     }
 
     public void saveKillEffects() {
         FileConfiguration dataYml = plugin.getDataYml();
         for (String uuid : killEffectMap.keySet()) {
-            dataYml.set(uuid + ".selected-effect", killEffectMap.get(uuid).getId());
+            KillEffect effect = killEffectMap.get(uuid);
+            if (effect != null)
+                dataYml.set(uuid + ".selected-effect", effect.getId());
         }
         plugin.saveDataYml();
     }

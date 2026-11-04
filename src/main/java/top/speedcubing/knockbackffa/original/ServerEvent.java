@@ -44,8 +44,11 @@ public class ServerEvent {
                     m.killedPlayer = false;
                     m.user.dbUpdate("kbffa_kill=" + m.kill + ",kbffa_dailykill=" + m.dailyKill);
                 }
-                m.updatePlayerPos(false);
             }
+            // one scan for every online player's position instead of one ranking query per player
+            Member.updatePositions(connection, Member.users.values());
+            for (Member m : Member.users.values())
+                m.updatePlayerPos(false);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

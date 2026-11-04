@@ -90,7 +90,7 @@ public class GuiKillEffectSelector implements Listener {
             return;
         }
         e.setCancelled(true);
-        if (e.getSlotType().equals(SlotType.OUTSIDE) || e.getCurrentItem().getType().equals(Material.AIR)) {
+        if (e.getSlotType().equals(SlotType.OUTSIDE) || e.getCurrentItem() == null || e.getCurrentItem().getType().equals(Material.AIR)) {
             return;
         }
         if (!e.getClickedInventory().equals(top)) {

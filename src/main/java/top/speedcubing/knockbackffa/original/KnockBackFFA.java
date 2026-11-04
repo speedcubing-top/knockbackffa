@@ -211,12 +211,18 @@ public class KnockBackFFA extends JavaPlugin {
 
         Calendar tomorrow = new GregorianCalendar();
         tomorrow.add(Calendar.DATE, 1);
-        new Timer("Cubing-Daily-Thread").schedule(new TimerTask() {
+        dailyResetTimer = new Timer("Cubing-Daily-Thread");
+        dailyResetTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Member.users.values().forEach(a -> a.dailyKill = 0);
-                try (SQLConnection connection = Database.getCubing()) {
-                    connection.update("playersdata", "kbffa_dailykill=0", "1");
+                // a throwing TimerTask kills the Timer, which would stop every future reset
+                try {
+                    Member.users.values().forEach(a -> a.dailyKill = 0);
+                    try (SQLConnection connection = Database.getCubing()) {
+                        connection.update("playersdata", "kbffa_dailykill=0", "1");
+                    }
+                } catch (Throwable t) {
+                    t.printStackTrace();
                 }
             }
         }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH),
@@ -226,6 +232,8 @@ public class KnockBackFFA extends JavaPlugin {
     @Override
     public void onDisable() {
         //bad code
+        if (dailyResetTimer != null)
+            dailyResetTimer.cancel();
         killEffectManager.saveKillEffects();
         projectileEffectManager.saveProjectileEffects();
         KnockBackFFA.BlockPlaced.keySet().forEach(a -> User.getUsers().stream().findFirst().ifPresent(user -> user.bGetWorld().getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR)));
@@ -286,6 +294,7 @@ public class KnockBackFFA extends JavaPlugin {
     private GuiProjectileEffectSelector guiProjectileEffectSelector;
     private GuiCosmeticsSelector guiCosmeticsSelector;
     private String nmsVersion;
+    private Timer dailyResetTimer;
     private ProjectileEffectManager projectileEffectManager;
     private FileConfiguration projectileEffectDataYml;
 

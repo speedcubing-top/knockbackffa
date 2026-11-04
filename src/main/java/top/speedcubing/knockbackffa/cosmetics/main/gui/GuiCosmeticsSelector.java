@@ -138,7 +138,7 @@ public class GuiCosmeticsSelector implements Listener {
             return;
         }
         e.setCancelled(true);
-        if (e.getSlotType().equals(InventoryType.SlotType.OUTSIDE) || e.getCurrentItem().getType().equals(Material.AIR)) {
+        if (e.getSlotType().equals(InventoryType.SlotType.OUTSIDE) || e.getCurrentItem() == null || e.getCurrentItem().getType().equals(Material.AIR)) {
             return;
         }
         if (e.getClickedInventory().equals(top)) {

@@ -37,8 +37,13 @@ public class TagGameListener implements Listener {
         if (tagPlayer.contains(uuid)) {
             tagPlayer.remove(uuid);
             Player newTag = getRandomPlayer(TagGameCommand.partyList);
-            tagPlayer.add(newTag.getUniqueId());
-            sendMessageToParty(TagGameCommand.partyList, "%lang_kbffa_tag_tagger_kicked%", player.getName(), newTag.getName());
+            if (newTag == null) { // nobody left to tag
+                if (TagGameCommand.isGameRunning())
+                    TagGameCommand.endGame();
+            } else {
+                tagPlayer.add(newTag.getUniqueId());
+                sendMessageToParty(TagGameCommand.partyList, "%lang_kbffa_tag_tagger_kicked%", player.getName(), newTag.getName());
+            }
         }
         lastTag.remove(uuid);
     }
@@ -71,6 +76,10 @@ public class TagGameListener implements Listener {
         }
         Player player = (Player) e.getEntity();
         Player tag = (Player) e.getDamager();
+        // only the current tagger takes part; ordinary FFA hits are not the tag game's business
+        if (!tagPlayer.contains(tag.getUniqueId())) {
+            return;
+        }
         if (!TagGameCommand.partyList.contains(player.getUniqueId())) {
             User.getUser(tag).sendMessage("%lang_kbffa_tag_target_not_in_game%", player.getName());
             return;
@@ -95,10 +104,12 @@ public class TagGameListener implements Listener {
     @EventHandler
     public void onGameEnd(TagGameEndEvent e) {
         sendMessageToParty(e.getPartyList(), "%lang_kbffa_tag_game_over%");
-        UUID uuid = tagPlayer.get(0);
-        Player loser = Bukkit.getPlayer(uuid);
-        sendMessageToParty(e.getPartyList(), "%lang_kbffa_tag_loser%", loser.getName());
-        loser.setHealth(0);
+        // the tagger list is empty if the party was disbanded or the last tagger left
+        Player loser = tagPlayer.isEmpty() ? null : Bukkit.getPlayer(tagPlayer.get(0));
+        if (loser != null) {
+            sendMessageToParty(e.getPartyList(), "%lang_kbffa_tag_loser%", loser.getName());
+            loser.setHealth(0);
+        }
         tagPlayer.clear();
         lastTag.clear();
     }
@@ -118,6 +129,11 @@ public class TagGameListener implements Listener {
             lastTag.remove(p.getUniqueId());
         }
         Player newTag = getRandomPlayer(TagGameCommand.partyList);
+        if (newTag == null) { // nobody left to tag
+            if (TagGameCommand.isGameRunning())
+                TagGameCommand.endGame();
+            return;
+        }
         tagPlayer.add(newTag.getUniqueId());
         sendMessageToParty(TagGameCommand.partyList, "%lang_kbffa_tag_tagger_quit%", p.getName(), newTag.getName());
 

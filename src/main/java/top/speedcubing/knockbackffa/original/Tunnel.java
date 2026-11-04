@@ -13,9 +13,9 @@ public class Tunnel {
         // true = at green
         Member member = Member.getMember(player);
         long l = System.currentTimeMillis();
-        if (l - member.lastClick < 30000) {
+        if (l - member.tunnelLastUse < 30000) {
             player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
-            member.user.sendMessage("%lang_kbffa_tunnel_cooldown%", Long.toString(30 - (l - member.lastClick) / 1000));
+            member.user.sendMessage("%lang_kbffa_tunnel_cooldown%", Long.toString(30 - (l - member.tunnelLastUse) / 1000));
             return;
         }
 
@@ -26,6 +26,11 @@ public class Tunnel {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (!player.isOnline()) { // quit mid-tunnel: nothing else resets isUsingTunnel
+                    member.isUsingTunnel = false;
+                    cancel();
+                    return;
+                }
                 if (stage.get() == 0) {
                     player.setVelocity(new Vector(0, 0, 0));
                     player.teleport(spawnLoc);
@@ -100,6 +105,6 @@ public class Tunnel {
             }
         }.runTaskTimer(KnockBackFFA.instance, 0, 1);
 
-        member.lastClick = l;
+        member.tunnelLastUse = l;
     }
 }

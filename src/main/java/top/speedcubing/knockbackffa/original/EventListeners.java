@@ -1,6 +1,5 @@
 package top.speedcubing.knockbackffa.original;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -89,7 +88,7 @@ import top.speedcubing.knockbackffa.original.list.ItemList;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.InventoryUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
-import top.speedcubing.server.authenticator.ImageRenderer;
+import top.speedcubing.knockbackffa.utils.ImageRenderer;
 import top.speedcubing.knockbackffa.utils.LangText;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.server.player.User;
@@ -189,33 +188,52 @@ public class EventListeners implements Listener {
                     }
                     p.closeInventory();
                     String itemName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
+                    MapView cachedView = MapManager.getPreviewView(itemName);
+                    if (cachedView != null) {
+                        givePreviewMap(p, cachedView, itemName);
+                        break;
+                    }
                     String url = MapManager.getMapByName(itemName);
                     if (url != null) {
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                MapView view = Bukkit.createMap(p.getWorld());
-                                view.getRenderers().forEach(view::removeRenderer);
-                                try {
-                                    ImageRenderer renderer = new ImageRenderer(url);
-                                    view.addRenderer(renderer);
-                                    ItemStack mapItem = new ItemStack(Material.MAP, 1, view.getId());
-                                    ItemMeta mapMeta = mapItem.getItemMeta();
-                                    mapMeta.setDisplayName(ChatColor.GOLD + itemName);
-                                    mapItem.setItemMeta(mapMeta);
-                                    p.getInventory().addItem(mapItem);
-                                } catch (IOException ee) {
-                                    ee.printStackTrace();
-                                    User.getUser(p).sendMessage("%lang_kbffa_map_preview_failed%");
-                                }
+                        // only the image download runs async; all Bukkit API calls go back to the main thread
+                        Bukkit.getScheduler().runTaskAsynchronously(speedcubingServer.instance, () -> {
+                            ImageRenderer renderer;
+                            try {
+                                renderer = new ImageRenderer(url);
+                            } catch (Exception ee) {
+                                ee.printStackTrace();
+                                Bukkit.getScheduler().runTask(speedcubingServer.instance, () -> {
+                                    if (p.isOnline())
+                                        User.getUser(p).sendMessage("%lang_kbffa_map_preview_failed%");
+                                });
+                                return;
                             }
-                        }.runTaskAsynchronously(speedcubingServer.instance);
+                            Bukkit.getScheduler().runTask(speedcubingServer.instance, () -> {
+                                MapView view = MapManager.getPreviewView(itemName);
+                                if (view == null) {
+                                    view = Bukkit.createMap(p.getWorld());
+                                    view.getRenderers().forEach(view::removeRenderer);
+                                    view.addRenderer(renderer);
+                                    MapManager.putPreviewView(itemName, view);
+                                }
+                                if (p.isOnline())
+                                    givePreviewMap(p, view, itemName);
+                            });
+                        });
                     }
                 }
                 break;
             default:
                 break;
         }
+    }
+
+    private static void givePreviewMap(Player p, MapView view, String itemName) {
+        ItemStack mapItem = new ItemStack(Material.MAP, 1, view.getId());
+        ItemMeta mapMeta = mapItem.getItemMeta();
+        mapMeta.setDisplayName(ChatColor.GOLD + itemName);
+        mapItem.setItemMeta(mapMeta);
+        p.getInventory().addItem(mapItem);
     }
 
     @EventHandler
@@ -547,8 +565,12 @@ public class EventListeners implements Listener {
                 e.setCancelled(true);
             }
         }
-        if (e.getEntity() instanceof ItemFrame && e.getDamager() instanceof Arrow || e.getDamager() instanceof TNTPrimed || e.getDamager() instanceof Fireball || e.getDamager() instanceof FishHook
-                || e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg) {
+        if (e.getEntity() instanceof ItemFrame && (e.getDamager() instanceof Arrow || e.getDamager() instanceof FishHook
+                || e.getDamager() instanceof Snowball || e.getDamager() instanceof Egg)) {
+            e.setCancelled(true);
+        }
+        // vanilla explosion damage stays off for every entity: fireballHit / EntityExplodeEvent apply their own knockback and damage
+        if (e.getDamager() instanceof TNTPrimed || e.getDamager() instanceof Fireball) {
             e.setCancelled(true);
         }
     }
@@ -602,7 +624,8 @@ public class EventListeners implements Listener {
                         Inventory inv = player.getInventory();
                         if (cursor.getType() == Material.AIR) {
                             member.user.sendMessage(Msg.KNOCKBACKFFA + "%lang_general_saved_setting%");
-                            List<Material> t = Arrays.asList(Material.getMaterial(member.weaponId), Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.STONE_PICKAXE);
+                            // slot 0 is the WOOD_SWORD that Member.giveHotbarItems always gives (independent of the weapon selector)
+                            List<Material> t = Arrays.asList(Material.WOOD_SWORD, Material.STICK, Material.ENDER_PEARL, Material.WEB, Material.SANDSTONE, Material.ARROW, Material.BOW, Material.STONE_PICKAXE);
                             for (int i = 0; i < 9; i++) {
                                 if (inv.getItem(i) != null && t.contains(inv.getItem(i).getType())) {
                                     int index = t.indexOf(inv.getItem(i).getType());
