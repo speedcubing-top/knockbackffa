@@ -715,6 +715,9 @@ public class EventListeners implements Listener {
         member.death(true);
         member.user.dbUpdate("kbffa_inventory='" + member.inventory + "',kbffa_kill=" + member.kill + ",kbffa_dailykill=" + member.dailyKill + ",kbffa_death=" + member.death + ",kbffa_killstreak=" + member.killstreak + ",kbffa_blockplace=kbffa_blockplace+" + member.placedBlock + ",kbffa_blockbreak=kbffa_blockbreak+" + member.breakBlock + ",kbffa_armorcolor='" + member.armorColor + "',kbffa_weapon=" + member.weaponId);
         Member.users.remove(member.user.id);
+        for (Hologram hologram : member.killBoard)
+            hologram.despawn().delete();
+        member.personal.despawn().delete();
         //remove bypass anticheat
         if (perms.containsKey(e.getPlayer().getUniqueId())) {
             perms.get(player.getUniqueId()).unsetPermission("vulcan.bypass.*");

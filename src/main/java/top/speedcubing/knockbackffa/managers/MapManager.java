@@ -94,7 +94,7 @@ public class MapManager {
             case "ZABER_THE_BUILDER":
                 return "map 20000 20000 100 180 19998.5 19998.5 150";
             case "FROZEN_EARTH":
-                return "map 5000 5000 100 90 5000.5 4997.5";
+                return "map 5000 5000 100 90 5000.5 4997.5 150";
             case "HOT_AIR_BALLOON":
                 return "map 2023 1225 50 -45 2026.5 1226.5 150";
             case "INVASION":

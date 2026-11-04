@@ -254,7 +254,10 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("nerfhighping").setExecutor(new NerfHighPingCommand());
 
         Bukkit.getPluginCommand("map").setExecutor((commandSender, command, s, strings) -> {
-            if (strings[6] == null) strings[6] = "150";
+            if (strings.length < 8) {
+                commandSender.sendMessage("/map <centerX> <centerZ> <offsetY> <yaw> <holoX> <holoZ> <centerY> <mapName>");
+                return true;
+            }
             KnockBackFFA.switchMap(Double.parseDouble(strings[0]), Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Float.parseFloat(strings[3]), Double.parseDouble(strings[4]), Double.parseDouble(strings[5]), Double.parseDouble(strings[6]), strings[7]);
             commandSender.sendMessage(Lang.of("%lang_kbffa_map_switched%", strings[0] + " " + strings[1] + " " + strings[2] + " " + strings[3]).get(commandSender).toLegacyText());
             return true;
