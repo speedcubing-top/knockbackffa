@@ -36,7 +36,6 @@ import top.speedcubing.knockbackffa.commands.ChangeMapCommand;
 import top.speedcubing.knockbackffa.commands.ComboCommand;
 import top.speedcubing.knockbackffa.commands.CPSLimit;
 import top.speedcubing.knockbackffa.commands.DebugFFACommand;
-import top.speedcubing.knockbackffa.commands.InvSeeCommand;
 import top.speedcubing.knockbackffa.commands.KillMyselfCommand;
 import top.speedcubing.knockbackffa.commands.MapViewCommand;
 import top.speedcubing.knockbackffa.commands.MyWorldCommand;
@@ -265,7 +264,6 @@ public class KnockBackFFA extends JavaPlugin {
         getCommand("killmyself").setExecutor(new KillMyselfCommand());
         getCommand("taggame").setExecutor(new TagGameCommand());
         getCommand("taggamelist").setExecutor(new TagGameListCommand());
-        getCommand("invsee").setExecutor(new InvSeeCommand());
         getCommand("mapview").setExecutor(new MapViewCommand());
         getCommand("vote").setExecutor(new VoteCommand());
         getCommand("changemap").setExecutor(new ChangeMapCommand());

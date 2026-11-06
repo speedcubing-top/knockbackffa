@@ -34,8 +34,6 @@ commands:
   taggamelist:
     aliases: [ tgl ]
     usage: /taggamelist
-  invsee:
-    usage: /invsee
   mapview:
     usage: /mapview
   vote:
