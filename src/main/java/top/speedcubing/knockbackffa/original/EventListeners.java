@@ -346,8 +346,6 @@ public class EventListeners implements Listener {
         if (player.getGameMode() == GameMode.SURVIVAL) {
             Member user = Member.getMember(player);
             Location to = e.getTo();
-            Location musicRoomLoc1 = new Location(player.getWorld(), 948, 134, 976);
-            Location musicRoomLoc2 = new Location(player.getWorld(), 931, 129, 956);
 
             Location yellowLoc1 = new Location(player.getWorld(), 29960.5, 99, 20062.5);
             Location yellowLoc2 = new Location(player.getWorld(), 29958.5, 102, 20064.5);
@@ -406,12 +404,6 @@ public class EventListeners implements Listener {
                     user.death(false);
                 }
                 if (isInRange(player, greenTunnelLoc1, greenTunnelLoc2) && !user.isUsingTunnel && player.getGameMode() == GameMode.SURVIVAL) {
-                    user.death(false);
-                }
-            }
-            //idk kys
-            if (!User.getUser(player).isStaff && !isYt(player)) {
-                if (isInRange(player, musicRoomLoc1, musicRoomLoc2)) {
                     user.death(false);
                 }
             }
@@ -929,11 +921,6 @@ public class EventListeners implements Listener {
     private static boolean isChampOrStaff(Player p) {
         User user = User.getUser(p);
         return user.isStaff || "champ".equals(user.displayRank) || "champ".equals(user.realRank);
-    }
-
-    private static boolean isYt(Player p) {
-        User user = User.getUser(p);
-        return "yt".equals(user.displayRank) || "yt".equals(user.realRank) || "ytplus".equals(user.displayRank) || "ytplus".equals(user.realRank);
     }
 
     private static boolean isEquipmentSlot(int rawSlot) {
