@@ -220,7 +220,8 @@ public class KnockBackFFA extends JavaPlugin {
                 try {
                     Member.users.values().forEach(a -> a.dailyKill = 0);
                     try (SQLConnection connection = Database.getCubing()) {
-                        connection.update("playersdata", "kbffa_dailykill=0", "1");
+                        // only rows that changed; a range read on idx_playersdata_kbffa_dailykill instead of locking every row
+                        connection.update("playersdata", "kbffa_dailykill=0", "kbffa_dailykill>0");
                     }
                 } catch (Throwable t) {
                     t.printStackTrace();
