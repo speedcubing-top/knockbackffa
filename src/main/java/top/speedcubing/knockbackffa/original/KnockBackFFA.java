@@ -136,6 +136,7 @@ public class KnockBackFFA extends JavaPlugin {
     public void onEnable() {
         instance = this;
         MinecraftServer.getServer().getPropertyManager().setProperty("server-name", "knockbackffa");
+        ensureIndexes();
         CubingEventManager.registerListeners(new ServerEvent(), new Configuration());
         Configuration.reload();
         regitserCommands();
@@ -237,6 +238,18 @@ public class KnockBackFFA extends JavaPlugin {
         killEffectManager.saveKillEffects();
         projectileEffectManager.saveProjectileEffects();
         KnockBackFFA.BlockPlaced.keySet().forEach(a -> User.getUsers().stream().findFirst().ifPresent(user -> user.bGetWorld().getBlockAt(a.getX(), a.getY(), a.getZ()).setType(Material.AIR)));
+    }
+
+    /**
+     * Leaderboard indexes on playersdata: the top-10 boards (ORDER BY kill DESC, name ASC LIMIT 10) read ten index
+     * entries instead of sorting the whole table, and Member.updatePositions counts with index range reads.
+     * Built online (no table lock) the first time; a no-op afterwards.
+     */
+    private static void ensureIndexes() {
+        try (SQLConnection connection = Database.getCubing()) {
+            connection.execute("ALTER TABLE playersdata ADD INDEX IF NOT EXISTS idx_playersdata_kbffa_kill (kbffa_kill DESC, name), ALGORITHM=INPLACE, LOCK=NONE");
+            connection.execute("ALTER TABLE playersdata ADD INDEX IF NOT EXISTS idx_playersdata_kbffa_dailykill (kbffa_dailykill DESC, name), ALGORITHM=INPLACE, LOCK=NONE");
+        }
     }
 
     private void regitserCommands() {

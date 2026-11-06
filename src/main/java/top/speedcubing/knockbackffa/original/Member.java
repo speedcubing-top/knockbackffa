@@ -257,7 +257,8 @@ public class Member {
 
     /**
      * Computes the lifetime and daily leaderboard position (1 + players with more kills) of every given member
-     * with a single scan of playersdata, instead of one ranking query per member.
+     * in one round trip: one COUNT per distinct threshold, each a range read on the kbffa_kill / kbffa_dailykill
+     * index (see KnockBackFFA.ensureIndexes) instead of a scan of the whole playersdata table.
      */
     static void updatePositions(SQLConnection connection, Collection<Member> members) {
         List<Member> list = new ArrayList<>(members);
@@ -275,10 +276,10 @@ public class Member {
         }
         if (columns.isEmpty())
             return;
-        StringJoiner select = new StringJoiner(",");
+        StringJoiner select = new StringJoiner(",", "SELECT ", "");
         for (String condition : columns.keySet())
-            select.add("COUNT(CASE WHEN " + condition + " THEN 1 END)");
-        SQLRow r = connection.select(select.toString()).from("playersdata").executeResult().get(0);
+            select.add("(SELECT COUNT(*) FROM playersdata WHERE " + condition + ")");
+        SQLRow r = connection.executeResult(select.toString()).get(0);
         for (int i = 0; i < list.size(); i++) {
             Member m = list.get(i);
             if (kills[i] > 0)
