@@ -95,8 +95,14 @@ public class ServerEvent {
                 lastKill = a;
             }
             KnockBackFFA.boardName[i] = r.getString(3);
-            KnockBackFFA.board[i] = StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", prefix(ranks, r.getInt(3)) + r.getString(1)).replace("%k%", r.getString(2));
+            // 0 kills never moved index off 0 ("0. name - 0"); show it as an empty slot like the daily board
+            KnockBackFFA.board[i] = a == 0 ? EMPTY_SLOT : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", prefix(ranks, r.getInt(3)) + r.getString(1)).replace("%k%", r.getString(2));
             i++;
+        }
+        // fewer than ten players: an empty hologram name shows the armor stand's own "Armor Stand"
+        for (; i < KnockBackFFA.board.length; i++) {
+            KnockBackFFA.boardName[i] = null;
+            KnockBackFFA.board[i] = EMPTY_SLOT;
         }
         lastKill = 0;
         index = 0;
@@ -108,10 +114,16 @@ public class ServerEvent {
                 lastKill = a;
             }
             KnockBackFFA.dailyBoardName[i] = r.getString(3);
-            KnockBackFFA.dailyBoard[i] = r.getInt(2) == 0 ? "§e#. §7### - §e#" : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", prefix(ranks, r.getInt(3)) + r.getString(1)).replace("%k%", r.getString(2));
+            KnockBackFFA.dailyBoard[i] = r.getInt(2) == 0 ? EMPTY_SLOT : StringList.leaderboard.replace("%i%", Integer.toString(index)).replace("%j%", prefix(ranks, r.getInt(3)) + r.getString(1)).replace("%k%", r.getString(2));
             i++;
         }
+        for (; i < KnockBackFFA.dailyBoard.length; i++) {
+            KnockBackFFA.dailyBoardName[i] = null;
+            KnockBackFFA.dailyBoard[i] = EMPTY_SLOT;
+        }
     }
+
+    private static final String EMPTY_SLOT = "§e#. §7### - §e#";
 
     private static String prefix(Map<Integer, String> ranks, int id) {
         Rank rank = Rank.rankByName.get(ranks.get(id));

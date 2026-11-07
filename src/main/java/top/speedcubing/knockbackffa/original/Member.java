@@ -179,9 +179,10 @@ public class Member {
         String[] s = displayType ? KnockBackFFA.board : KnockBackFFA.dailyBoard;
         String[] s2 = displayType ? KnockBackFFA.boardName : KnockBackFFA.dailyBoardName;
         for (int i = 0; i < 10; i++) {
-            if (s[i] == null || s2[i] == null) // boards not loaded yet (or fewer than 10 rows)
+            if (s[i] == null) // boards not loaded yet
                 continue;
-            killBoard[i].setName(user.id == Integer.parseInt(s2[i]) ? KnockBackFFA.bold(s[i]) : s[i]);
+            // s2[i] is null for an empty slot (fewer than ten players)
+            killBoard[i].setName(s2[i] != null && user.id == Integer.parseInt(s2[i]) ? KnockBackFFA.bold(s[i]) : s[i]);
         }
     }
 
